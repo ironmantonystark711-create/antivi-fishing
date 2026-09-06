@@ -11,7 +11,7 @@
       {
         "command": "python3 scripts/record-verification.py",
         "result_file": "reports/evidence/current-tests.xml",
-        "result_sha256": "88b2193128e4fd22e2868c51b93e3afda7513b06237cfa8ab5d4440100cffc91",
+        "result_sha256": "66220b3a70cf0ca5a1e148740b78b425a2f7537a115a80f9d0f81bd346af7dac",
         "passing_test_names": [
           "COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle",
           "COV-001 COV-002 COV-008 COV-010: every declared path has a mandatory assigned plan and manual claims fail closed"
@@ -36,7 +36,7 @@
       {
         "command": "python3 scripts/record-verification.py",
         "result_file": "reports/evidence/current-tests.xml",
-        "result_sha256": "88b2193128e4fd22e2868c51b93e3afda7513b06237cfa8ab5d4440100cffc91",
+        "result_sha256": "66220b3a70cf0ca5a1e148740b78b425a2f7537a115a80f9d0f81bd346af7dac",
         "passing_test_names": [
           "COV-001 COV-002 COV-008 COV-010: every declared path has a mandatory assigned plan and manual claims fail closed"
         ],
@@ -60,7 +60,7 @@
       {
         "command": "python3 scripts/record-verification.py",
         "result_file": "reports/evidence/current-tests.xml",
-        "result_sha256": "88b2193128e4fd22e2868c51b93e3afda7513b06237cfa8ab5d4440100cffc91",
+        "result_sha256": "66220b3a70cf0ca5a1e148740b78b425a2f7537a115a80f9d0f81bd346af7dac",
         "passing_test_names": [
           "COV-001 COV-002 COV-008 COV-010: every declared path has a mandatory assigned plan and manual claims fail closed"
         ],
@@ -84,7 +84,7 @@
       {
         "command": "python3 scripts/record-verification.py",
         "result_file": "reports/evidence/current-tests.xml",
-        "result_sha256": "88b2193128e4fd22e2868c51b93e3afda7513b06237cfa8ab5d4440100cffc91",
+        "result_sha256": "66220b3a70cf0ca5a1e148740b78b425a2f7537a115a80f9d0f81bd346af7dac",
         "passing_test_names": [
           "COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle",
           "COV-003 COV-005 COV-006 COV-007 COV-009: scope-bound signed evidence, expiry intervals and tenant history isolation"
@@ -111,7 +111,7 @@
       {
         "command": "python3 scripts/record-verification.py",
         "result_file": "reports/evidence/current-tests.xml",
-        "result_sha256": "88b2193128e4fd22e2868c51b93e3afda7513b06237cfa8ab5d4440100cffc91",
+        "result_sha256": "66220b3a70cf0ca5a1e148740b78b425a2f7537a115a80f9d0f81bd346af7dac",
         "passing_test_names": [
           "RUN-010: restart cannot roll back signed configuration or rebind an accepted version",
           "RUN-010 RUN-003: expiry, revoked custodian, duplicate signer and stale process withdraw local authority",
@@ -140,7 +140,7 @@
       {
         "command": "python3 scripts/record-verification.py",
         "result_file": "reports/evidence/current-tests.xml",
-        "result_sha256": "88b2193128e4fd22e2868c51b93e3afda7513b06237cfa8ab5d4440100cffc91",
+        "result_sha256": "66220b3a70cf0ca5a1e148740b78b425a2f7537a115a80f9d0f81bd346af7dac",
         "passing_test_names": [
           "ACT-012 COM-005 UX-006: atomic batch commits every exact child and rejects replay, missing or reversed authority",
           "COM-005 COM-012 ACT-012: atomic child-1 preserves all-or-none state and durable replay protection",
@@ -177,7 +177,7 @@
       {
         "command": "python3 scripts/record-verification.py",
         "result_file": "reports/evidence/current-tests.xml",
-        "result_sha256": "88b2193128e4fd22e2868c51b93e3afda7513b06237cfa8ab5d4440100cffc91",
+        "result_sha256": "66220b3a70cf0ca5a1e148740b78b425a2f7537a115a80f9d0f81bd346af7dac",
         "passing_test_names": [
           "KEY-005 COM-002: key algorithm, suite, signature encoding and verification cutoff cannot be confused",
           "KEY-005 KEY-010 NFR-MNT-002: independent verifiers accept mixed-suite audit history and reject cross-suite tampering",
@@ -185,12 +185,12 @@
           "KEY-005: execution suite rotation invalidates old live authority and a stale peer cannot mint with the retired key"
         ],
         "source_hashes": {
-          "src/crypto.mjs": "e808ec0323ae8810b3b4dcbd4da0807d2de4f9547aaafb6007fba4d87f2b2a78",
-          "src/suites.mjs": "5f7876250d914e475d4f449e2676a971c404622fa063aeba321040a19ab2206e",
-          "src/key-governance.mjs": "383b83e59886954e24a829c852c612c40d1284e13b3a2e03b00b0436f80d1253",
+          "src/crypto.mjs": "1eaae6334579b71b57f5808bff6cfa02a8cc6d5ed9424b55a736b19f5e679f8f",
+          "src/suites.mjs": "3db3b5456a60b9813e99e26f007751c0ba9b6fbcfb5d0820299eec62812f3a34",
+          "src/key-governance.mjs": "be9088e7bceef52089675985da010b49168412c8062e89c6b97fca8845c78e48",
           "src/store.mjs": "dedd6be74eb6925b59991b298dfb2e3dcb1f628474f32cb7da4bb036fe101bc2",
           "src/fabric.mjs": "d1fc8993ac81120ed368c38ba7441bfedc24fa2b83123f7686bc88b76a70804a",
-          "scripts/verify-export-webcrypto.mjs": "7d7f288acf549be71e6cfb437d1da3eb041c148dc240e03855e833d613ac185b",
+          "scripts/verify-export-webcrypto.mjs": "da9e1201303880029034b392bf927fac3e9088c7a95c478a8231fe0aafc38593",
           "tests/crypto-agility.test.mjs": "533b96eeac2f81fd0da5c3bd51bfc0d53d7b701bf6f65a92cad0b078309e1d7d"
         }
       }
@@ -210,7 +210,7 @@
       {
         "command": "python3 scripts/record-verification.py",
         "result_file": "reports/evidence/current-tests.xml",
-        "result_sha256": "88b2193128e4fd22e2868c51b93e3afda7513b06237cfa8ab5d4440100cffc91",
+        "result_sha256": "66220b3a70cf0ca5a1e148740b78b425a2f7537a115a80f9d0f81bd346af7dac",
         "passing_test_names": [
           "POL-008 POL-010: signed development, shadow and canary stages bind exact policy and cannot be skipped or self-asserted",
           "POL-008 POL-009 POL-014: activation and rollback advance versions and never restore revoked authorities",
@@ -242,7 +242,7 @@
       {
         "command": "python3 scripts/record-verification.py",
         "result_file": "reports/evidence/current-tests.xml",
-        "result_sha256": "88b2193128e4fd22e2868c51b93e3afda7513b06237cfa8ab5d4440100cffc91",
+        "result_sha256": "66220b3a70cf0ca5a1e148740b78b425a2f7537a115a80f9d0f81bd346af7dac",
         "passing_test_names": [
           "COM-014 POL-009: 3-of-5 customer software quorum protects exact policy activation",
           "POL-008 POL-009 POL-014: activation and rollback advance versions and never restore revoked authorities"
@@ -273,7 +273,7 @@
       {
         "command": "python3 scripts/record-verification.py",
         "result_file": "reports/evidence/current-tests.xml",
-        "result_sha256": "88b2193128e4fd22e2868c51b93e3afda7513b06237cfa8ab5d4440100cffc91",
+        "result_sha256": "66220b3a70cf0ca5a1e148740b78b425a2f7537a115a80f9d0f81bd346af7dac",
         "passing_test_names": [
           "POL-013 POL-014: emergency requires simulation and quorum, restricts exact scope, expires without reviving revocations",
           "POL-008 POL-009 POL-014: activation and rollback advance versions and never restore revoked authorities"
@@ -304,7 +304,7 @@
       {
         "command": "python3 scripts/record-verification.py",
         "result_file": "reports/evidence/current-tests.xml",
-        "result_sha256": "88b2193128e4fd22e2868c51b93e3afda7513b06237cfa8ab5d4440100cffc91",
+        "result_sha256": "66220b3a70cf0ca5a1e148740b78b425a2f7537a115a80f9d0f81bd346af7dac",
         "passing_test_names": [
           "CON-001 CON-002 CON-010: tenant-signed connector manifest enumerates actions, least privilege and limitations"
         ],
@@ -333,7 +333,7 @@
       {
         "command": "python3 scripts/record-verification.py",
         "result_file": "reports/evidence/current-tests.xml",
-        "result_sha256": "88b2193128e4fd22e2868c51b93e3afda7513b06237cfa8ab5d4440100cffc91",
+        "result_sha256": "66220b3a70cf0ca5a1e148740b78b425a2f7537a115a80f9d0f81bd346af7dac",
         "passing_test_names": [
           "CON-001 CON-002 CON-010: tenant-signed connector manifest enumerates actions, least privilege and limitations"
         ],
@@ -362,7 +362,7 @@
       {
         "command": "python3 scripts/record-verification.py",
         "result_file": "reports/evidence/current-tests.xml",
-        "result_sha256": "88b2193128e4fd22e2868c51b93e3afda7513b06237cfa8ab5d4440100cffc91",
+        "result_sha256": "66220b3a70cf0ca5a1e148740b78b425a2f7537a115a80f9d0f81bd346af7dac",
         "passing_test_names": [
           "CON-006 NFR-MNT-005: lifecycle forbids EOL use and silent downgrade and preserves migration instructions",
           "CON-006 NFR-MNT-005: schema expiry invalidates already-issued certificates and cannot be delayed to revive authority",
@@ -375,6 +375,37 @@
           "src/server.mjs": "20e7cb39203fd8f0ced0e68d62f8caa28254beec1b249cca70613a3c84149cad",
           "tests/connector-lifecycle.test.mjs": "173b82a5f0f3c6c51f81504b735f746e1341139b7bc18f89f77b3d7ef4e8af14",
           "tests/completion-security.test.mjs": "0439d65482591c45546e77d06d085e332f9ea321c1f1fd1529e6782532c5bc4e"
+        }
+      }
+    ]
+  },
+  "KEY-006": {
+    "implementation": [
+      "src/crypto.mjs",
+      "src/suites.mjs",
+      "src/key-governance.mjs",
+      "scripts/verify-export-webcrypto.mjs"
+    ],
+    "status": "VERIFIED",
+    "blocker_reason": null,
+    "remaining_work": null,
+    "verification_evidence": [
+      {
+        "command": "python3 scripts/record-verification.py",
+        "result_file": "reports/evidence/current-tests.xml",
+        "result_sha256": "66220b3a70cf0ca5a1e148740b78b425a2f7537a115a80f9d0f81bd346af7dac",
+        "passing_test_names": [
+          "KEY-005 KEY-006: algorithm migration preserves historical signatures and binds suite",
+          "KEY-006 KEY-005: ML-DSA-65-v1 signs, rejects tampering and verifies independently without classical fallback",
+          "KEY-006 KEY-005: HYBRID-Ed25519-ML-DSA-65-v1 signs, rejects tampering and verifies independently without classical fallback",
+          "KEY-006 KEY-005: customer-approved hybrid migration executes real certificates and forbids component downgrade"
+        ],
+        "source_hashes": {
+          "src/crypto.mjs": "1eaae6334579b71b57f5808bff6cfa02a8cc6d5ed9424b55a736b19f5e679f8f",
+          "src/suites.mjs": "3db3b5456a60b9813e99e26f007751c0ba9b6fbcfb5d0820299eec62812f3a34",
+          "src/key-governance.mjs": "be9088e7bceef52089675985da010b49168412c8062e89c6b97fca8845c78e48",
+          "scripts/verify-export-webcrypto.mjs": "da9e1201303880029034b392bf927fac3e9088c7a95c478a8231fe0aafc38593",
+          "tests/post-quantum.test.mjs": "abac1d82d423dff70e69f398df1a3ececced8158d68acc72e4a04321b5a931ec"
         }
       }
     ]

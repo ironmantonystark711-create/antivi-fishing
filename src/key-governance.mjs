@@ -15,7 +15,9 @@ export class KeyGovernance {
     return this.f.transaction(p, now => {
       requireThat(!this.f.store.get(p.tenant_id, 'retired-suite', `${input.purpose}:${input.suite}`), 'INV-451-POLICY', 'Retired signing suite cannot be reactivated', 451);
       integer(input.not_before, 'rotation delay', now + 60000, now + 86400000);
-      const old = this.f.keys(p.tenant_id)[input.purpose], next = generateKey(input.suite);
+      const old = this.f.keys(p.tenant_id)[input.purpose], priorProfile = suite(old.suite), nextProfile = suite(input.suite);
+      requireThat((!priorProfile.post_quantum || nextProfile.post_quantum) && (!priorProfile.hybrid || nextProfile.hybrid), 'INV-451-POLICY', 'Migration cannot silently remove post-quantum or hybrid assurance', 451);
+      const next = generateKey(input.suite);
       const payload = { format: 'IF-KEY-ROTATION-1', rotation_id: randomUUID(), tenant_id: p.tenant_id, purpose: input.purpose, prior_key_id: old.key_id, prior_suite: old.suite, next_key_id: next.key_id, next_public_key: next.public_key, next_suite: next.suite, policy_digest: digest(this.f.policy(p.tenant_id)), requested_by: p.subject_id, issued_at: now, not_before: input.not_before, expires_at: input.not_before + 3600000, preserve_audit_history: true };
       this.f.store.insert(p.tenant_id, 'key-rotation', payload.rotation_id, { payload, private_material: next, status: 'PREPARED' }, now);
       this.f.store.audit(p.tenant_id, 'KEY_ROTATION_PREPARED', p.subject_id, payload.rotation_id, { public_transition_digest: digest(payload), not_before: payload.not_before }, now);

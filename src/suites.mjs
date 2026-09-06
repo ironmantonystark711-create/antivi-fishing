@@ -1,8 +1,10 @@
 import { requireThat } from './errors.mjs';
 // Versioned, closed registry. No caller-supplied algorithms or executable extensions.
 export const SUITES = Object.freeze({
-  Ed25519: Object.freeze({ id: 'Ed25519', version: 1, key_type: 'ed25519', digest: null, hash: 'sha256', encryption: 'aes-256-gcm', deprecated_at: null, sign_until: null, verify_until: null }),
-  'ECDSA-P256-SHA256-v1': Object.freeze({ id: 'ECDSA-P256-SHA256-v1', version: 1, key_type: 'ec', curve: 'prime256v1', digest: 'sha256', hash: 'sha256', encryption: 'aes-256-gcm', deprecated_at: null, sign_until: null, verify_until: null })
+  Ed25519: Object.freeze({ id: 'Ed25519', signature_bytes: 64, version: 1, key_type: 'ed25519', digest: null, hash: 'sha256', encryption: 'aes-256-gcm', deprecated_at: null, sign_until: null, verify_until: null }),
+  'ML-DSA-65-v1': Object.freeze({ id: 'ML-DSA-65-v1', signature_bytes: 3309, key_type: 'ml-dsa-65', digest: null, signing: true, verification: true, hybrid: false, post_quantum: true }),
+  'HYBRID-Ed25519-ML-DSA-65-v1': Object.freeze({ id: 'HYBRID-Ed25519-ML-DSA-65-v1', signature_bytes: 3373, key_type: 'hybrid', digest: null, signing: true, verification: true, hybrid: true, post_quantum: true }),
+  'ECDSA-P256-SHA256-v1': Object.freeze({ id: 'ECDSA-P256-SHA256-v1', signature_bytes: 64, version: 1, key_type: 'ec', curve: 'prime256v1', digest: 'sha256', hash: 'sha256', encryption: 'aes-256-gcm', deprecated_at: null, sign_until: null, verify_until: null })
 });
 export function suite(id, operation = 'verify', now = Date.now(), policy = {}) {
   const s = Object.hasOwn(SUITES, id) ? SUITES[id] : null;

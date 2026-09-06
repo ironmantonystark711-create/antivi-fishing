@@ -17,14 +17,26 @@ const bytes = v => new TextEncoder().encode(encode(v));
 async function hash(v) { return Buffer.from(await crypto.subtle.digest('SHA-256', bytes(v))).toString('hex'); }
 async function verify(envelope, keys, purpose) {
   check(Object.keys(envelope).sort().join() === 'payload,protected,signature', 'Invalid envelope');
-  const h = envelope.protected; check(Object.keys(h).sort().join() === 'key_id,profile,purpose,suite' && h.profile === 'IF-CJSON-1' && ['Ed25519', 'ECDSA-P256-SHA256-v1'].includes(h.suite) && h.purpose === purpose, 'Bad context');
+  const h = envelope.protected; check(Object.keys(h).sort().join() === 'key_id,profile,purpose,suite' && h.profile === 'IF-CJSON-1' && ['Ed25519', 'ECDSA-P256-SHA256-v1', 'ML-DSA-65-v1', 'HYBRID-Ed25519-ML-DSA-65-v1'].includes(h.suite) && h.purpose === purpose, 'Bad context');
   const source = Object.hasOwn(keys, h.key_id) ? keys[h.key_id] : null; check(source && !source.revoked, 'Untrusted key');
-  check(/^[A-Za-z0-9_-]{86}$/.test(envelope.signature), 'Bad signature encoding');
-  const raw = Buffer.from(source.public_key.replace(/-----[^-]+-----|\s/g, ''), 'base64');
-  const algorithm = h.suite === 'Ed25519' ? { name: 'Ed25519' } : { name: 'ECDSA', namedCurve: 'P-256', hash: 'SHA-256' };
-  check(Buffer.from(envelope.signature, 'base64url').toString('base64url') === envelope.signature, 'Noncanonical signature encoding');
-  const key = await crypto.subtle.importKey('spki', raw, algorithm, false, ['verify']);
-  check(await crypto.subtle.verify(algorithm, key, Buffer.from(envelope.signature, 'base64url'), bytes({ protected: h, payload: envelope.payload })), 'Bad signature'); return envelope.payload;
+  check(typeof envelope.signature === 'string' && /^[A-Za-z0-9_-]+$/.test(envelope.signature), 'Bad signature encoding');
+  const expectedBytes = { Ed25519: 64, 'ECDSA-P256-SHA256-v1': 64, 'ML-DSA-65-v1': 3309, 'HYBRID-Ed25519-ML-DSA-65-v1': 3373 }[h.suite];
+  const signature = Buffer.from(envelope.signature, 'base64url'), message = bytes({ protected: h, payload: envelope.payload });
+  check(signature.length === expectedBytes && signature.toString('base64url') === envelope.signature, 'Noncanonical signature encoding');
+  async function component(pem, algorithm, part) {
+    const raw = Buffer.from(pem.replace(/-----[^-]+-----/g, '').replace(/\s/g, ''), 'base64');
+    const key = await crypto.subtle.importKey('spki', raw, algorithm, false, ['verify']);
+    return crypto.subtle.verify(algorithm, key, part, message);
+  }
+  if (h.suite === 'HYBRID-Ed25519-ML-DSA-65-v1') {
+    noDuplicates(source.public_key); const parts = JSON.parse(source.public_key); check(Object.keys(parts).sort().join(',') === 'classical,pq', 'Hybrid key');
+    check(await component(parts.classical, { name: 'Ed25519' }, signature.subarray(0, 64)), 'Hybrid classical component');
+    check(await component(parts.pq, { name: 'ML-DSA-65' }, signature.subarray(64)), 'Hybrid post-quantum component');
+  } else {
+    const algorithm = h.suite === 'Ed25519' ? { name: 'Ed25519' } : h.suite === 'ML-DSA-65-v1' ? { name: 'ML-DSA-65' } : { name: 'ECDSA', namedCurve: 'P-256', hash: 'SHA-256' };
+    check(await component(source.public_key, algorithm, signature), 'Signature mismatch');
+  }
+  return envelope.payload;
 }
 function noDuplicates(raw) {
   const stack = [];

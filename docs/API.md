@@ -126,3 +126,19 @@ non-canonical numeric prefixes. All-address IPv4 and IPv6 networks are denied by
 semantic prefix length, including expanded IPv6 spellings. CIDR validation also
 runs inside deterministic policy evaluation, so an imported capsule cannot bypass
 schema validation through a differently spelled unrestricted range.
+
+### Explicit post-quantum/hybrid migration
+
+The closed suite registry additionally supports native `ML-DSA-65-v1` and
+`HYBRID-Ed25519-ML-DSA-65-v1` on pinned Node 24.16.0 / OpenSSL 3.5.6. Hybrid
+verification requires **both** independently domain-bound Ed25519 and ML-DSA-65
+signatures; there is no classical fallback. Key governance cannot remove a
+post-quantum or hybrid component during migration. Defaults remain unchanged.
+Both audit verifier implementations verify these suites, and actual hybrid
+Action Certificates are exercised end to end. This prepares the software path;
+it does not claim that an entire deployment, TLS channel, HSM or root ceremony
+has received post-quantum certification. Native WebCrypto ML-DSA remains labelled
+experimental by Node and requires customer production review before adoption.
+
+Reference checked against the pinned runtime:
+https://github.com/nodejs/node/blob/v24.16.0/doc/api/crypto.md
