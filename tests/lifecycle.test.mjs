@@ -78,7 +78,7 @@ test('COM-014 POL-009: 3-of-5 customer software quorum protects exact policy act
   const r = h.proposed('policy.change', { policy: next }, { action: { type: 'policy.change', target_resource: 'policy-root', purpose: 'Tighten payment ceiling' } });
   const simulation = h.f.simulate(h.p('policy-admin'), next);
   for (const stage of ['staging', 'canary', 'production']) {
-    const challenge = h.f.policyPromotionChallenge(h.p('policy-admin'), { candidate: next, reviewed_commit: 'a'.repeat(40), stage, simulation_id: simulation.simulation_id, expires_at: h.now() + 300000 });
+    const environment = `acme-${stage}`, policyDigest = digest(next), challenge = h.f.policyPromotionChallenge(h.p('policy-admin'), { candidate: next, reviewed_commit: 'a'.repeat(40), stage, environment, simulation_id: simulation.simulation_id, expires_at: h.now() + 300000, release_evidence: h.releaseEvidence({ releaseId: policyDigest, artifactDigest: policyDigest, policyDigest, stage, environment }) });
     h.f.promotePolicy(h.p('policy-admin'), { challenge, signatures: Object.values(h.setup.custodianKeys.acme).slice(0, 3).map(key => signed(challenge, key, 'policy-promotion')) });
   }
   h.advance(120001); h.evidence(r, { kind: 'governance_review' }); h.evidence(r, { issuer: 'registry', kind: 'governance_review' }); h.approve(r, 2);

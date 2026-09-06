@@ -2,8 +2,10 @@ import { digest, clone } from './canonical.mjs';
 import { signed, verifySigned } from './crypto.mjs';
 import { fields, identifier, oneOf, integer, text } from './schema.mjs';
 import { requireThat } from './errors.mjs';
+import { runIsolatedCoverageBypass } from './bootstrap.mjs';
 
 const requiredNegativeTests = ['no-certificate', 'wrong-tenant', 'state-race', 'replay', 'direct-bypass'];
+export const COVERAGE_RUNNER_VERSION = 'IF-ISOLATED-FABRIC-BYPASS-RUNNER-1';
 function connectorVersion(value) {
   text(value, 'connector version', 64);
   requireThat(/^\d+(?:\.\d+){0,3}$/.test(value), 'INV-400-SCHEMA', 'Connector version must use canonical numeric components');
@@ -53,25 +55,27 @@ export class CoverageLifecycle {
     return this.f.transaction(p, now => { const r = this.f.store.must(p.tenant_id, 'coverage', input.path_id); requireThat(!isDowngrade(input.connector_version, r.connector_version), 'INV-409-LIFECYCLE', 'Connector downgrade requires a new declared path and bypass assessment', 409); if (r.configuration_digest !== input.configuration_digest || r.connector_version !== input.connector_version) { this.closeActiveInterval(p.tenant_id, r.path_id, now, 'CONFIGURATION_OR_CONNECTOR_DRIFT'); Object.assign(r, input, { status: 'UNKNOWN', evidence_at: null, technical_validation: null }); this.f.store.put(p.tenant_id, 'coverage', input.path_id, r, now); this.history(p.tenant_id, r, now, 'CONFIGURATION_OR_CONNECTOR_DRIFT'); } return r; });
   }
   revalidate(p, input) {
-    this.f.authorize(p, ['security']); fields(input, ['path_id', 'evidence']);
+    this.f.authorize(p, ['security']); fields(input, ['path_id']);
     return this.f.transaction(p, now => {
-      const r = this.f.store.must(p.tenant_id, 'coverage', input.path_id), e = verifySigned(input.evidence, this.f.tenant(p.tenant_id).issuers, 'coverage-test');
-      fields(e, ['format', 'tenant_id', 'path_id', 'configuration_digest', 'connector_version', 'tested_at', 'expires_at', 'credential_owner', 'permissions', 'negative_tests', 'environment', 'target']);
-      const issuer = this.f.tenant(p.tenant_id).issuers[input.evidence.protected.key_id];
-      requireThat(issuer.channel === 'authoritative' && issuer.kinds.includes('governance_review') && !this.f.revoked(p.tenant_id, 'issuer', input.evidence.protected.key_id) && !this.f.revoked(p.tenant_id, 'key', input.evidence.protected.key_id), 'INV-403-SCOPE', 'Trusted non-revoked technical assessor required', 403);
-      requireThat(e.format === 'IF-COVERAGE-TEST-1' && e.tenant_id === p.tenant_id && e.path_id === r.path_id && e.target === r.target && e.configuration_digest === r.configuration_digest && e.connector_version === r.connector_version && e.environment === r.environment && e.credential_owner === 'root-gate', 'INV-409-COVERAGE', 'Technical evidence does not match declared scope', 409);
+      const r = this.f.store.must(p.tenant_id, 'coverage', input.path_id), raw = runIsolatedCoverageBypass({ ...r, tenant_id: p.tenant_id }, now), evidence = signed(raw, this.f.keys(p.tenant_id).coverage_assessor, 'coverage-test'), assessor = this.f.keys(p.tenant_id).coverage_assessor;
+      const e = verifySigned(evidence, { [assessor.key_id]: { public_key: assessor.public_key, suite: assessor.suite } }, 'coverage-test');
+      fields(e, ['format', 'runner', 'tenant_id', 'path_id', 'configuration_digest', 'connector_version', 'tested_at', 'expires_at', 'credential_owner', 'permissions', 'negative_tests', 'environment', 'target', 'root_gate_verified']);
+      requireThat(e.format === 'IF-COVERAGE-TEST-3' && e.runner === COVERAGE_RUNNER_VERSION && e.tenant_id === p.tenant_id && e.path_id === r.path_id && e.target === r.target && e.configuration_digest === r.configuration_digest && e.connector_version === r.connector_version && e.environment === r.environment && e.credential_owner === 'root-gate' && e.root_gate_verified === true && !this.f.revoked(p.tenant_id, 'key', assessor.key_id), 'INV-409-COVERAGE', 'Technical evidence does not match declared scope', 409);
       integer(e.tested_at, 'test time', now - r.max_age_ms, now); integer(e.expires_at, 'test expiry', now + 1, e.tested_at + r.max_age_ms);
       const testedNames = Array.isArray(e.negative_tests) ? e.negative_tests.map(x => x?.name) : [];
-      requireThat(Array.isArray(e.permissions) && e.permissions.length === 2 && new Set(e.permissions).size === 2 && ['read', 'exact-mutation'].every(permission => e.permissions.includes(permission)) && Array.isArray(e.negative_tests) && new Set(testedNames).size === testedNames.length && testedNames.length === requiredNegativeTests.length && requiredNegativeTests.every(name => e.negative_tests.some(x => x.name === name && x.rejected === true && /^[a-f0-9]{64}$/.test(x.result_digest))), 'INV-412-COVERAGE', 'All assigned bypass tests and least-privilege evidence must pass', 412);
-      this.closeActiveInterval(p.tenant_id, r.path_id, now, 'REVALIDATED'); r.status = 'ENFORCED'; r.evidence_at = e.tested_at; r.evidence_expires_at = e.expires_at; r.evidence_digest = digest(input.evidence); r.technical_validation = clone(input.evidence);
-      this.f.store.put(p.tenant_id, 'coverage', r.path_id, r, now); this.history(p.tenant_id, r, now, 'TECHNICAL_TESTS_VERIFIED'); return r;
+      const passed = Array.isArray(e.permissions) && e.permissions.length === 2 && new Set(e.permissions).size === 2 && ['read', 'exact-mutation'].every(permission => e.permissions.includes(permission)) && Array.isArray(e.negative_tests) && new Set(testedNames).size === testedNames.length && testedNames.length === requiredNegativeTests.length && requiredNegativeTests.every(name => e.negative_tests.some(x => x.name === name && x.rejected === true && /^[a-f0-9]{64}$/.test(x.result_digest)));
+      this.closeActiveInterval(p.tenant_id, r.path_id, now, 'REVALIDATED'); r.status = passed ? 'ENFORCED' : 'UNKNOWN'; r.evidence_at = e.tested_at; r.evidence_expires_at = e.expires_at; r.evidence_digest = digest(evidence); r.technical_validation = clone(evidence);
+      this.f.store.put(p.tenant_id, 'coverage', r.path_id, r, now); this.history(p.tenant_id, r, now, passed ? 'TECHNICAL_TESTS_VERIFIED' : 'DIRECT_BYPASS_DETECTED'); if (!passed) this.f.store.put(p.tenant_id, 'coverage-task', r.path_id, { path_id: r.path_id, owner: r.owner, reason: 'DIRECT_BYPASS_DETECTED', created_at: now }, now); return r;
     });
   }
-  refresh(p) {
-    return this.f.transaction(p, now => { let stale = 0; for (const r of this.f.store.list(p.tenant_id, 'coverage', 10000)) {
+  refreshTenant(tenant, now) {
+    let stale = 0; for (const r of this.f.store.list(tenant, 'coverage', 10000)) {
       const assessorKey = r.technical_validation?.protected?.key_id;
-      const invalid = r.status === 'ENFORCED' && (now - r.evidence_at > r.max_age_ms || r.evidence_expires_at <= now || !assessorKey || this.f.revoked(p.tenant_id, 'issuer', assessorKey) || this.f.revoked(p.tenant_id, 'key', assessorKey));
-      if (invalid) { const reason = assessorKey && (this.f.revoked(p.tenant_id, 'issuer', assessorKey) || this.f.revoked(p.tenant_id, 'key', assessorKey)) ? 'ASSESSOR_REVOKED' : 'STALE_EVIDENCE'; this.closeActiveInterval(p.tenant_id, r.path_id, now, reason); r.status = 'UNKNOWN'; this.f.store.put(p.tenant_id, 'coverage', r.path_id, r, now); this.history(p.tenant_id, r, now, reason); this.f.store.put(p.tenant_id, 'coverage-task', r.path_id, { path_id: r.path_id, owner: r.owner, reason: 'REVALIDATION_REQUIRED', created_at: now }, now); stale++; }
-    } return { stale }; });
+      const invalid = r.status === 'ENFORCED' && (now - r.evidence_at > r.max_age_ms || r.evidence_expires_at <= now || !assessorKey || this.f.revoked(tenant, 'key', assessorKey));
+      if (invalid) { const reason = assessorKey && this.f.revoked(tenant, 'key', assessorKey) ? 'ASSESSOR_REVOKED' : 'STALE_EVIDENCE'; this.closeActiveInterval(tenant, r.path_id, now, reason); r.status = 'UNKNOWN'; this.f.store.put(tenant, 'coverage', r.path_id, r, now); this.history(tenant, r, now, reason); this.f.store.put(tenant, 'coverage-task', r.path_id, { path_id: r.path_id, owner: r.owner, reason: 'REVALIDATION_REQUIRED', created_at: now }, now); stale++; }
+    } return { stale };
+  }
+  refresh(p) {
+    return this.f.transaction(p, now => this.refreshTenant(p.tenant_id, now));
   }
 }

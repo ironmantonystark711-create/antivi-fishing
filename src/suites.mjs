@@ -8,6 +8,7 @@ export const ALGORITHM_INVENTORY = Object.freeze(Object.values(SUITES).map(s => 
 export function suite(id, operation = 'verify', now = Date.now(), policy = {}) {
   const s = Object.hasOwn(SUITES, id) ? SUITES[id] : null;
   requireThat(s && ['sign', 'verify'].includes(operation), 'INV-401-SIGNATURE', 'Unsupported cryptographic suite', 401);
+  requireThat(policy === undefined || (policy && typeof policy === 'object' && !Array.isArray(policy)), 'INV-401-SIGNATURE', 'Invalid cryptographic suite policy', 401);
   const selected = policy[id] ?? s;
   requireThat(selected && typeof selected === 'object' && (selected.id === undefined || selected.id === id), 'INV-401-SIGNATURE', 'Invalid cryptographic suite policy', 401);
   const cutoff = selected[`${operation}_until`];

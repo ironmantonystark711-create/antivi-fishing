@@ -6,31 +6,31 @@ import { verifySigned, signed } from './crypto.mjs';
 import { fields, integer, oneOf } from './schema.mjs';
 import { requireThat } from './errors.mjs';
 
-export function runtimeConfiguration(tenant, gate, now) {
+export function runtimeConfiguration(tenant, gate, now, endpointAttestors = []) {
   return {
     format: 'IF-RUNTIME-CONFIG-1', tenant_id: tenant, gate_id: gate, version: 1, issued_at: now, expires_at: now + 7 * 86400000,
-    failure_policies: { 'data.read': 'fail-closed', 'service.connect': 'cached-allow' }, cache_entries: 256,
-    control_rate_per_second: 30, revocation_slo_ms: 1000, reload_interval_ms: 1000,
+    failure_policies: { 'data.read': 'fail-closed', 'service.connect': 'fail-closed' }, cache_entries: 256,
+    control_rate_per_second: 30, revocation_slo_ms: 1000, reload_interval_ms: 1000, endpoint_health_slo_ms: 5000, endpoint_attestors: endpointAttestors,
     remediation_services: ['security-remediation'], environment: 'simulation'
   };
 }
 export function signRuntimeConfiguration(config, custodians) { return { config: clone(config), signatures: custodians.map(k => signed(config, k, 'runtime-config')) }; }
 export function verifyRuntimeConfiguration(snapshot, identities, tenant, gate, now) {
-  requireThat(snapshot && Array.isArray(snapshot.signatures), 'INV-503-CONFIG', 'Signed runtime configuration required', 503);
+  requireThat(snapshot && Array.isArray(snapshot.signatures) && snapshot.signatures.length >= 3 && snapshot.signatures.length <= 16, 'INV-503-CONFIG', 'Signed runtime configuration required', 503);
   const c = snapshot.config;
-  fields(c, ['format', 'tenant_id', 'gate_id', 'version', 'issued_at', 'expires_at', 'failure_policies', 'cache_entries', 'control_rate_per_second', 'revocation_slo_ms', 'reload_interval_ms', 'remediation_services', 'environment']);
+  fields(c, ['format', 'tenant_id', 'gate_id', 'version', 'issued_at', 'expires_at', 'failure_policies', 'cache_entries', 'control_rate_per_second', 'revocation_slo_ms', 'reload_interval_ms', 'endpoint_health_slo_ms', 'endpoint_attestors', 'remediation_services', 'environment']);
   requireThat(c.format === 'IF-RUNTIME-CONFIG-1' && c.tenant_id === tenant && c.gate_id === gate && c.issued_at <= now && c.expires_at > now, 'INV-503-CONFIG', 'Runtime configuration scope or validity failed', 503);
-  integer(c.version, 'configuration version', 1); integer(c.cache_entries, 'cache entries', 1, 4096); integer(c.control_rate_per_second, 'control rate', 1, 10000); integer(c.revocation_slo_ms, 'revocation SLO', 1, 60000); integer(c.reload_interval_ms, 'reload interval', 100, 60000);
+  integer(c.version, 'configuration version', 1); integer(c.cache_entries, 'cache entries', 1, 4096); integer(c.control_rate_per_second, 'control rate', 1, 10000); integer(c.revocation_slo_ms, 'revocation SLO', 1, 60000); integer(c.reload_interval_ms, 'reload interval', 100, 60000); integer(c.endpoint_health_slo_ms, 'endpoint health SLO', 100, 60000);
   fields(c.failure_policies, ['data.read', 'service.connect']);
   for (const [action, mode] of Object.entries(c.failure_policies)) oneOf(mode, ['cached-allow', 'fail-closed', 'constrained-open'], `${action} failure policy`);
-  requireThat(c.environment === 'simulation' && Array.isArray(c.remediation_services) && c.remediation_services.length <= 8 && c.remediation_services.every(x => typeof x === 'string' && /^[a-z][a-z0-9-]*$/.test(x)), 'INV-503-CONFIG', 'Invalid runtime environment or remediation set', 503);
+  requireThat(c.environment === 'simulation' && Array.isArray(c.endpoint_attestors) && c.endpoint_attestors.length > 0 && c.endpoint_attestors.length <= 8 && new Set(c.endpoint_attestors).size === c.endpoint_attestors.length && c.endpoint_attestors.every(x => typeof x === 'string' && Object.hasOwn(identities, x)) && Array.isArray(c.remediation_services) && c.remediation_services.length <= 8 && c.remediation_services.every(x => typeof x === 'string' && /^[a-z][a-z0-9-]*$/.test(x)), 'INV-503-CONFIG', 'Invalid endpoint attestors, runtime environment or remediation set', 503);
   const signers = new Set(), domains = new Set();
   for (const envelope of snapshot.signatures) {
     const p = verifySigned(envelope, identities, 'runtime-config'), who = identities[envelope.protected.key_id];
     requireThat(who.roles.includes('custodian') && digest(p) === digest(c), 'INV-503-CONFIG', 'Configuration requires exact customer approval', 503);
     signers.add(envelope.protected.key_id); domains.add(who.failure_domain);
   }
-  requireThat(signers.size >= 3 && domains.size >= 3, 'INV-503-CONFIG', 'Configuration requires independent customer quorum', 503);
+  requireThat(signers.size === snapshot.signatures.length && signers.size >= 3 && domains.size >= 3, 'INV-503-CONFIG', 'Configuration requires independent customer quorum', 503);
   return c;
 }
 export class RuntimeIntegrity {

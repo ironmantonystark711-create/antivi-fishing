@@ -21,6 +21,7 @@
     "browser-scoped-data-flow",
     "operator-cannot-open-audit-export",
     "finance-cannot-open-protected-actions",
+    "finance-cannot-open-unauthorized-coverage",
     "finance-only-authorized-projection",
     "audit-projection-download",
     "all-controls-have-labels",

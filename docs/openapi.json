@@ -347,6 +347,60 @@
         ]
       }
     },
+    "/v1/action-capsules/{id}/shield": {
+      "post": {
+        "operationId": "post_v1_action_capsules_id_shield",
+        "summary": "Create a reduced-scope SHIELD successor with no inherited authority",
+        "description": "Roles: operator, policy_admin. Engineering profile; all target mutations are simulated.",
+        "tags": [
+          "Control"
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful response; see API.md for exact record contracts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Reason-coded rejection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Empty"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+              "maxLength": 128
+            }
+          }
+        ]
+      }
+    },
     "/v1/action-capsules/{id}/cancel": {
       "post": {
         "operationId": "post_v1_action_capsules_id_cancel",
@@ -641,6 +695,260 @@
                 "schema": {
                   "$ref": "#/components/schemas/Error"
                 }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+              "maxLength": 128
+            }
+          }
+        ]
+      }
+    },
+    "/v1/compositions": {
+      "post": {
+        "operationId": "post_v1_compositions",
+        "summary": "Create exact bounded all-child composition",
+        "description": "Roles: operator, policy_admin. Engineering profile; all target mutations are simulated.",
+        "tags": [
+          "Control"
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful response; see API.md for exact record contracts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Reason-coded rejection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompositionCreate"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "get_v1_compositions",
+        "summary": "List signed compositions",
+        "description": "Roles: operator, approver, custodian, policy_admin, security. Engineering profile; all target mutations are simulated.",
+        "tags": [
+          "Control"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response; see API.md for exact record contracts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Reason-coded rejection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/compositions/{id}/challenge": {
+      "get": {
+        "operationId": "get_v1_compositions_id_challenge",
+        "summary": "Get exact aggregate and child approval challenge",
+        "description": "Roles: approver, custodian. Engineering profile; all target mutations are simulated.",
+        "tags": [
+          "Control"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response; see API.md for exact record contracts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Reason-coded rejection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+              "maxLength": 128
+            }
+          }
+        ]
+      }
+    },
+    "/v1/batch-approvals": {
+      "post": {
+        "operationId": "post_v1_batch_approvals",
+        "summary": "Submit offline-signed batch approval",
+        "description": "Roles: approver, custodian. Engineering profile; all target mutations are simulated.",
+        "tags": [
+          "Control"
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful response; see API.md for exact record contracts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Reason-coded rejection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Envelope"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/gate/v1/compositions/execute": {
+      "post": {
+        "operationId": "post_gate_v1_compositions_execute",
+        "summary": "Reserve and execute exact composition",
+        "description": "Roles: operator, policy_admin. Engineering profile; all target mutations are simulated.",
+        "tags": [
+          "Gate"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response; see API.md for exact record contracts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Reason-coded rejection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompositionExecute"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/gate/v1/compositions/{id}/reconcile": {
+      "post": {
+        "operationId": "post_gate_v1_compositions_id_reconcile",
+        "summary": "Reconcile a durably reserved composition from target journals only",
+        "description": "Roles: operator, policy_admin, security. Engineering profile; all target mutations are simulated.",
+        "tags": [
+          "Gate"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response; see API.md for exact record contracts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Reason-coded rejection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Empty"
               }
             }
           }
@@ -975,6 +1283,174 @@
         }
       }
     },
+    "/v1/policies/promotion-challenge": {
+      "post": {
+        "operationId": "post_v1_policies_promotion_challenge",
+        "summary": "Validate exact staged release evidence and return a promotion challenge",
+        "description": "Roles: policy_admin, security. Engineering profile; all target mutations are simulated.",
+        "tags": [
+          "Control"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response; see API.md for exact record contracts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Reason-coded rejection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolicyPromotionChallenge"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/policies/promotions": {
+      "post": {
+        "operationId": "post_v1_policies_promotions",
+        "summary": "Submit a three-domain customer-signed staged promotion",
+        "description": "Roles: policy_admin, security. Engineering profile; all target mutations are simulated.",
+        "tags": [
+          "Control"
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful response; see API.md for exact record contracts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Reason-coded rejection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolicyPromotion"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/deployments/stage": {
+      "post": {
+        "operationId": "post_v1_deployments_stage",
+        "summary": "Stage an exact reviewed artifact with build and environment observations",
+        "description": "Roles: security. Engineering profile; all target mutations are simulated.",
+        "tags": [
+          "Control"
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful response; see API.md for exact record contracts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Reason-coded rejection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeploymentStage"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/deployments/rollback": {
+      "post": {
+        "operationId": "post_v1_deployments_rollback",
+        "summary": "Rollback only to a verified non-revoked artifact with customer quorum",
+        "description": "Roles: security. Engineering profile; all target mutations are simulated.",
+        "tags": [
+          "Control"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response; see API.md for exact record contracts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Reason-coded rejection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeploymentRollback"
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/audit-exports": {
       "post": {
         "operationId": "post_v1_audit_exports",
@@ -1169,6 +1645,92 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/Session"
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/session/credential-reissue/challenge": {
+      "post": {
+        "operationId": "post_session_credential_reissue_challenge",
+        "summary": "Create a post-reset same-origin credential reissue challenge",
+        "description": "Roles: same-origin post-reset/recovery workflow. Engineering profile; all target mutations are simulated.",
+        "tags": [
+          "Control"
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful response; see API.md for exact record contracts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CredentialReissueChallenge"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Reason-coded rejection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CredentialReissueChallengeRequest"
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/session/credential-reissue": {
+      "post": {
+        "operationId": "post_session_credential_reissue",
+        "summary": "Redeem a customer-custodian-approved credential reissue challenge",
+        "description": "Roles: same-origin customer-custodian quorum. Engineering profile; all target mutations are simulated.",
+        "tags": [
+          "Control"
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful response; see API.md for exact record contracts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CredentialReissueResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Reason-coded rejection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CredentialReissueRequest"
               }
             }
           }
@@ -1373,7 +1935,11 @@
               "key",
               "subject",
               "device",
-              "capability"
+              "capability",
+              "component",
+              "jit",
+              "artifact",
+              "deployment"
             ]
           },
           "id": {
@@ -1487,6 +2053,204 @@
             "type": "string",
             "minLength": 43,
             "maxLength": 43
+          }
+        }
+      },
+      "CredentialReissueChallengeRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tenant_id",
+          "subject_id"
+        ],
+        "properties": {
+          "tenant_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+            "maxLength": 128
+          },
+          "subject_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+            "maxLength": 128
+          }
+        }
+      },
+      "CredentialReissueChallenge": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "credential_reissue_id",
+          "tenant_id",
+          "subject_id",
+          "session_epoch",
+          "issued_at",
+          "expires_at"
+        ],
+        "properties": {
+          "credential_reissue_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+            "maxLength": 128
+          },
+          "tenant_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+            "maxLength": 128
+          },
+          "subject_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+            "maxLength": 128
+          },
+          "session_epoch": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "issued_at": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "expires_at": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "CredentialReissueApproval": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "credential_reissue_id",
+          "tenant_id",
+          "subject_id",
+          "session_epoch",
+          "issued_at",
+          "expires_at",
+          "signer_id"
+        ],
+        "properties": {
+          "credential_reissue_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+            "maxLength": 128
+          },
+          "tenant_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+            "maxLength": 128
+          },
+          "subject_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+            "maxLength": 128
+          },
+          "session_epoch": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "issued_at": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "expires_at": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "signer_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+            "maxLength": 128
+          }
+        }
+      },
+      "CredentialReissueRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tenant_id",
+          "credential_reissue_id",
+          "approvals"
+        ],
+        "properties": {
+          "tenant_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+            "maxLength": 128
+          },
+          "credential_reissue_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+            "maxLength": 128
+          },
+          "approvals": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "protected",
+                "payload",
+                "signature"
+              ],
+              "properties": {
+                "protected": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "profile",
+                    "suite",
+                    "key_id",
+                    "purpose"
+                  ],
+                  "properties": {
+                    "profile": {
+                      "const": "IF-CJSON-1"
+                    },
+                    "suite": {
+                      "const": "Ed25519"
+                    },
+                    "key_id": {
+                      "type": "string"
+                    },
+                    "purpose": {
+                      "const": "credential-reissue"
+                    }
+                  }
+                },
+                "payload": {
+                  "$ref": "#/components/schemas/CredentialReissueApproval"
+                },
+                "signature": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_-]{86}$"
+                }
+              }
+            }
+          }
+        }
+      },
+      "CredentialReissueResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "token",
+          "expires_in",
+          "session_epoch"
+        ],
+        "properties": {
+          "token": {
+            "type": "string",
+            "minLength": 43,
+            "maxLength": 43
+          },
+          "expires_in": {
+            "const": 900
+          },
+          "session_epoch": {
+            "type": "integer",
+            "minimum": 1
           }
         }
       },
@@ -1652,6 +2416,525 @@
           },
           "port": {
             "const": 443
+          }
+        }
+      },
+      "CompositionCreate": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tree",
+          "expires_at"
+        ],
+        "properties": {
+          "tree": {
+            "type": "object",
+            "description": "IF-COMPOSITION-1 tree: a root and bounded all/action nodes; validated by flattenComposition."
+          },
+          "expires_at": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "CompositionExecute": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "composition_id",
+          "certificates"
+        ],
+        "properties": {
+          "composition_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+            "maxLength": 128
+          },
+          "certificates": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 32,
+            "items": {
+              "$ref": "#/components/schemas/Envelope"
+            }
+          }
+        }
+      },
+      "BuildAttestation": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "format",
+          "tenant_id",
+          "source_commit",
+          "artifact_digest",
+          "tests_digest",
+          "runner_id",
+          "built_at",
+          "expires_at"
+        ],
+        "properties": {
+          "format": {
+            "const": "IF-BUILD-ATTESTATION-1"
+          },
+          "tenant_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+            "maxLength": 128
+          },
+          "source_commit": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{40,64}$"
+          },
+          "artifact_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "tests_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "runner_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+            "maxLength": 128
+          },
+          "built_at": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "expires_at": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "ReleaseReview": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "format",
+          "tenant_id",
+          "release_id",
+          "source_commit",
+          "artifact_digest",
+          "tests_digest",
+          "policy_digest",
+          "execution_key_id",
+          "stage",
+          "environment",
+          "reviewed_at",
+          "expires_at"
+        ],
+        "properties": {
+          "format": {
+            "const": "IF-RELEASE-REVIEW-1"
+          },
+          "tenant_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+            "maxLength": 128
+          },
+          "release_id": {
+            "type": "string"
+          },
+          "source_commit": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{40,64}$"
+          },
+          "artifact_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "tests_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "policy_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "execution_key_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+            "maxLength": 128
+          },
+          "stage": {
+            "enum": [
+              "staging",
+              "canary",
+              "production"
+            ]
+          },
+          "environment": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+            "maxLength": 128
+          },
+          "reviewed_at": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "expires_at": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "ReleaseObservation": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "format",
+          "tenant_id",
+          "release_id",
+          "source_commit",
+          "artifact_digest",
+          "policy_digest",
+          "execution_key_id",
+          "stage",
+          "environment",
+          "observed_at",
+          "expires_at",
+          "status"
+        ],
+        "properties": {
+          "format": {
+            "const": "IF-RELEASE-OBSERVATION-1"
+          },
+          "tenant_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+            "maxLength": 128
+          },
+          "release_id": {
+            "type": "string"
+          },
+          "source_commit": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{40,64}$"
+          },
+          "artifact_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "policy_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "execution_key_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+            "maxLength": 128
+          },
+          "stage": {
+            "enum": [
+              "staging",
+              "canary",
+              "production"
+            ]
+          },
+          "environment": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+            "maxLength": 128
+          },
+          "observed_at": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "expires_at": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "status": {
+            "const": "HEALTHY"
+          }
+        }
+      },
+      "ReleaseEvidence": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "build",
+          "review",
+          "observation"
+        ],
+        "properties": {
+          "build": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "protected",
+              "payload",
+              "signature"
+            ],
+            "properties": {
+              "protected": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "profile",
+                  "suite",
+                  "key_id",
+                  "purpose"
+                ],
+                "properties": {
+                  "profile": {
+                    "const": "IF-CJSON-1"
+                  },
+                  "suite": {
+                    "const": "Ed25519"
+                  },
+                  "key_id": {
+                    "type": "string"
+                  },
+                  "purpose": {
+                    "const": "release-build"
+                  }
+                }
+              },
+              "payload": {
+                "$ref": "#/components/schemas/BuildAttestation"
+              },
+              "signature": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_-]{86}$"
+              }
+            }
+          },
+          "review": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "protected",
+              "payload",
+              "signature"
+            ],
+            "properties": {
+              "protected": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "profile",
+                  "suite",
+                  "key_id",
+                  "purpose"
+                ],
+                "properties": {
+                  "profile": {
+                    "const": "IF-CJSON-1"
+                  },
+                  "suite": {
+                    "const": "Ed25519"
+                  },
+                  "key_id": {
+                    "type": "string"
+                  },
+                  "purpose": {
+                    "const": "release-review"
+                  }
+                }
+              },
+              "payload": {
+                "$ref": "#/components/schemas/ReleaseReview"
+              },
+              "signature": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_-]{86}$"
+              }
+            }
+          },
+          "observation": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "protected",
+              "payload",
+              "signature"
+            ],
+            "properties": {
+              "protected": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "profile",
+                  "suite",
+                  "key_id",
+                  "purpose"
+                ],
+                "properties": {
+                  "profile": {
+                    "const": "IF-CJSON-1"
+                  },
+                  "suite": {
+                    "const": "Ed25519"
+                  },
+                  "key_id": {
+                    "type": "string"
+                  },
+                  "purpose": {
+                    "const": "release-observation"
+                  }
+                }
+              },
+              "payload": {
+                "$ref": "#/components/schemas/ReleaseObservation"
+              },
+              "signature": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_-]{86}$"
+              }
+            }
+          }
+        }
+      },
+      "PolicyPromotionChallenge": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "candidate",
+          "reviewed_commit",
+          "stage",
+          "environment",
+          "simulation_id",
+          "expires_at",
+          "release_evidence"
+        ],
+        "properties": {
+          "candidate": {
+            "$ref": "#/components/schemas/Policy"
+          },
+          "reviewed_commit": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{40,64}$"
+          },
+          "stage": {
+            "enum": [
+              "staging",
+              "canary",
+              "production"
+            ]
+          },
+          "environment": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+            "maxLength": 128
+          },
+          "simulation_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+            "maxLength": 128
+          },
+          "expires_at": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "release_evidence": {
+            "$ref": "#/components/schemas/ReleaseEvidence"
+          }
+        }
+      },
+      "PolicyPromotion": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "challenge",
+          "signatures"
+        ],
+        "properties": {
+          "challenge": {
+            "type": "object",
+            "description": "Exact IF-POLICY-PROMOTION-1 challenge returned by the promotion-challenge operation."
+          },
+          "signatures": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 5,
+            "items": {
+              "$ref": "#/components/schemas/Envelope"
+            }
+          }
+        }
+      },
+      "DeploymentStage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "deployment_id",
+          "artifact_digest",
+          "reviewed_commit",
+          "stage",
+          "environment",
+          "policy_digest",
+          "execution_key_id",
+          "evidence"
+        ],
+        "properties": {
+          "deployment_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+            "maxLength": 128
+          },
+          "artifact_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "reviewed_commit": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{40,64}$"
+          },
+          "stage": {
+            "enum": [
+              "staging",
+              "canary",
+              "production"
+            ]
+          },
+          "environment": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+            "maxLength": 128
+          },
+          "policy_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "execution_key_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+            "maxLength": 128
+          },
+          "evidence": {
+            "$ref": "#/components/schemas/ReleaseEvidence"
+          }
+        }
+      },
+      "DeploymentRollback": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "target_deployment_id",
+          "reason_digest",
+          "approvals"
+        ],
+        "properties": {
+          "target_deployment_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+            "maxLength": 128
+          },
+          "reason_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "approvals": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 5,
+            "items": {
+              "$ref": "#/components/schemas/Envelope"
+            }
           }
         }
       },

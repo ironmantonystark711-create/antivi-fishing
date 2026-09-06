@@ -12,34 +12,42 @@
   "core_deterministic_evaluation": {
     "samples": 2000,
     "errors": 0,
-    "p50_ms": 0.0786200000000008,
-    "p95_ms": 0.15262000000001308,
-    "p99_ms": 0.2615600000000029,
-    "operations_per_second": 10999.762047647504
+    "p50_ms": 0.07773000000000252,
+    "p95_ms": 0.13966000000002055,
+    "p99_ms": 0.26759899999998993,
+    "operations_per_second": 11253.744697615313
   },
   "protected_action_evaluation_with_sqlite_audit": {
     "samples": 500,
     "errors": 0,
-    "p50_ms": 1.6765559999999482,
-    "p95_ms": 2.4897549999999455,
-    "p99_ms": 3.8419420000000173,
-    "operations_per_second": 550.3586557474864
+    "p50_ms": 1.7009469999998146,
+    "p95_ms": 2.2654449999999997,
+    "p99_ms": 3.209873000000016,
+    "operations_per_second": 542.6608755663482
   },
   "runtime_authorization_with_signed_audit": {
     "samples": 500,
     "errors": 0,
-    "p50_ms": 0.888287999999875,
-    "p95_ms": 1.2855270000000019,
-    "p99_ms": 1.6079059999999572,
-    "operations_per_second": 1048.1434309825188
+    "p50_ms": 0.9716779999998835,
+    "p95_ms": 1.2896979999998166,
+    "p99_ms": 2.097155000000157,
+    "operations_per_second": 936.869911069029
   },
   "cached_local_runtime_dataplane": {
     "samples": 5000,
     "errors": 0,
-    "p50_ms": 0.17709999999988213,
-    "p95_ms": 0.35613899999998466,
-    "p99_ms": 0.543529000000035,
-    "operations_per_second": 5329.200136450547
+    "p50_ms": 0.002560000000130458,
+    "p95_ms": 0.0041300000000319415,
+    "p99_ms": 0.010459999999966385,
+    "operations_per_second": 280749.63746799406
+  },
+  "loopback_http_proxy_under_concurrent_load": {
+    "samples": 1000,
+    "errors": 0,
+    "p50_ms": 8.878721000000041,
+    "p95_ms": 14.508428999999978,
+    "p99_ms": 58.9354350000001,
+    "operations_per_second": 1443.1339551846613
   },
   "external_connector_latency": {
     "status": "NOT_CONFIGURED",
@@ -50,8 +58,9 @@
     "core_p95_at_most_250_ms": true,
     "core_p99_at_most_750_ms": true,
     "protected_action_100_evaluations_per_second": true,
-    "cached_runtime_p99_at_most_1_ms": true
+    "cached_runtime_p99_at_most_1_ms": true,
+    "loopback_proxy_p99_at_most_250_ms": true
   },
   "production_capacity_claim": false,
-  "caveat": "Single-node warm-process benchmark using synthetic data and a virtual policy clock. It measures deterministic core, protected SQLite/audit, and cached local dataplane paths separately; it is not production load, soak, packet enforcement, multi-zone, or external connector evidence."
+  "caveat": "Single-node warm-process benchmark using synthetic data and a virtual policy clock. The proxy result uses 20 concurrent keep-alive requests against an actual loopback HTTP listener. NFR-PERF-002 applies its 1 ms target to cached local gate decisions; the 250 ms proxy transport target is implementation-specific. This is not production load, soak, kernel packet enforcement, multi-zone, or external connector evidence."
 }

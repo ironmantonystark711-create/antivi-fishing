@@ -34,3 +34,8 @@ export function shieldRows(rows, input, key) {
   if (input.aggregate) return { row_count: rows.length };
   return rows.map(row => Object.fromEntries(Object.entries(row).filter(([k]) => !input.remove.includes(k)).map(([k, v]) => [k, input.mask.includes(k) ? '[REDACTED]' : input.tokenize.includes(k) ? createHmac('sha256', key).update(canonical({ field: k, value: v })).digest('hex') : clone(v)])));
 }
+export function applyShield(rows, transformation, key) {
+  fields(transformation, ['columns', 'exclusions']); uniqueStrings(transformation.columns, 'shield columns', 64); uniqueStrings(transformation.exclusions, 'shield exclusions', 64);
+  requireThat(transformation.columns.length > 0 && transformation.columns.every(column => !transformation.exclusions.includes(column)), 'INV-451-POLICY', 'SHIELD transformation must retain only allowed fields', 451);
+  return shieldRows(rows, { remove: Object.keys(rows[0] ?? {}).filter(column => !transformation.columns.includes(column)), mask: [], tokenize: [], aggregate: false }, key);
+}

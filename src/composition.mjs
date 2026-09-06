@@ -92,17 +92,36 @@ export class Compositions {
       const cert = verifySigned(input.certificates[i], this.f.executionPublic(p.tenant_id), 'action-certificate');
       requireThat(cert.capsule_id === c.children[i].capsule_id && cert.capsule_digest === c.children[i].capsule_digest && c.children[i].action.action.type !== 'policy.change', 'INV-403-SCOPE', 'Composed authority cannot exceed children', 403);
     }
-    const reservation = this.f.reserveBatch(p, input.certificates), outcomes = [];
-    this.f.transaction(p, now => { const r = this.f.store.must(p.tenant_id, 'composition', c.composition_id); requireThat(!r.started, 'INV-409-REPLAY', 'Composition already started; reconcile children', 409); r.started = true; this.f.store.put(p.tenant_id, 'composition', c.composition_id, r, now); });
-    let status = 'VERIFIED';
+    const reservation = this.f.reserveBatch(p, input.certificates, c.composition_id), outcomes = [];
+    let status = 'VERIFIED', reason = 'ATOMIC_BATCH_RECONCILED';
     try {
       const raw = this.f.target.executeBatch(reservation.reservations.map(({ capsule, cert }) => ({ capsule, transaction_id: cert.certificate_id })), reservation.now);
       for (let i = 0; i < reservation.reservations.length; i++) outcomes.push(this.f.finish(p, reservation.reservations[i].cert, raw[i], 'VERIFIED', 'ATOMIC_BATCH_RECONCILED'));
-      if (outcomes.some(out => out.payload.status !== 'VERIFIED')) status = 'INCOMPLETE_RECONCILE_CHILDREN';
+      if (outcomes.some(out => out.payload.status !== 'VERIFIED')) { status = 'UNCERTAIN'; reason = 'TARGET_BATCH_RESPONSE_INVALID'; }
     } catch (error) {
-      status = 'INCOMPLETE_RECONCILE_CHILDREN';
+      status = 'UNCERTAIN'; reason = error.code ?? 'TARGET_BATCH_UNCONFIRMED';
       for (const { cert } of reservation.reservations) outcomes.push(this.f.finish(p, cert, null, 'UNCERTAIN', error.code ?? 'TARGET_BATCH_UNCONFIRMED'));
     }
-    return this.f.transaction(p, now => { const out = { composition_id: c.composition_id, status, outcomes, atomic: true }; this.f.store.put(p.tenant_id, 'composition-outcome', c.composition_id, out, now); this.f.store.audit(p.tenant_id, 'COMPOSITION_OUTCOME', p.subject_id, c.composition_id, { status, outcome_digest: digest(out) }, now); return out; });
+    return this.recordOutcome(p, c.composition_id, reservation.reservations.map(({ cert }) => cert.certificate_id), outcomes, status, reason);
+  }
+  recordOutcome(p, compositionId, certificateIds, outcomes, status, reason) {
+    return this.f.transaction(p, now => {
+      const composition = this.f.store.must(p.tenant_id, 'composition', compositionId);
+      requireThat(composition.started && digest(composition.certificate_ids) === digest(certificateIds), 'INV-409-BATCH', 'Composition reservation is unavailable', 409);
+      const payload = { format: 'IF-COMPOSITION-OUTCOME-1', composition_id: compositionId, tenant_id: p.tenant_id, certificate_ids: certificateIds, status, reason, atomic: true, outcome_digests: outcomes.map(digest), recorded_at: now };
+      const envelope = signed(payload, this.f.keys(p.tenant_id).audit, 'composition-outcome');
+      composition.status = status; composition.completed_at = now; this.f.store.put(p.tenant_id, 'composition', compositionId, composition, now);
+      this.f.store.put(p.tenant_id, 'composition-outcome', compositionId, { envelope }, now); this.f.store.audit(p.tenant_id, 'COMPOSITION_OUTCOME', p.subject_id, compositionId, { status, reason, outcome_digest: digest(envelope) }, now); return { ...payload, outcomes: clone(outcomes), envelope };
+    });
+  }
+  reconcile(p, compositionId) {
+    this.f.authorize(p, ['operator', 'security', 'policy_admin']); identifier(compositionId, 'composition id');
+    const record = this.f.store.must(p.tenant_id, 'composition', compositionId), batch = verifySigned(record.envelope, this.f.executionPublic(p.tenant_id), 'composition');
+    requireThat(batch.composition_id === compositionId && record.started && Array.isArray(record.certificate_ids) && record.certificate_ids.length === batch.children.length, 'INV-409-BATCH', 'Composition was not durably reserved', 409);
+    const outcomes = record.certificate_ids.map(certificateId => this.f.reconcile(p, certificateId));
+    const statuses = outcomes.map(outcome => outcome.payload.status);
+    const status = statuses.every(value => value === 'VERIFIED') ? 'VERIFIED' : statuses.every(value => value === 'FAILED') ? 'FAILED' : 'UNCERTAIN';
+    const reason = status === 'VERIFIED' ? 'ATOMIC_BATCH_RECONCILED' : status === 'FAILED' ? 'ATOMIC_BATCH_REJECTED' : 'TARGET_BATCH_UNCONFIRMED';
+    return this.recordOutcome(p, compositionId, record.certificate_ids, outcomes, status, reason);
   }
 }

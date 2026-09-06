@@ -1,14 +1,14 @@
 {
   "format": "IF-COMPLETION-1",
   "baseline_commit": "7d92076602d6c6485aa96bcb2a26bfac11afd861",
-  "source_revision": "e4ff69bde2c430fbe2dce045d5a79ddcb72dbdc6",
-  "source_fingerprint": "17f1ab2dd974be473e3e9fbbe2923468bd8fe1f079c4d2e4653a835acb03ea33",
+  "source_revision": "a2d88ac3bfe0f8837e38bf2d1441ae5f568fbfef",
+  "source_fingerprint": "a428136fe383a9d7f3f24eabfdfaba2eea7f14a7baef1c9e3de147e6409136c9",
   "srs_sha256": "64dd0b013feb8455906342cb6df1ca8fde6a0717a35b91b3e4c968e59320b3a1",
-  "total_requirements": 233,
+  "total_requirements": 299,
   "numbered_requirements": 211,
   "counts": {
-    "VERIFIED": 0,
-    "PARTIAL": 233,
+    "VERIFIED": 3,
+    "PARTIAL": 296,
     "NOT_IMPLEMENTED": 0,
     "BLOCKED_EXTERNAL": 0
   },
@@ -32,34 +32,42 @@
     "core_deterministic_evaluation": {
       "samples": 2000,
       "errors": 0,
-      "p50_ms": 0.0786200000000008,
-      "p95_ms": 0.15262000000001308,
-      "p99_ms": 0.2615600000000029,
-      "operations_per_second": 10999.762047647504
+      "p50_ms": 0.0777599999999552,
+      "p95_ms": 0.1423690000000022,
+      "p99_ms": 0.27109899999999243,
+      "operations_per_second": 11141.773891848918
     },
     "protected_action_evaluation_with_sqlite_audit": {
       "samples": 500,
       "errors": 0,
-      "p50_ms": 1.6765559999999482,
-      "p95_ms": 2.4897549999999455,
-      "p99_ms": 3.8419420000000173,
-      "operations_per_second": 550.3586557474864
+      "p50_ms": 1.7680359999999382,
+      "p95_ms": 4.916180000000168,
+      "p99_ms": 17.23485299999993,
+      "operations_per_second": 409.1443527164991
     },
     "runtime_authorization_with_signed_audit": {
       "samples": 500,
       "errors": 0,
-      "p50_ms": 0.888287999999875,
-      "p95_ms": 1.2855270000000019,
-      "p99_ms": 1.6079059999999572,
-      "operations_per_second": 1048.1434309825188
+      "p50_ms": 1.0414880000000721,
+      "p95_ms": 1.9059959999999592,
+      "p99_ms": 4.034402,
+      "operations_per_second": 750.0693217817537
     },
     "cached_local_runtime_dataplane": {
       "samples": 5000,
       "errors": 0,
-      "p50_ms": 0.17709999999988213,
-      "p95_ms": 0.35613899999998466,
-      "p99_ms": 0.543529000000035,
-      "operations_per_second": 5329.200136450547
+      "p50_ms": 0.002599999999802094,
+      "p95_ms": 0.0041999999998552084,
+      "p99_ms": 0.008470000000215805,
+      "operations_per_second": 271503.0260912838
+    },
+    "loopback_http_proxy_under_concurrent_load": {
+      "samples": 1000,
+      "errors": 0,
+      "p50_ms": 9.188490000000002,
+      "p95_ms": 16.662054999999782,
+      "p99_ms": 80.14371099999971,
+      "operations_per_second": 1317.1778918355776
     },
     "external_connector_latency": {
       "status": "NOT_CONFIGURED",
@@ -70,10 +78,11 @@
       "core_p95_at_most_250_ms": true,
       "core_p99_at_most_750_ms": true,
       "protected_action_100_evaluations_per_second": true,
-      "cached_runtime_p99_at_most_1_ms": true
+      "cached_runtime_p99_at_most_1_ms": true,
+      "loopback_proxy_p99_at_most_250_ms": true
     },
     "production_capacity_claim": false,
-    "caveat": "Single-node warm-process benchmark using synthetic data and a virtual policy clock. It measures deterministic core, protected SQLite/audit, and cached local dataplane paths separately; it is not production load, soak, packet enforcement, multi-zone, or external connector evidence."
+    "caveat": "Single-node warm-process benchmark using synthetic data and a virtual policy clock. The proxy result uses 20 concurrent keep-alive requests against an actual loopback HTTP listener. NFR-PERF-002 applies its 1 ms target to cached local gate decisions; the 250 ms proxy transport target is implementation-specific. This is not production load, soak, kernel packet enforcement, multi-zone, or external connector evidence."
   },
   "browser_state": {
     "status": "PASS",
@@ -98,6 +107,7 @@
       "browser-scoped-data-flow",
       "operator-cannot-open-audit-export",
       "finance-cannot-open-protected-actions",
+      "finance-cannot-open-unauthorized-coverage",
       "finance-only-authorized-projection",
       "audit-projection-download",
       "all-controls-have-labels",
@@ -162,6 +172,82 @@
       "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
     },
     {
+      "id": "TB-1",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "TB-2",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "TB-3",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "TB-4",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "TB-5",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "TB-6",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "TB-7",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "UC-01",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "UC-02",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "UC-03",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "UC-04",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "UC-05",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "UC-06",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "UC-07",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "UC-08",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "UC-09",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "UC-10",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "UC-11",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "UC-12",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
       "id": "COV-001",
       "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
     },
@@ -206,10 +292,6 @@
       "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
     },
     {
-      "id": "ACT-002",
-      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
-    },
-    {
       "id": "ACT-003",
       "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
     },
@@ -230,19 +312,11 @@
       "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
     },
     {
-      "id": "ACT-008",
-      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
-    },
-    {
       "id": "ACT-009",
       "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
     },
     {
       "id": "ACT-010",
-      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
-    },
-    {
-      "id": "ACT-011",
       "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
     },
     {
@@ -1006,6 +1080,118 @@
       "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
     },
     {
+      "id": "OBJ-001",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "OBJ-002",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "OBJ-003",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "OBJ-004",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "OBJ-005",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "OBJ-006",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "OBJ-007",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "IFC-001",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "IFC-002",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "IFC-003",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "IFC-004",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "IFC-005",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "IFC-006",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "IFC-007",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "IFC-008",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "IFC-009",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "IFC-010",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "IFC-011",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "IFC-012",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "ERR-001",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "ERR-002",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "ERR-003",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "ERR-004",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "ERR-005",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "ERR-006",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "ERR-007",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "ERR-008",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "ERR-009",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
       "id": "FAIL-001",
       "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
     },
@@ -1046,7 +1232,83 @@
       "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
     },
     {
+      "id": "VFY-001",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "VFY-002",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "VFY-003",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "VFY-004",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "VFY-005",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "VFY-006",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
       "id": "TRACE-001",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "REL-001",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "REL-002",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "REL-003",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "REL-004",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "REL-005",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "REL-006",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "DSN-001",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "DSN-002",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "DSN-003",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "DSN-004",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "DSN-005",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "DSN-006",
+      "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
+    },
+    {
+      "id": "DSN-007",
       "work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure."
     }
   ],
@@ -1228,6 +1490,319 @@
       "release_baseline": "Full SRS closure"
     },
     {
+      "id": "TB-1",
+      "requirement": "user and communication inputs to Intent Compiler are attacker-controlled.",
+      "acceptance": "Demonstrate the stated trust boundary under compromise.",
+      "line": 154,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "TB-2",
+      "requirement": "general-purpose endpoint OS is not trusted for protected plaintext or action semantics in Secure Perception mode.",
+      "acceptance": "Demonstrate the stated trust boundary under compromise.",
+      "line": 156,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "TB-3",
+      "requirement": "customer control plane and vendor SaaS are separate from customer root signing authority.",
+      "acceptance": "Demonstrate the stated trust boundary under compromise.",
+      "line": 158,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "TB-4",
+      "requirement": "calling applications and workloads are not trusted to enforce their own access limits.",
+      "acceptance": "Demonstrate the stated trust boundary under compromise.",
+      "line": 160,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "TB-5",
+      "requirement": "Root Gate to crown-jewel resource is the final enforcement boundary and must be technically non-bypassable for a guarantee.",
+      "acceptance": "Demonstrate the stated trust boundary under compromise.",
+      "line": 162,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "TB-6",
+      "requirement": "external evidence sources may be unavailable, compromised or correlated; independence and freshness are explicit.",
+      "acceptance": "Demonstrate the stated trust boundary under compromise.",
+      "line": 164,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "TB-7",
+      "requirement": "software supply chain, updates, HSM/TEE firmware and deployment configuration are part of the trusted computing base and require lifecycle controls.",
+      "acceptance": "Demonstrate the stated trust boundary under compromise.",
+      "line": 166,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "UC-01",
+      "requirement": "Vendor bank-detail change",
+      "acceptance": "Finance operator proposes old→new account; independent bank/counterparty evidence is collected; policy applies cooldown and separation; exact change executes; first payment remains separately gated.",
+      "line": 172,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "UC-02",
+      "requirement": "First payment after change",
+      "acceptance": "Payment capsule binds amount, currency, beneficiary, invoice/contract, budget and state; high-risk approval is action-bound; bank result is reconciled.",
+      "line": 173,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [
+        "src/canonical.mjs",
+        "src/crypto.mjs",
+        "src/schema.mjs",
+        "src/fabric.mjs"
+      ],
+      "tests": [
+        "UC-02: exact first payment enforces beneficiary amount and cannot repeat"
+      ],
+      "test_files": [
+        "tests/lifecycle.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "UC-03",
+      "requirement": "Sensitive data export",
+      "acceptance": "Data gate applies row/column/purpose/destination limits and rolling budgets; exceptional bulk export enters escrow with exact destination and expiry.",
+      "line": 174,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "UC-04",
+      "requirement": "Slow-drip exfiltration",
+      "acceptance": "Overlapping small queries accumulate information-value budget until throttled or blocked.",
+      "line": 175,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "UC-05",
+      "requirement": "Helpdesk recovery",
+      "acceptance": "Reset, new authenticator enrolment and privilege restoration are distinct actions requiring phishing-resistant and independent recovery evidence.",
+      "line": 176,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "UC-06",
+      "requirement": "Internal worm / DDoS",
+      "acceptance": "Workstation peer scanning and excess service fan-out exceed capability envelope; local gate drops traffic and quarantines the device.",
+      "line": 177,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "UC-07",
+      "requirement": "Ransomware containment",
+      "acceptance": "Mass writes are throttled; device/workload is quarantined; backup deletion remains threshold-protected and isolated.",
+      "line": 178,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "UC-08",
+      "requirement": "Cloud exposure",
+      "acceptance": "Firewall/IAM change is canonicalised, simulated and denied when it violates constitution; no admin session bypasses resource gate.",
+      "line": 179,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "UC-09",
+      "requirement": "Production release",
+      "acceptance": "Certificate binds source commit, build provenance, artifact digest, test result, signer and deployment target.",
+      "line": 180,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "UC-10",
+      "requirement": "AI agent action",
+      "acceptance": "Agent proposes tool call; receives only action-specific capability; model output remains advisory and rate/volume constrained.",
+      "line": 181,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "UC-11",
+      "requirement": "Secure Perception",
+      "acceptance": "Attested protected component receives encrypted fields and renders them without ordinary OS plaintext access.",
+      "line": 182,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "UC-12",
+      "requirement": "Root policy change",
+      "acceptance": "Exact policy diff is simulated, delayed and activated only by customer threshold governance.",
+      "line": 183,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
       "id": "COV-001",
       "requirement": "The system SHALL maintain a versioned inventory of every declared execution path for each protected action, including web UI, mobile, API, CLI, batch, import, service account, direct database, recovery and emergency paths.",
       "acceptance": "A test tenant shows every configured path with owner, target, last evidence time and status.",
@@ -1246,7 +1821,7 @@
         "src/advisory.mjs"
       ],
       "tests": [
-        "COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle"
+        "COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: real isolated tests detect direct bypass and keep coverage UNKNOWN"
       ],
       "test_files": [
         "tests/completion-security.test.mjs"
@@ -1298,8 +1873,8 @@
         "src/advisory.mjs"
       ],
       "tests": [
-        "COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle",
-        "COV-003 COV-004 COV-005 COV-009: assessor revocation and expiry withdraw coverage and close its interval",
+        "COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: real isolated tests detect direct bypass and keep coverage UNKNOWN",
+        "COV-003 COV-010: isolated Fabric/target execution detects the direct target bypass and cannot claim enforcement",
         "COV-003 COV-010 CON-006: bypass evidence is exact and connector downgrades fail closed"
       ],
       "test_files": [
@@ -1329,12 +1904,10 @@
         "src/advisory.mjs"
       ],
       "tests": [
-        "COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle",
-        "COV-003 COV-004 COV-005 COV-009: assessor revocation and expiry withdraw coverage and close its interval"
+        "COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: real isolated tests detect direct bypass and keep coverage UNKNOWN"
       ],
       "test_files": [
-        "tests/completion-security.test.mjs",
-        "tests/coverage-advisory-hardening.test.mjs"
+        "tests/completion-security.test.mjs"
       ],
       "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
@@ -1359,8 +1932,8 @@
         "src/advisory.mjs"
       ],
       "tests": [
-        "COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle",
-        "COV-003 COV-004 COV-005 COV-009: assessor revocation and expiry withdraw coverage and close its interval"
+        "COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: real isolated tests detect direct bypass and keep coverage UNKNOWN",
+        "COV-005: a protected transaction preserves the direct-bypass withdrawal without a coverage read"
       ],
       "test_files": [
         "tests/completion-security.test.mjs",
@@ -1389,7 +1962,7 @@
         "src/advisory.mjs"
       ],
       "tests": [
-        "COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle"
+        "COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: real isolated tests detect direct bypass and keep coverage UNKNOWN"
       ],
       "test_files": [
         "tests/completion-security.test.mjs"
@@ -1465,12 +2038,10 @@
         "src/advisory.mjs"
       ],
       "tests": [
-        "COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle",
-        "COV-003 COV-004 COV-005 COV-009: assessor revocation and expiry withdraw coverage and close its interval"
+        "COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: real isolated tests detect direct bypass and keep coverage UNKNOWN"
       ],
       "test_files": [
-        "tests/completion-security.test.mjs",
-        "tests/coverage-advisory-hardening.test.mjs"
+        "tests/completion-security.test.mjs"
       ],
       "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
@@ -1495,7 +2066,8 @@
         "src/advisory.mjs"
       ],
       "tests": [
-        "COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle",
+        "COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: real isolated tests detect direct bypass and keep coverage UNKNOWN",
+        "COV-003 COV-010: isolated Fabric/target execution detects the direct target bypass and cannot claim enforcement",
         "COV-003 COV-010 CON-006: bypass evidence is exact and connector downgrades fail closed"
       ],
       "test_files": [
@@ -1536,15 +2108,25 @@
       "acceptance": "Schema validator rejects a capsule missing a mandatory field for its action class.",
       "line": 209,
       "numbered": true,
-      "status": "PARTIAL",
+      "status": "VERIFIED",
       "blocker_reason": null,
-      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
-      "implementation": [],
-      "tests": [],
-      "test_files": [],
+      "remaining_work": null,
+      "implementation": [
+        "src/schema.mjs",
+        "src/fabric.mjs",
+        "src/canonical.mjs",
+        "src/store.mjs"
+      ],
+      "tests": [
+        "ACT-002: every action schema rejects all missing capsule, actor, action, state and requested fields",
+        "ACT-002 ACT-011: the gate supplies tenant and collision-resistant capsule identity, never caller overrides"
+      ],
+      "test_files": [
+        "tests/schema-contract.test.mjs"
+      ],
       "verification_evidence": "reports/completion-tests.json",
-      "owner": "Principal engineering review pending",
-      "release_baseline": "Full SRS closure"
+      "owner": "Principal engineering acceptance review",
+      "release_baseline": "Full SRS: intrinsic capsule/schema contract"
     },
     {
       "id": "ACT-003",
@@ -1660,24 +2242,26 @@
       "acceptance": "A verifier rejects unsupported or tampered schema versions.",
       "line": 215,
       "numbered": true,
-      "status": "PARTIAL",
+      "status": "VERIFIED",
       "blocker_reason": null,
-      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "remaining_work": null,
       "implementation": [
-        "src/canonical.mjs",
-        "src/crypto.mjs",
         "src/schema.mjs",
-        "src/fabric.mjs"
+        "src/fabric.mjs",
+        "src/canonical.mjs",
+        "src/store.mjs"
       ],
       "tests": [
+        "ACT-008: all schemas reject missing, unknown or substituted identifiers and digests",
         "ACT-008: tampered schema digest rejected"
       ],
       "test_files": [
-        "tests/lifecycle.test.mjs"
+        "tests/lifecycle.test.mjs",
+        "tests/schema-contract.test.mjs"
       ],
       "verification_evidence": "reports/completion-tests.json",
-      "owner": "Principal engineering review pending",
-      "release_baseline": "Full SRS closure"
+      "owner": "Principal engineering acceptance review",
+      "release_baseline": "Full SRS: intrinsic capsule/schema contract"
     },
     {
       "id": "ACT-009",
@@ -1726,24 +2310,26 @@
       "acceptance": "Duplicate capsule submission is detected and rejected.",
       "line": 218,
       "numbered": true,
-      "status": "PARTIAL",
+      "status": "VERIFIED",
       "blocker_reason": null,
-      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "remaining_work": null,
       "implementation": [
-        "src/canonical.mjs",
-        "src/crypto.mjs",
         "src/schema.mjs",
-        "src/fabric.mjs"
+        "src/fabric.mjs",
+        "src/canonical.mjs",
+        "src/store.mjs"
       ],
       "tests": [
+        "ACT-002 ACT-011: the gate supplies tenant and collision-resistant capsule identity, never caller overrides",
         "ACT-011 COM-006: proposal idempotency returns exact first result; changed request rejected"
       ],
       "test_files": [
-        "tests/lifecycle.test.mjs"
+        "tests/lifecycle.test.mjs",
+        "tests/schema-contract.test.mjs"
       ],
       "verification_evidence": "reports/completion-tests.json",
-      "owner": "Principal engineering review pending",
-      "release_baseline": "Full SRS closure"
+      "owner": "Principal engineering acceptance review",
+      "release_baseline": "Full SRS: intrinsic capsule/schema contract"
     },
     {
       "id": "ACT-012",
@@ -1761,7 +2347,8 @@
         "src/runtime-config.mjs",
         "src/suites.mjs",
         "src/output.mjs",
-        "src/advisory.mjs"
+        "src/advisory.mjs",
+        "src/fabric.mjs"
       ],
       "tests": [
         "ACT-012: deterministic nested composition rejects cycles, duplicates, hidden and missing authority",
@@ -1910,7 +2497,8 @@
         "src/canonical.mjs",
         "src/crypto.mjs",
         "src/output.mjs",
-        "src/store.mjs"
+        "src/store.mjs",
+        "src/schema.mjs"
       ],
       "tests": [
         "EVD-003 EVD-006 EVD-010 EVD-011: signed evidence requires purpose-limited provenance and safe AI classification"
@@ -1935,7 +2523,8 @@
         "src/canonical.mjs",
         "src/crypto.mjs",
         "src/output.mjs",
-        "src/store.mjs"
+        "src/store.mjs",
+        "src/schema.mjs"
       ],
       "tests": [
         "EVD-007 EVD-008 EVD-009: stale, revoked, and conflicting evidence produce distinct fail-closed reasons"
@@ -2018,7 +2607,8 @@
         "src/canonical.mjs",
         "src/crypto.mjs",
         "src/output.mjs",
-        "src/store.mjs"
+        "src/store.mjs",
+        "src/schema.mjs"
       ],
       "tests": [
         "EVD-003 EVD-006 EVD-010 EVD-011: signed evidence requires purpose-limited provenance and safe AI classification"
@@ -2043,7 +2633,8 @@
         "src/canonical.mjs",
         "src/crypto.mjs",
         "src/output.mjs",
-        "src/store.mjs"
+        "src/store.mjs",
+        "src/schema.mjs"
       ],
       "tests": [
         "EVD-003 EVD-006 EVD-010 EVD-011: signed evidence requires purpose-limited provenance and safe AI classification"
@@ -2136,14 +2727,18 @@
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
       "implementation": [
-        "src/store.mjs",
         "src/canonical.mjs",
-        "src/crypto.mjs"
+        "src/crypto.mjs",
+        "src/output.mjs",
+        "src/store.mjs",
+        "src/schema.mjs"
       ],
       "tests": [
-        "DAT-005 POL-004: restricted export requires explicit new SHIELD proposal"
+        "DAT-005 POL-004 DAT-011: SHIELD creates a new reduced capsule that needs independent evidence and authority before execution",
+        "DAT-005 POL-004: restricted export requires a separately evidenced reduced-scope SHIELD successor"
       ],
       "test_files": [
+        "tests/data-audit-hardening.test.mjs",
         "tests/runtime-audit.test.mjs"
       ],
       "verification_evidence": "reports/completion-tests.json",
@@ -2236,12 +2831,15 @@
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
       "implementation": [
         "src/crypto.mjs",
-        "src/canonical.mjs"
+        "src/canonical.mjs",
+        "src/fabric.mjs"
       ],
       "tests": [
         "POL-008 POL-010 POL-014: activation respects the staged window and preserves immutable rollback history and revocations",
         "POL-008: policy promotion rejects skipped stages, foreign signers, stale reports and tampered reviewed commits",
-        "POL-008: stale simulations and newly revoked promotion custodians invalidate production promotion"
+        "POL-008: stale simulations and newly revoked promotion custodians invalidate production promotion",
+        "POL-008: a revoked verified policy artifact cannot remain promotion authority",
+        "POL-008: a revoked build issuer invalidates a previously signed policy promotion"
       ],
       "test_files": [
         "tests/governance-hardening.test.mjs"
@@ -2262,8 +2860,8 @@
       "implementation": [
         "src/crypto.mjs",
         "src/canonical.mjs",
-        "src/schema.mjs",
-        "src/fabric.mjs"
+        "src/fabric.mjs",
+        "src/schema.mjs"
       ],
       "tests": [
         "ACT-012 POL-009: policy activation cannot be hidden inside a batch",
@@ -2289,8 +2887,8 @@
       "implementation": [
         "src/crypto.mjs",
         "src/canonical.mjs",
-        "src/schema.mjs",
         "src/fabric.mjs",
+        "src/schema.mjs",
         "src/store.mjs"
       ],
       "tests": [
@@ -2374,7 +2972,8 @@
         "src/runtime-config.mjs",
         "src/suites.mjs",
         "src/output.mjs",
-        "src/advisory.mjs"
+        "src/advisory.mjs",
+        "src/fabric.mjs"
       ],
       "tests": [
         "POL-013 POL-014: emergency requires simulation and quorum, restricts exact scope, expires without reviving revocations",
@@ -2404,7 +3003,8 @@
         "src/runtime-config.mjs",
         "src/suites.mjs",
         "src/output.mjs",
-        "src/advisory.mjs"
+        "src/advisory.mjs",
+        "src/fabric.mjs"
       ],
       "tests": [
         "POL-013 POL-014: emergency requires simulation and quorum, restricts exact scope, expires without reviving revocations",
@@ -2558,11 +3158,13 @@
       "implementation": [
         "src/crypto.mjs",
         "src/canonical.mjs",
-        "src/schema.mjs",
-        "src/fabric.mjs"
+        "src/fabric.mjs",
+        "src/schema.mjs"
       ],
       "tests": [
         "COM-005 ACT-012: an atomic batch failure leaves no target mutation and records every child as uncertain",
+        "COM-005 COM-012: a real process kill after batch reservation restarts into journal-only aggregate reconciliation",
+        "COM-005 COM-012: response loss after an atomic commit reconciles the one target journal without redispatch",
         "COM-005 COM-012: target failure before commit rolls back and stays uncertain without blind retry"
       ],
       "test_files": [
@@ -2720,19 +3322,25 @@
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
       "implementation": [
-        "src/canonical.mjs",
         "src/crypto.mjs",
-        "src/schema.mjs",
-        "src/fabric.mjs"
+        "src/server.mjs",
+        "src/canonical.mjs",
+        "src/fabric.mjs",
+        "src/schema.mjs"
       ],
       "tests": [
+        "COM-012: HTTP aggregate reconciliation verifies the journal without repeating target mutations",
         "CON-004 COM-012: missing data-output fields return UNCERTAIN rather than an exception after dispatch",
+        "COM-005 COM-012: a real process kill after batch reservation restarts into journal-only aggregate reconciliation",
+        "COM-005 COM-012: response loss after an atomic commit reconciles the one target journal without redispatch",
         "COM-012: post-commit timeout becomes UNCERTAIN; reconciliation finds one durable mutation",
         "COM-005 COM-012: target failure before commit rolls back and stays uncertain without blind retry",
         "COM-012: process crash reservation survives restart and prevents replay"
       ],
       "test_files": [
+        "tests/composition-http.test.mjs",
         "tests/extended-security.test.mjs",
+        "tests/governance-hardening.test.mjs",
         "tests/lifecycle.test.mjs"
       ],
       "verification_evidence": "reports/completion-tests.json",
@@ -2830,17 +3438,23 @@
       "implementation": [
         "src/store.mjs",
         "src/canonical.mjs",
-        "src/crypto.mjs"
+        "src/crypto.mjs",
+        "src/network.mjs",
+        "src/network-proxy.mjs",
+        "src/runtime-config.mjs",
+        "src/fabric.mjs"
       ],
       "tests": [
         "RUN-002 DAT-004: destination binding cannot be broadened",
         "RUN-002 DAT-004: device_id binding cannot be broadened",
         "RUN-002 DAT-004: resource binding cannot be broadened",
         "RUN-002 DAT-004: purpose binding cannot be broadened",
-        "RUN-002: runtime request replay does not spend twice or return data twice"
+        "RUN-002: runtime request replay does not spend twice or return data twice",
+        "RUN-002: service capability consumption rejects a changed resource state"
       ],
       "test_files": [
-        "tests/runtime-audit.test.mjs"
+        "tests/runtime-audit.test.mjs",
+        "tests/runtime-network-proxy.test.mjs"
       ],
       "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
@@ -2886,20 +3500,24 @@
         "src/perception.mjs",
         "src/store.mjs",
         "src/fabric.mjs",
-        "src/runtime-config.mjs"
+        "src/runtime-config.mjs",
+        "src/network-proxy.mjs"
       ],
       "tests": [
         "RUN-004: runtime issuer-key revocation and active-policy change invalidate cached token",
         "NET-004 NET-005 NET-006 NET-010 RUN-004 RUN-008 RUN-009: rate, quarantine, revocation, exhaustion and containment counters",
         "RUN-004 IDN-008: device quarantine rejects issued capability immediately",
         "RUN-004 RUN-006 RUN-009: signed capability revocation is immediate, scoped and does not expose payloads",
-        "RUN-004 RUN-008: signer revocation withdraws a local gate and cache saturation preserves existing authority"
+        "RUN-004 RUN-008: signer revocation withdraws a local gate and cache saturation preserves existing authority",
+        "RUN-004: Fabric revocation is durably fed and acknowledged by a local gate",
+        "RUN-004: a restarted gate recovers the durable feed, rejects invalid envelopes, and fails closed for stale entries"
       ],
       "test_files": [
         "tests/extended-security.test.mjs",
         "tests/network-perception.test.mjs",
         "tests/runtime-audit.test.mjs",
-        "tests/runtime-hardening.test.mjs"
+        "tests/runtime-hardening.test.mjs",
+        "tests/runtime-network-proxy.test.mjs"
       ],
       "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
@@ -2919,13 +3537,16 @@
         "src/network.mjs",
         "src/canonical.mjs",
         "src/crypto.mjs",
-        "src/runtime-config.mjs"
+        "src/runtime-config.mjs",
+        "src/network-proxy.mjs"
       ],
       "tests": [
-        "RUN-005 RUN-010: local network gate requires a signed per-action configuration and rejects rollback"
+        "RUN-005 RUN-010: local network gate requires a signed per-action configuration and rejects rollback",
+        "RUN-005 NET-005 NET-006: configured constrained remediation is the only non-fail-closed infrastructure behavior"
       ],
       "test_files": [
-        "tests/runtime-hardening.test.mjs"
+        "tests/runtime-hardening.test.mjs",
+        "tests/runtime-network-proxy.test.mjs"
       ],
       "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
@@ -2945,13 +3566,16 @@
         "src/network.mjs",
         "src/canonical.mjs",
         "src/crypto.mjs",
-        "src/runtime-config.mjs"
+        "src/runtime-config.mjs",
+        "src/network-proxy.mjs"
       ],
       "tests": [
-        "RUN-004 RUN-006 RUN-009: signed capability revocation is immediate, scoped and does not expose payloads"
+        "RUN-004 RUN-006 RUN-009: signed capability revocation is immediate, scoped and does not expose payloads",
+        "RUN-006: primary runtime enforcement exposes bounded reason-coded counters without payloads"
       ],
       "test_files": [
-        "tests/runtime-hardening.test.mjs"
+        "tests/runtime-hardening.test.mjs",
+        "tests/runtime-network-proxy.test.mjs"
       ],
       "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
@@ -2996,16 +3620,19 @@
         "src/crypto.mjs",
         "src/canonical.mjs",
         "src/fabric.mjs",
-        "src/runtime-config.mjs"
+        "src/runtime-config.mjs",
+        "src/network-proxy.mjs"
       ],
       "tests": [
         "NET-004 NET-005 NET-006 NET-010 RUN-004 RUN-008 RUN-009: rate, quarantine, revocation, exhaustion and containment counters",
         "RUN-008 RUN-009: malformed requests and failed local services fail closed without duplicate delivery",
-        "RUN-004 RUN-008: signer revocation withdraws a local gate and cache saturation preserves existing authority"
+        "RUN-004 RUN-008: signer revocation withdraws a local gate and cache saturation preserves existing authority",
+        "RUN-008: bounded revocation state withdraws the gate rather than evicting security state"
       ],
       "test_files": [
         "tests/network-perception.test.mjs",
-        "tests/runtime-hardening.test.mjs"
+        "tests/runtime-hardening.test.mjs",
+        "tests/runtime-network-proxy.test.mjs"
       ],
       "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
@@ -3200,14 +3827,17 @@
         "src/suites.mjs",
         "src/output.mjs",
         "src/advisory.mjs",
-        "src/store.mjs"
+        "src/store.mjs",
+        "src/schema.mjs"
       ],
       "tests": [
         "DAT-005 DAT-011: watermark is opt-in, attributed, deterministic and never mutates source data",
-        "DAT-005 POL-004: restricted export requires explicit new SHIELD proposal"
+        "DAT-005 POL-004 DAT-011: SHIELD creates a new reduced capsule that needs independent evidence and authority before execution",
+        "DAT-005 POL-004: restricted export requires a separately evidenced reduced-scope SHIELD successor"
       ],
       "test_files": [
         "tests/completion-security.test.mjs",
+        "tests/data-audit-hardening.test.mjs",
         "tests/runtime-audit.test.mjs"
       ],
       "verification_evidence": "reports/completion-tests.json",
@@ -3327,11 +3957,13 @@
         "src/suites.mjs",
         "src/output.mjs",
         "src/advisory.mjs",
-        "src/store.mjs"
+        "src/store.mjs",
+        "src/schema.mjs"
       ],
       "tests": [
         "DAT-005 DAT-011: watermark is opt-in, attributed, deterministic and never mutates source data",
-        "DAT-011: output attribution validates source and policy without mutating protected rows"
+        "DAT-011: output attribution validates source and policy without mutating protected rows",
+        "DAT-005 POL-004 DAT-011: SHIELD creates a new reduced capsule that needs independent evidence and authority before execution"
       ],
       "test_files": [
         "tests/completion-security.test.mjs",
@@ -3354,10 +3986,12 @@
         "src/canonical.mjs",
         "src/crypto.mjs",
         "src/output.mjs",
-        "src/store.mjs"
+        "src/store.mjs",
+        "src/schema.mjs"
       ],
       "tests": [
         "DAT-012 AUD-006: customer retention instructions cap evidence retention and preserve legal holds",
+        "DAT-012: local evidence erasure removes the prior ciphertext from live database and WAL storage",
         "DAT-012: expired evidence is held for active actions and legal hold; terminal evidence logically deleted"
       ],
       "test_files": [
@@ -3383,17 +4017,21 @@
         "src/suites.mjs",
         "src/fabric.mjs",
         "src/store.mjs",
-        "src/schema.mjs"
+        "src/schema.mjs",
+        "src/server.mjs"
       ],
       "tests": [
         "IDN-001 POL-011: an initiator cannot approve their own protected action even with an eligible signing key",
         "IDN-001 IDN-007 KEY-011: reset authenticator or revoked firmware fails protected capability issuance",
-        "IDN-001: software signature cannot satisfy hardware-required policy"
+        "IDN-001 IDN-007 IDN-008: revoked identity keys, hardware policy, and lifecycle epochs withdraw active authority",
+        "IDN-001: software signature cannot satisfy hardware-required policy",
+        "IDN-001 IDN-007 IDN-008: credential reissue rejects an unattested custodian device"
       ],
       "test_files": [
         "tests/extended-security.test.mjs",
         "tests/key-identity-hardening.test.mjs",
-        "tests/lifecycle.test.mjs"
+        "tests/lifecycle.test.mjs",
+        "tests/session-lifecycle.test.mjs"
       ],
       "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
@@ -3478,13 +4116,16 @@
         "src/crypto.mjs",
         "src/suites.mjs",
         "src/fabric.mjs",
-        "src/store.mjs"
+        "src/store.mjs",
+        "src/server.mjs"
       ],
       "tests": [
-        "IDN-005 IDN-006 IDN-010: recovery operations are separately recorded and reject weaker social recovery"
+        "IDN-005 IDN-006 IDN-010: recovery operations are separately recorded and reject weaker social recovery",
+        "IDN-005 IDN-008 IDN-009: reset invalidates bearer and cookie credentials; independent custodians reissue one short-lived credential"
       ],
       "test_files": [
-        "tests/key-identity-hardening.test.mjs"
+        "tests/key-identity-hardening.test.mjs",
+        "tests/session-lifecycle.test.mjs"
       ],
       "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
@@ -3528,13 +4169,17 @@
         "src/crypto.mjs",
         "src/suites.mjs",
         "src/fabric.mjs",
-        "src/store.mjs"
+        "src/store.mjs",
+        "src/server.mjs"
       ],
       "tests": [
-        "IDN-001 IDN-007 KEY-011: reset authenticator or revoked firmware fails protected capability issuance"
+        "IDN-001 IDN-007 KEY-011: reset authenticator or revoked firmware fails protected capability issuance",
+        "IDN-001 IDN-007 IDN-008: revoked identity keys, hardware policy, and lifecycle epochs withdraw active authority",
+        "IDN-001 IDN-007 IDN-008: credential reissue rejects an unattested custodian device"
       ],
       "test_files": [
-        "tests/key-identity-hardening.test.mjs"
+        "tests/key-identity-hardening.test.mjs",
+        "tests/session-lifecycle.test.mjs"
       ],
       "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
@@ -3550,15 +4195,23 @@
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
       "implementation": [
+        "src/crypto.mjs",
+        "src/suites.mjs",
+        "src/fabric.mjs",
         "src/store.mjs",
         "src/canonical.mjs",
-        "src/crypto.mjs"
+        "src/server.mjs"
       ],
       "tests": [
-        "RUN-004 IDN-008: device quarantine rejects issued capability immediately"
+        "IDN-001 IDN-007 IDN-008: revoked identity keys, hardware policy, and lifecycle epochs withdraw active authority",
+        "RUN-004 IDN-008: device quarantine rejects issued capability immediately",
+        "IDN-005 IDN-008 IDN-009: reset invalidates bearer and cookie credentials; independent custodians reissue one short-lived credential",
+        "IDN-001 IDN-007 IDN-008: credential reissue rejects an unattested custodian device"
       ],
       "test_files": [
-        "tests/runtime-audit.test.mjs"
+        "tests/key-identity-hardening.test.mjs",
+        "tests/runtime-audit.test.mjs",
+        "tests/session-lifecycle.test.mjs"
       ],
       "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
@@ -3573,9 +4226,16 @@
       "status": "PARTIAL",
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
-      "implementation": [],
-      "tests": [],
-      "test_files": [],
+      "implementation": [
+        "src/server.mjs",
+        "src/crypto.mjs"
+      ],
+      "tests": [
+        "IDN-005 IDN-008 IDN-009: reset invalidates bearer and cookie credentials; independent custodians reissue one short-lived credential"
+      ],
+      "test_files": [
+        "tests/session-lifecycle.test.mjs"
+      ],
       "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
@@ -3618,13 +4278,18 @@
         "src/network.mjs",
         "src/perception.mjs",
         "src/crypto.mjs",
-        "src/canonical.mjs"
+        "src/canonical.mjs",
+        "src/network-proxy.mjs",
+        "src/runtime-config.mjs",
+        "src/fabric.mjs"
       ],
       "tests": [
-        "NET-001 NET-002 NET-003 NET-007 NET-009 RUN-001: local process dispatch requires exact tenant/device/service capability, even offline"
+        "NET-001 NET-002 NET-003 NET-007 NET-009 RUN-001: local process dispatch requires exact tenant/device/service capability, even offline",
+        "NET-001 NET-003: loopback proxy mediates an actual HTTP request and blocks non-enrolled paths"
       ],
       "test_files": [
-        "tests/network-perception.test.mjs"
+        "tests/network-perception.test.mjs",
+        "tests/runtime-network-proxy.test.mjs"
       ],
       "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
@@ -3669,15 +4334,20 @@
         "src/perception.mjs",
         "src/crypto.mjs",
         "src/canonical.mjs",
-        "src/store.mjs"
+        "src/store.mjs",
+        "src/network-proxy.mjs",
+        "src/runtime-config.mjs",
+        "src/fabric.mjs"
       ],
       "tests": [
         "NET-001 NET-002 NET-003 NET-007 NET-009 RUN-001: local process dispatch requires exact tenant/device/service capability, even offline",
-        "NET-003 NET-004: local service envelope rejects other port and excess request rate"
+        "NET-003 NET-004: local service envelope rejects other port and excess request rate",
+        "NET-001 NET-003: loopback proxy mediates an actual HTTP request and blocks non-enrolled paths"
       ],
       "test_files": [
         "tests/network-perception.test.mjs",
-        "tests/runtime-audit.test.mjs"
+        "tests/runtime-audit.test.mjs",
+        "tests/runtime-network-proxy.test.mjs"
       ],
       "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
@@ -3724,13 +4394,19 @@
         "src/network.mjs",
         "src/perception.mjs",
         "src/crypto.mjs",
-        "src/canonical.mjs"
+        "src/canonical.mjs",
+        "src/network-proxy.mjs",
+        "src/runtime-config.mjs",
+        "src/fabric.mjs"
       ],
       "tests": [
-        "NET-004 NET-005 NET-006 NET-010 RUN-004 RUN-008 RUN-009: rate, quarantine, revocation, exhaustion and containment counters"
+        "NET-004 NET-005 NET-006 NET-010 RUN-004 RUN-008 RUN-009: rate, quarantine, revocation, exhaustion and containment counters",
+        "RUN-005 NET-005 NET-006: configured constrained remediation is the only non-fail-closed infrastructure behavior",
+        "NET-005 NET-006 NET-010: signed endpoint-health expiry and agent-loss hooks quarantine, report duration, and recover only on fresh proof"
       ],
       "test_files": [
-        "tests/network-perception.test.mjs"
+        "tests/network-perception.test.mjs",
+        "tests/runtime-network-proxy.test.mjs"
       ],
       "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
@@ -3749,13 +4425,19 @@
         "src/network.mjs",
         "src/perception.mjs",
         "src/crypto.mjs",
-        "src/canonical.mjs"
+        "src/canonical.mjs",
+        "src/network-proxy.mjs",
+        "src/runtime-config.mjs",
+        "src/fabric.mjs"
       ],
       "tests": [
-        "NET-004 NET-005 NET-006 NET-010 RUN-004 RUN-008 RUN-009: rate, quarantine, revocation, exhaustion and containment counters"
+        "NET-004 NET-005 NET-006 NET-010 RUN-004 RUN-008 RUN-009: rate, quarantine, revocation, exhaustion and containment counters",
+        "RUN-005 NET-005 NET-006: configured constrained remediation is the only non-fail-closed infrastructure behavior",
+        "NET-005 NET-006 NET-010: signed endpoint-health expiry and agent-loss hooks quarantine, report duration, and recover only on fresh proof"
       ],
       "test_files": [
-        "tests/network-perception.test.mjs"
+        "tests/network-perception.test.mjs",
+        "tests/runtime-network-proxy.test.mjs"
       ],
       "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
@@ -3840,13 +4522,18 @@
         "src/network.mjs",
         "src/perception.mjs",
         "src/crypto.mjs",
-        "src/canonical.mjs"
+        "src/canonical.mjs",
+        "src/network-proxy.mjs",
+        "src/runtime-config.mjs",
+        "src/fabric.mjs"
       ],
       "tests": [
-        "NET-004 NET-005 NET-006 NET-010 RUN-004 RUN-008 RUN-009: rate, quarantine, revocation, exhaustion and containment counters"
+        "NET-004 NET-005 NET-006 NET-010 RUN-004 RUN-008 RUN-009: rate, quarantine, revocation, exhaustion and containment counters",
+        "NET-005 NET-006 NET-010: signed endpoint-health expiry and agent-loss hooks quarantine, report duration, and recover only on fresh proof"
       ],
       "test_files": [
-        "tests/network-perception.test.mjs"
+        "tests/network-perception.test.mjs",
+        "tests/runtime-network-proxy.test.mjs"
       ],
       "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
@@ -3909,10 +4596,12 @@
         "src/canonical.mjs"
       ],
       "tests": [
-        "PER-001 PER-003 PER-006 PER-007 PER-009 PER-010: software transport contract encrypts only allowed fields and never claims hardware assurance"
+        "PER-001 PER-003 PER-006 PER-007 PER-009 PER-010: software transport contract encrypts only allowed fields and never claims hardware assurance",
+        "PER-003 PER-006 PER-007: scope, purpose, clock rollback and expired sessions cannot release output"
       ],
       "test_files": [
-        "tests/network-perception.test.mjs"
+        "tests/network-perception.test.mjs",
+        "tests/perception-lifecycle.test.mjs"
       ],
       "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
@@ -3966,10 +4655,13 @@
         "src/canonical.mjs"
       ],
       "tests": [
-        "PER-001 PER-003 PER-006 PER-007 PER-009 PER-010: software transport contract encrypts only allowed fields and never claims hardware assurance"
+        "PER-001 PER-003 PER-006 PER-007 PER-009 PER-010: software transport contract encrypts only allowed fields and never claims hardware assurance",
+        "PER-003 PER-006 PER-007: scope, purpose, clock rollback and expired sessions cannot release output",
+        "PER-006 PER-009 PER-010: bounded fallback recovers capacity and rejects weak display keys or hardware claims"
       ],
       "test_files": [
-        "tests/network-perception.test.mjs"
+        "tests/network-perception.test.mjs",
+        "tests/perception-lifecycle.test.mjs"
       ],
       "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
@@ -3995,11 +4687,14 @@
       ],
       "tests": [
         "PER-007 PER-009: Secure Perception remains explicitly unavailable and fails closed",
-        "PER-001 PER-003 PER-006 PER-007 PER-009 PER-010: software transport contract encrypts only allowed fields and never claims hardware assurance"
+        "PER-001 PER-003 PER-006 PER-007 PER-009 PER-010: software transport contract encrypts only allowed fields and never claims hardware assurance",
+        "PER-007 KEY-011: existing sessions lose output immediately on attestor, firmware or device revocation",
+        "PER-003 PER-006 PER-007: scope, purpose, clock rollback and expired sessions cannot release output"
       ],
       "test_files": [
         "tests/http-concurrency-ui.test.mjs",
-        "tests/network-perception.test.mjs"
+        "tests/network-perception.test.mjs",
+        "tests/perception-lifecycle.test.mjs"
       ],
       "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
@@ -4041,11 +4736,13 @@
       ],
       "tests": [
         "PER-007 PER-009: Secure Perception remains explicitly unavailable and fails closed",
-        "PER-001 PER-003 PER-006 PER-007 PER-009 PER-010: software transport contract encrypts only allowed fields and never claims hardware assurance"
+        "PER-001 PER-003 PER-006 PER-007 PER-009 PER-010: software transport contract encrypts only allowed fields and never claims hardware assurance",
+        "PER-006 PER-009 PER-010: bounded fallback recovers capacity and rejects weak display keys or hardware claims"
       ],
       "test_files": [
         "tests/http-concurrency-ui.test.mjs",
-        "tests/network-perception.test.mjs"
+        "tests/network-perception.test.mjs",
+        "tests/perception-lifecycle.test.mjs"
       ],
       "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
@@ -4067,10 +4764,12 @@
         "src/canonical.mjs"
       ],
       "tests": [
-        "PER-001 PER-003 PER-006 PER-007 PER-009 PER-010: software transport contract encrypts only allowed fields and never claims hardware assurance"
+        "PER-001 PER-003 PER-006 PER-007 PER-009 PER-010: software transport contract encrypts only allowed fields and never claims hardware assurance",
+        "PER-006 PER-009 PER-010: bounded fallback recovers capacity and rejects weak display keys or hardware claims"
       ],
       "test_files": [
-        "tests/network-perception.test.mjs"
+        "tests/network-perception.test.mjs",
+        "tests/perception-lifecycle.test.mjs"
       ],
       "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
@@ -4199,7 +4898,9 @@
       "tests": [
         "KEY-005 KEY-006: algorithm migration preserves historical signatures and binds suite",
         "KEY-004 KEY-005 KEY-007 KEY-008 KEY-010 KEY-012: threshold key rotation preserves audit verification and prevents suite downgrade",
-        "KEY-005 KEY-008: same-suite renewal and multiple rotation restart restore the newest public key"
+        "KEY-005 KEY-008: same-suite renewal and multiple rotation restart restore the newest public key",
+        "KEY-005 KEY-008 KEY-009 KEY-012: stale rotations or recoveries cannot supersede the current key",
+        "KEY-005 KEY-006: migration sign and verification cutoffs are enforced from persisted key policy"
       ],
       "test_files": [
         "tests/completion-security.test.mjs",
@@ -4225,13 +4926,17 @@
         "src/runtime-config.mjs",
         "src/suites.mjs",
         "src/output.mjs",
-        "src/advisory.mjs"
+        "src/advisory.mjs",
+        "src/fabric.mjs",
+        "src/store.mjs"
       ],
       "tests": [
-        "KEY-005 KEY-006: algorithm migration preserves historical signatures and binds suite"
+        "KEY-005 KEY-006: algorithm migration preserves historical signatures and binds suite",
+        "KEY-005 KEY-006: migration sign and verification cutoffs are enforced from persisted key policy"
       ],
       "test_files": [
-        "tests/completion-security.test.mjs"
+        "tests/completion-security.test.mjs",
+        "tests/key-identity-hardening.test.mjs"
       ],
       "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
@@ -4282,7 +4987,8 @@
       ],
       "tests": [
         "KEY-004 KEY-005 KEY-007 KEY-008 KEY-010 KEY-012: threshold key rotation preserves audit verification and prevents suite downgrade",
-        "KEY-005 KEY-008: same-suite renewal and multiple rotation restart restore the newest public key"
+        "KEY-005 KEY-008: same-suite renewal and multiple rotation restart restore the newest public key",
+        "KEY-005 KEY-008 KEY-009 KEY-012: stale rotations or recoveries cannot supersede the current key"
       ],
       "test_files": [
         "tests/key-identity-hardening.test.mjs"
@@ -4307,6 +5013,7 @@
         "src/store.mjs"
       ],
       "tests": [
+        "KEY-005 KEY-008 KEY-009 KEY-012: stale rotations or recoveries cannot supersede the current key",
         "KEY-001 KEY-002 KEY-003 KEY-009: recovery survives restart and requires three independent custodians plus delay"
       ],
       "test_files": [
@@ -4357,13 +5064,16 @@
         "src/crypto.mjs",
         "src/suites.mjs",
         "src/fabric.mjs",
-        "src/store.mjs"
+        "src/store.mjs",
+        "src/perception.mjs"
       ],
       "tests": [
-        "IDN-001 IDN-007 KEY-011: reset authenticator or revoked firmware fails protected capability issuance"
+        "IDN-001 IDN-007 KEY-011: reset authenticator or revoked firmware fails protected capability issuance",
+        "PER-007 KEY-011: existing sessions lose output immediately on attestor, firmware or device revocation"
       ],
       "test_files": [
-        "tests/key-identity-hardening.test.mjs"
+        "tests/key-identity-hardening.test.mjs",
+        "tests/perception-lifecycle.test.mjs"
       ],
       "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
@@ -4385,7 +5095,8 @@
         "src/store.mjs"
       ],
       "tests": [
-        "KEY-004 KEY-005 KEY-007 KEY-008 KEY-010 KEY-012: threshold key rotation preserves audit verification and prevents suite downgrade"
+        "KEY-004 KEY-005 KEY-007 KEY-008 KEY-010 KEY-012: threshold key rotation preserves audit verification and prevents suite downgrade",
+        "KEY-005 KEY-008 KEY-009 KEY-012: stale rotations or recoveries cannot supersede the current key"
       ],
       "test_files": [
         "tests/key-identity-hardening.test.mjs"
@@ -4500,7 +5211,8 @@
         "src/canonical.mjs",
         "src/crypto.mjs",
         "src/output.mjs",
-        "src/store.mjs"
+        "src/store.mjs",
+        "src/schema.mjs"
       ],
       "tests": [
         "AUD-005 AUD-008 AUD-010: exports need pinned trust and projections exclude unassigned roles",
@@ -4527,7 +5239,8 @@
         "src/canonical.mjs",
         "src/crypto.mjs",
         "src/output.mjs",
-        "src/store.mjs"
+        "src/store.mjs",
+        "src/schema.mjs"
       ],
       "tests": [
         "DAT-012 AUD-006: customer retention instructions cap evidence retention and preserve legal holds"
@@ -4576,7 +5289,8 @@
         "src/canonical.mjs",
         "src/crypto.mjs",
         "src/output.mjs",
-        "src/store.mjs"
+        "src/store.mjs",
+        "src/schema.mjs"
       ],
       "tests": [
         "AUD-005 AUD-008 AUD-010: exports need pinned trust and projections exclude unassigned roles",
@@ -4623,10 +5337,12 @@
         "src/suites.mjs",
         "src/output.mjs",
         "src/advisory.mjs",
-        "src/store.mjs"
+        "src/store.mjs",
+        "src/schema.mjs"
       ],
       "tests": [
         "AUD-010 UX-010: UI audit choices never widen role-specific server permissions",
+        "AUD-010 UX-010: role-scoped reviewers cannot navigate to unauthorized coverage or action data",
         "AUD-010: role projections reject cross-role/tenant access and never expose full source envelopes",
         "AUD-005 AUD-008 AUD-010: exports need pinned trust and projections exclude unassigned roles"
       ],
@@ -4690,7 +5406,7 @@
         "src/advisory.mjs"
       ],
       "tests": [
-        "AIG-003 AIG-004 AIG-007: advisory extraction preserves spans/context and enforces narrow source, tenant and output authority"
+        "AIG-003 AIG-004 AIG-007: advisory extraction preserves runner-bound provenance and enforces narrow source, tenant and output authority"
       ],
       "test_files": [
         "tests/completion-security.test.mjs"
@@ -4718,10 +5434,12 @@
         "src/advisory.mjs"
       ],
       "tests": [
-        "AIG-003 AIG-004 AIG-007: advisory extraction preserves spans/context and enforces narrow source, tenant and output authority"
+        "AIG-003 AIG-004 AIG-007: advisory extraction preserves runner-bound provenance and enforces narrow source, tenant and output authority",
+        "AIG-004 AIG-010: only an executable durable local regression can promote the configured advisory model"
       ],
       "test_files": [
-        "tests/completion-security.test.mjs"
+        "tests/completion-security.test.mjs",
+        "tests/coverage-advisory-hardening.test.mjs"
       ],
       "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
@@ -4789,7 +5507,7 @@
         "src/advisory.mjs"
       ],
       "tests": [
-        "AIG-003 AIG-004 AIG-007: advisory extraction preserves spans/context and enforces narrow source, tenant and output authority"
+        "AIG-003 AIG-004 AIG-007: advisory extraction preserves runner-bound provenance and enforces narrow source, tenant and output authority"
       ],
       "test_files": [
         "tests/completion-security.test.mjs"
@@ -4850,7 +5568,7 @@
       ],
       "tests": [
         "AIG-010: versioned adversarial regression prevents provider promotion",
-        "AIG-010: only the configured local model can pass a complete versioned promotion report"
+        "AIG-004 AIG-010: only an executable durable local regression can promote the configured advisory model"
       ],
       "test_files": [
         "tests/completion-security.test.mjs",
@@ -4981,8 +5699,9 @@
       ],
       "tests": [
         "CON-006 NFR-MNT-005: lifecycle forbids EOL use and silent downgrade and preserves migration instructions",
-        "COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle",
-        "COV-003 COV-010 CON-006: bypass evidence is exact and connector downgrades fail closed"
+        "COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: real isolated tests detect direct bypass and keep coverage UNKNOWN",
+        "COV-003 COV-010 CON-006: bypass evidence is exact and connector downgrades fail closed",
+        "CON-006: unregistered versions and post-floor retrograde registration fail closed"
       ],
       "test_files": [
         "tests/completion-security.test.mjs",
@@ -5265,6 +5984,7 @@
       ],
       "tests": [
         "AUD-010 UX-010: UI audit choices never widen role-specific server permissions",
+        "AUD-010 UX-010: role-scoped reviewers cannot navigate to unauthorized coverage or action data",
         "NFR-SEC-005 UX-010: preview permits only configured hosts and origin-bound secure sessions"
       ],
       "test_files": [
@@ -5288,7 +6008,8 @@
         "src/server.mjs"
       ],
       "tests": [
-        "NFR-SEC-001 NFR-PERF-005: aborted and oversized clients cannot crash the HTTP gate"
+        "NFR-SEC-001 NFR-PERF-005: aborted and oversized clients cannot crash the HTTP gate",
+        "NFR-SEC-001: repeated oversized aborts drain streams without an asynchronous transport failure after request completion"
       ],
       "test_files": [
         "tests/transport-abort.test.mjs"
@@ -5685,9 +6406,17 @@
       "status": "PARTIAL",
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
-      "implementation": [],
-      "tests": [],
-      "test_files": [],
+      "implementation": [
+        "src/crypto.mjs",
+        "src/canonical.mjs",
+        "src/fabric.mjs"
+      ],
+      "tests": [
+        "NFR-OPS-001 NFR-OPS-005: unsigned or revoked artifacts cannot be staged or selected for rollback"
+      ],
+      "test_files": [
+        "tests/governance-hardening.test.mjs"
+      ],
       "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
@@ -5719,7 +6448,8 @@
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
       "implementation": [
         "src/crypto.mjs",
-        "src/canonical.mjs"
+        "src/canonical.mjs",
+        "src/fabric.mjs"
       ],
       "tests": [
         "NFR-OPS-003 NFR-OPS-004: high-severity alerts enforce owner acknowledgement and incidents cannot skip recovery stages"
@@ -5742,7 +6472,8 @@
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
       "implementation": [
         "src/crypto.mjs",
-        "src/canonical.mjs"
+        "src/canonical.mjs",
+        "src/fabric.mjs"
       ],
       "tests": [
         "NFR-OPS-003 NFR-OPS-004: high-severity alerts enforce owner acknowledgement and incidents cannot skip recovery stages"
@@ -5765,10 +6496,12 @@
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
       "implementation": [
         "src/crypto.mjs",
-        "src/canonical.mjs"
+        "src/canonical.mjs",
+        "src/fabric.mjs"
       ],
       "tests": [
-        "NFR-OPS-005: deployment must progress staging to canary to production and rollback retains current policy/key integrity"
+        "NFR-OPS-005: deployment must progress staging to canary to production and rollback retains current policy/key integrity",
+        "NFR-OPS-001 NFR-OPS-005: unsigned or revoked artifacts cannot be staged or selected for rollback"
       ],
       "test_files": [
         "tests/governance-hardening.test.mjs"
@@ -6084,6 +6817,454 @@
       "release_baseline": "Full SRS closure"
     },
     {
+      "id": "OBJ-001",
+      "requirement": "Action Capsule: Action-dependent; may contain personal/business data.",
+      "acceptance": "Canonical digest and versioned schema.",
+      "line": 509,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "OBJ-002",
+      "requirement": "Evidence content: Store minimum necessary; full source only when required.",
+      "acceptance": "Digest, provenance, source signature/verification.",
+      "line": 510,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "OBJ-003",
+      "requirement": "Evidence Graph: Long-lived decision evidence; usually metadata.",
+      "acceptance": "Signed graph digest and dependency model.",
+      "line": 511,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "OBJ-004",
+      "requirement": "Policy: Long-lived and customer-controlled.",
+      "acceptance": "Signed version, review evidence and activation record.",
+      "line": 512,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "OBJ-005",
+      "requirement": "Certificate: At least action/audit retention.",
+      "acceptance": "Independent signature verification and revocation.",
+      "line": 513,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "OBJ-006",
+      "requirement": "Outcome: At least certificate retention.",
+      "acceptance": "Gate signature, target reconciliation and append-only log.",
+      "line": 514,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "OBJ-007",
+      "requirement": "Telemetry: Operational retention, minimised.",
+      "acceptance": "Tenant isolation and access logging.",
+      "line": 515,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "IFC-001",
+      "requirement": "Propose action: POST /v1/action-capsules",
+      "acceptance": "Idempotency key, schema validation, no direct authority.",
+      "line": 521,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "IFC-002",
+      "requirement": "Attach evidence: POST /v1/action-capsules/{id}/evidence",
+      "acceptance": "Provenance, digest, issuer, freshness and minimisation.",
+      "line": 522,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "IFC-003",
+      "requirement": "Evaluate: POST /v1/action-capsules/{id}/evaluate",
+      "acceptance": "Deterministic policy version and reason-coded result.",
+      "line": 523,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "IFC-004",
+      "requirement": "Approve exact action: POST /v1/approvals",
+      "acceptance": "Action-bound WebAuthn/hardware signature; signer eligibility.",
+      "line": 524,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "IFC-005",
+      "requirement": "Mint certificate: POST /v1/certificates",
+      "acceptance": "Only after ALLOW and required threshold.",
+      "line": 525,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "IFC-006",
+      "requirement": "Execute: POST /gate/v1/execute",
+      "acceptance": "Gate verifies state, nonce, expiry, target and constraints.",
+      "line": 526,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "IFC-007",
+      "requirement": "Reconcile outcome: GET /gate/v1/outcomes/{id}",
+      "acceptance": "Never infer success from timeout.",
+      "line": 527,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "IFC-008",
+      "requirement": "Issue runtime capability: POST /v1/capabilities",
+      "acceptance": "Short TTL, bound subject/device/resource/rate.",
+      "line": 528,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "IFC-009",
+      "requirement": "Revoke: POST /v1/revocations",
+      "acceptance": "Immediate signed revocation and propagation status.",
+      "line": 529,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "IFC-010",
+      "requirement": "Coverage manifest: GET /v1/coverage/{scope}",
+      "acceptance": "Signed path status and evidence age.",
+      "line": 530,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "IFC-011",
+      "requirement": "Audit export: POST /v1/audit-exports",
+      "acceptance": "Purpose-limited, encrypted, independently verifiable bundle.",
+      "line": 531,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "IFC-012",
+      "requirement": "Policy simulation: POST /v1/policies/simulate",
+      "acceptance": "Historical replay and predicted friction without activation.",
+      "line": 532,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "ERR-001",
+      "requirement": "INV-400-SCHEMA: Invalid or unsupported canonical schema.",
+      "acceptance": "Correct request; do not retry unchanged.",
+      "line": 538,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "ERR-002",
+      "requirement": "INV-409-STATE: Current target state differs from signed state.",
+      "acceptance": "Re-canonicalise and re-evaluate.",
+      "line": 539,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "ERR-003",
+      "requirement": "INV-409-REPLAY: Nonce or certificate already consumed.",
+      "acceptance": "Treat as security-relevant; do not retry.",
+      "line": 540,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "ERR-004",
+      "requirement": "INV-412-EVIDENCE: Required evidence missing, expired or conflicting.",
+      "acceptance": "Resolve evidence / remain in escrow.",
+      "line": 541,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "ERR-005",
+      "requirement": "INV-423-DEFER: Policy time/state condition not yet met.",
+      "acceptance": "Wait until supplied condition.",
+      "line": 542,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "ERR-006",
+      "requirement": "INV-429-BUDGET: Rate or rolling information budget exceeded.",
+      "acceptance": "Throttle, reduce scope or request exceptional action.",
+      "line": 543,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "ERR-007",
+      "requirement": "INV-451-POLICY: Action denied by deterministic policy.",
+      "acceptance": "No automatic override.",
+      "line": 544,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "ERR-008",
+      "requirement": "INV-503-GATE: Gate unavailable; failure policy applies.",
+      "acceptance": "Use local cache/alternate gate only as preconfigured.",
+      "line": 545,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "ERR-009",
+      "requirement": "INV-599-UNCERTAIN: Execution result cannot be confirmed.",
+      "acceptance": "Reconcile; never blindly repeat mutating action.",
+      "line": 546,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
       "id": "FAIL-001",
       "requirement": "Vendor cloud unavailable: Local gates continue valid cached runtime decisions; new critical actions follow configured fail policy.",
       "acceptance": "Forbidden: Disabling all enforcement or silently accepting new root actions.",
@@ -6244,6 +7425,102 @@
       "release_baseline": "Full SRS closure"
     },
     {
+      "id": "VFY-001",
+      "requirement": "Test: Deterministic functions, APIs, policy, canonicalisation, replay and failure behaviour.",
+      "acceptance": "Automated result linked to requirement ID.",
+      "line": 567,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "VFY-002",
+      "requirement": "Adversarial test / red team: Bypass, compromised account/application, prompt injection, lateral movement, low-and-slow extraction.",
+      "acceptance": "Attack narrative, evidence and residual risk.",
+      "line": 568,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "VFY-003",
+      "requirement": "Analysis: Cryptography, availability, privacy, threat model and capacity.",
+      "acceptance": "Reviewed analysis with assumptions.",
+      "line": 569,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "VFY-004",
+      "requirement": "Inspection: Configuration, key ceremony, code review, evidence bundle and legal controls.",
+      "acceptance": "Signed checklist / report.",
+      "line": 570,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "VFY-005",
+      "requirement": "Demonstration: Human approval comprehension, recovery ceremony, customer workflow and controlled failure.",
+      "acceptance": "Recorded result and acceptance sign-off.",
+      "line": 571,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "VFY-006",
+      "requirement": "Independent assessment: High-assurance claims and production readiness.",
+      "acceptance": "Third-party report; remediation evidence.",
+      "line": 572,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
       "id": "TRACE-001",
       "requirement": "**Traceability rule.** No SHALL requirement is complete until it maps to a test, inspection, analysis or demonstration, an owner, a release baseline and stored evidence. Requirement count is not progress; verified behaviour is progress.",
       "acceptance": "Owner, baseline, method and stored evidence for every mandatory requirement.",
@@ -6259,6 +7536,214 @@
       "test_files": [
         "tests/completion-evidence.test.mjs"
       ],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "REL-001",
+      "requirement": "R0 — Falsification prototype: Action Capsule, deterministic policy, certificate, one Root Gate, replay/state tests.",
+      "acceptance": "Direct bypass rejected; exact action/state binding proven.",
+      "line": 580,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "REL-002",
+      "requirement": "R1 — Finance design-partner pilot: Vendor/bank/beneficiary/first-payment schemas; shadow and limited enforcement; local gate; audit.",
+      "acceptance": "Paid pilot; routine friction measured; target uncertainty safe.",
+      "line": 581,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "REL-003",
+      "requirement": "R2 — Finance production: Tenant isolation, multi-zone, customer keys, incident/DR, external assessment, coverage proof.",
+      "acceptance": "No unresolved exploitable critical/high findings; signed production acceptance.",
+      "line": 582,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "REL-004",
+      "requirement": "R3 — Data / identity: Database/file Root Gate, rolling budgets, recovery and JIT identity.",
+      "acceptance": "Low-and-slow and recovery red-team pass.",
+      "line": 583,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "REL-005",
+      "requirement": "R4 — Runtime Fabric: Network/workload local gates, quarantine and rate envelopes.",
+      "acceptance": "Internal worm/DoS contained under benchmark.",
+      "line": 584,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "REL-006",
+      "requirement": "R5 — Secure Perception: Attested display/input path on supported hardware.",
+      "acceptance": "OS extraction tests fail; usability and residual-risk disclosure accepted.",
+      "line": 585,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "DSN-001",
+      "requirement": "Certificate encoding: CBOR/COSE, canonical JSON/JWS, protobuf + signed envelope",
+      "acceptance": "Cross-language canonicalisation, hardware support, audit usability.",
+      "line": 604,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "DSN-002",
+      "requirement": "Policy engine: Purpose-built DSL, Cedar/Rego-based restricted profile, formally specified core",
+      "acceptance": "Determinism, explainability, performance, safety of extensions.",
+      "line": 605,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "DSN-003",
+      "requirement": "Root Gate deployment: Sidecar, proxy, target plugin, transaction broker",
+      "acceptance": "Total mediation, latency, target credential ownership and failure mode.",
+      "line": 606,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "DSN-004",
+      "requirement": "Threshold implementation: MPC threshold signature or HSM quorum wrapper",
+      "acceptance": "Standards maturity, vendor interoperability and ceremony complexity.",
+      "line": 607,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "DSN-005",
+      "requirement": "Transparency log: Tenant Merkle log, external witness, public checkpoint",
+      "acceptance": "Privacy, independent verification and operational cost.",
+      "line": 608,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "DSN-006",
+      "requirement": "Secure Perception platform: Dedicated hardware, TEE trusted UI, remote-rendered controlled endpoint",
+      "acceptance": "Actual protected path, OS extraction resistance and user acceptance.",
+      "line": 609,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
+      "verification_evidence": "reports/completion-tests.json",
+      "owner": "Principal engineering review pending",
+      "release_baseline": "Full SRS closure"
+    },
+    {
+      "id": "DSN-007",
+      "requirement": "Runtime dataplane: eBPF, service mesh, proxy, switch/NAC integration",
+      "acceptance": "Latency, tamper resistance and deployment coverage.",
+      "line": 610,
+      "numbered": false,
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
+      "implementation": [],
+      "tests": [],
+      "test_files": [],
       "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"

@@ -14,35 +14,40 @@ export class IdentityLifecycle {
     return { key_id: found[0], identity: found[1] };
   }
   effective(t, subject) {
-    const { identity } = this.base(t, subject), state = this.f.store.get(t, 'identity-state', subject);
-    return { ...clone(identity), ...(state ?? {}), authenticators: state?.authenticators ?? [clone(identity.authenticator)] };
+    const { key_id, identity } = this.base(t, subject), state = this.f.store.get(t, 'identity-state', subject);
+    return { ...clone(identity), ...(state ?? {}), identity_key_id: key_id, revoked: this.f.revoked(t, 'key', key_id) || this.f.revoked(t, 'subject', subject), authenticators: state?.authenticators ?? [clone(identity.authenticator)] };
   }
   all(t) { return Object.fromEntries(Object.keys(this.f.tenant(t).identities).map(keyId => { const identity = this.f.tenant(t).identities[keyId]; return [keyId, { ...this.effective(t, identity.subject_id), revoked: this.f.revoked(t, 'key', keyId) || this.f.revoked(t, 'subject', identity.subject_id) }]; })); }
   assertAssured(t, subject, device, now) {
     const identity = this.effective(t, subject), authenticator = identity.authenticators.find(a => a.id === identity.authenticator?.id) ?? identity.authenticator;
+    requireThat(!identity.revoked, 'INV-401-AUTH', 'Identity signing key is revoked', 401);
     requireThat(identity.device_id === device && identity.health_expires_at > now, 'INV-403-HEALTH', 'Configured device health evidence expired or mismatched', 403);
-    requireThat(authenticator && authenticator.phishing_resistant === true && authenticator.status !== 'RESET_REQUIRED' && authenticator.enrolled_at <= now, 'INV-401-AUTH', 'Phishing-resistant authentication is required', 401);
+    const hardwareRequired = this.f.config.identity_assurance?.require_hardware_backed === true;
+    requireThat(authenticator && authenticator.phishing_resistant === true && (!hardwareRequired || (authenticator.hardware_backed === true && identity.hardware_backed === true)) && authenticator.status !== 'RESET_REQUIRED' && authenticator.enrolled_at <= now, 'INV-401-AUTH', hardwareRequired ? 'Phishing-resistant hardware-backed authentication is required' : 'Phishing-resistant authentication is required', 401);
     requireThat(identity.component?.trusted === true && this.f.tenant(t).key_governance.trusted_component_firmware.includes(identity.component.firmware) && !this.f.revoked(t, 'component', `${identity.component.id}:${identity.component.firmware}`), 'INV-403-HEALTH', 'Trusted component is unavailable', 403);
     return identity;
   }
+  sessionEpoch(t, subject) { return this.effective(t, subject).session_epoch ?? 0; }
+  sessionValid(t, subject, epoch) { return Number.isSafeInteger(epoch) && epoch === this.sessionEpoch(t, subject) && !this.effective(t, subject).revoked; }
   issueJit(p, input) {
     this.f.authorize(p, ['security']); fields(input, ['subject_id', 'scope', 'device_id', 'ttl_ms', 'reason']); identifier(input.subject_id); uniqueStrings(input.scope, 'JIT scope', 16); identifier(input.device_id); integer(input.ttl_ms, 'JIT TTL', 1000, 300000); text(input.reason, 'JIT reason');
     return this.f.transaction(p, now => {
       this.assertAssured(p.tenant_id, input.subject_id, input.device_id, now);
-      const payload = { ...clone(input), jit_id: randomUUID(), tenant_id: p.tenant_id, issued_by: p.subject_id, issued_at: now, expires_at: now + input.ttl_ms };
+      const payload = { ...clone(input), jit_id: randomUUID(), tenant_id: p.tenant_id, issued_by: p.subject_id, session_epoch: this.sessionEpoch(p.tenant_id, input.subject_id), issued_at: now, expires_at: now + input.ttl_ms };
       const envelope = signed(payload, this.f.keys(p.tenant_id).execution, 'identity-jit');
       this.f.store.insert(p.tenant_id, 'identity-jit', payload.jit_id, envelope, now);
       this.f.store.audit(p.tenant_id, 'JIT_PRIVILEGE_ISSUED', p.subject_id, payload.jit_id, { subject_id: input.subject_id, scope_digest: digest(input.scope), reason_digest: digest(input.reason) }, now);
       return envelope;
     });
   }
-  consumeJit(p, envelope, scope) {
-    text(scope, 'JIT scope');
+  consumeJit(p, envelope, scope, device) {
+    text(scope, 'JIT scope'); identifier(device, 'JIT device');
     return this.f.transaction(p, now => {
       const payload = verifySigned(envelope, this.f.executionPublic(p.tenant_id), 'identity-jit');
-      requireThat(payload.tenant_id === p.tenant_id && payload.subject_id === p.subject_id && payload.scope.includes(scope) && payload.expires_at > now && !this.f.revoked(p.tenant_id, 'jit', payload.jit_id), 'INV-403-SCOPE', 'JIT privilege is unavailable or out of scope', 403);
+      requireThat(payload.tenant_id === p.tenant_id && payload.subject_id === p.subject_id && payload.device_id === device && payload.scope.includes(scope) && payload.expires_at > now && payload.session_epoch === this.sessionEpoch(p.tenant_id, p.subject_id) && !this.f.revoked(p.tenant_id, 'jit', payload.jit_id) && !this.f.revoked(p.tenant_id, 'key', envelope.protected.key_id), 'INV-403-SCOPE', 'JIT privilege is unavailable or out of scope', 403);
       const stored = this.f.store.must(p.tenant_id, 'identity-jit', payload.jit_id);
       requireThat(digest(stored) === digest(envelope), 'INV-401-SIGNATURE', 'JIT privilege does not match its durable grant', 401);
+      this.assertAssured(p.tenant_id, p.subject_id, device, now);
       this.f.store.put(p.tenant_id, 'identity-jit', payload.jit_id, { ...stored, consumed_at: now }, now);
       this.f.store.audit(p.tenant_id, 'JIT_PRIVILEGE_USED', p.subject_id, payload.jit_id, { scope }, now);
       return clone(payload);
@@ -87,7 +92,8 @@ export class IdentityLifecycle {
       const old = this.effective(p.tenant_id, request.subject_id), next = clone(old);
       if (request.operation === 'MFA_RESET') next.authenticators = next.authenticators.map(a => ({ ...a, status: 'RESET_REQUIRED' }));
       if (request.operation === 'AUTHENTICATOR_ENROLL') next.authenticators.push({ ...request.new_authenticator, enrolled_at: now, status: 'ACTIVE' });
-      if (request.operation === 'ACCOUNT_RECOVERY') { next.recovered_at = now; next.recovery_proofing_level = request.proofing_level; }
+      if (request.operation === 'ACCOUNT_RECOVERY') { next.recovered_at = now; next.recovery_proofing_level = request.proofing_level; next.authenticators = next.authenticators.map(a => ({ ...a, status: 'RESET_REQUIRED' })); }
+      next.session_epoch = (old.session_epoch ?? 0) + 1; next.session_invalidated_at = now;
       this.f.store.put(p.tenant_id, 'identity-state', request.subject_id, next, now); request.status = 'COMPLETED'; request.completed_at = now; this.f.store.put(p.tenant_id, 'identity-lifecycle', requestId, request, now);
       this.f.store.audit(p.tenant_id, 'IDENTITY_LIFECYCLE_COMPLETED', p.subject_id, requestId, { operation: request.operation, subject_id: request.subject_id, approvals: eligible.size }, now);
       return clone(request);

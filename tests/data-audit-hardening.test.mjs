@@ -1,10 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { fixture, hasCode } from './helpers.mjs';
 import { clone, digest } from '../src/canonical.mjs';
 import { signed } from '../src/crypto.mjs';
 import { protectOutput, verifyOutputAttribution } from '../src/output.mjs';
 import { verifyAudit } from '../src/store.mjs';
+import { proposal } from '../src/schema.mjs';
 
 test('EVD-003 EVD-006 EVD-010 EVD-011: signed evidence requires purpose-limited provenance and safe AI classification', t => {
   const h = fixture(t), r = h.proposed(), base = h.evidence(r);
@@ -64,4 +67,33 @@ test('DAT-012 AUD-006: customer retention instructions cap evidence retention an
   h.f.retention(h.p('security'), { evidence_id: evidence.payload.evidence_id, legal_hold: false }); h.f.cancel(h.p(), r.capsule.capsule_id);
   assert.equal(h.f.retentionSweep(h.p('security')).deleted, 1);
   assert.ok(h.f.store.list('acme', 'retention-policy-history').length === 1);
+});
+
+test('DAT-005 POL-004 DAT-011: SHIELD creates a new reduced capsule that needs independent evidence and authority before execution', t => {
+  const h = fixture(t), policy = clone(h.f.policy('acme'));
+  policy.runtime.watermark = { enabled: true, lawful_basis: 'Customer-approved export attribution', mode: 'visible' }; policy.rules['data.export'].approval_threshold = 1; h.f.store.put('acme', 'policy', 'active', policy, h.now());
+  const requested = { dataset: 'dataset-1', columns: ['id', 'name', 'passport'], row_ids: ['row-1'], max_rows: 1, classification: 'internal', jurisdiction: 'EU' };
+  const input = proposal('data.export', h.actor(), h.f.target.state('acme', 'dataset-1'), requested, h.now(), { action: { type: 'data.export', target_resource: 'dataset-1', purpose: 'Controlled export' }, destination: 'customer-vault' });
+  const record = h.f.propose(h.p(), input, crypto.randomUUID()), originalEvidence = h.evidence(record, { kind: 'dataset_authority' });
+  assert.equal(h.f.evaluate(h.p(), record.capsule.capsule_id).decision, 'SHIELD'); h.approve(record, 1);
+  assert.throws(() => h.f.certificate(h.p(), record.capsule.capsule_id), hasCode('INV-412-EVIDENCE'));
+  const shielded = h.f.createShieldedProposal(h.p(), record.capsule.capsule_id);
+  assert.notEqual(shielded.capsule.capsule_id, record.capsule.capsule_id); assert.notEqual(shielded.capsule_digest, record.capsule_digest); assert.notEqual(shielded.capsule.nonce, record.capsule.nonce); assert.deepEqual(shielded.capsule.requested_state.columns, ['id', 'name']); assert.equal(shielded.evidence.length, 0); assert.equal(shielded.approvals.length, 0);
+  assert.throws(() => h.f.createShieldedProposal(h.p(), record.capsule.capsule_id), hasCode('INV-409-REPLAY'));
+  assert.throws(() => h.f.attachEvidence(h.p(), shielded.capsule.capsule_id, originalEvidence), hasCode('INV-403-SCOPE'));
+  assert.equal(h.f.evaluate(h.p(), shielded.capsule.capsule_id).decision, 'ESCROW'); h.evidence(shielded, { kind: 'dataset_authority' }); assert.equal(h.f.evaluate(h.p(), shielded.capsule.capsule_id).decision, 'ESCROW'); h.approve(shielded, 1); assert.equal(h.f.evaluate(h.p(), shielded.capsule.capsule_id).decision, 'ALLOW');
+  const certificate = h.f.certificate(h.p(), shielded.capsule.capsule_id), outcome = h.f.execute(h.p(), certificate);
+  assert.equal(outcome.payload.status, 'VERIFIED'); assert.deepEqual(Object.keys(outcome.payload.output[0]), ['id', 'name']); assert.equal(Object.hasOwn(outcome.payload.output[0], 'passport'), false);
+  assert.throws(() => h.f.execute(h.p(), certificate), hasCode('INV-409-REPLAY')); const changedScope = clone(certificate); changedScope.payload.constraints.requested_digest = digest({ columns: ['id', 'name', 'passport'] }); assert.throws(() => h.f.execute(h.p(), changedScope), hasCode('INV-401-SIGNATURE'));
+  assert.equal(h.f.store.must('acme', 'capsule', record.capsule.capsule_id).capsule.requested_state.columns.includes('passport'), true); assert.equal(shielded.shield_parent.capsule_id, record.capsule.capsule_id);
+  assert.equal(verifyOutputAttribution(outcome.payload.output, outcome.payload.watermark, policy.runtime.watermark, h.f.store.key('acme')).valid, true);
+});
+
+test('DAT-012: local evidence erasure removes the prior ciphertext from live database and WAL storage', t => {
+  const h = fixture(t);
+  h.f.retentionInstruction(h.p('security'), { action_type: 'finance.beneficiary.create', legal_basis: 'Customer erasure instruction', customer_instruction_digest: digest('erase evidence'), evidence_retention_ms: 1, audit_retention_ms: 1000 });
+  const r = h.proposed(), evidence = h.evidence(r), row = h.f.store.statement('SELECT value FROM records WHERE tenant=? AND kind=? AND id=?').get('acme', 'evidence', evidence.payload.evidence_id);
+  h.f.cancel(h.p(), r.capsule.capsule_id); h.advance(2);
+  const result = h.f.retentionSweep(h.p('security')); assert.equal(result.deleted, 1); assert.equal(result.complete_payload_erasure, true); assert.equal(result.erasure_method, 'SQLITE_SECURE_DELETE_WAL_CHECKPOINT_VACUUM');
+  for (const file of ['fabric.db', 'fabric.db-wal']) if (existsSync(join(h.directory, file))) assert.equal(readFileSync(join(h.directory, file)).includes(Buffer.from(row.value)), false);
 });

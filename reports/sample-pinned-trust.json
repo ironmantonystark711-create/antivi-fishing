@@ -1,6 +1,7 @@
 {
-  "56150a721c6c7b9ac04fb9cae65ef697": {
-    "public_key": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEA4lBGMCw6XWhOdhB3ELLAC5tlRtKy10/arU6CMvXHJOo=\n-----END PUBLIC KEY-----\n",
-    "suite": "Ed25519"
+  "f5971149f4f378e9733cf72b27293ce8": {
+    "public_key": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAslgWURbm4DV980TQpuhxAQMKKv8kxq79pe51cbPYces=\n-----END PUBLIC KEY-----\n",
+    "suite": "Ed25519",
+    "suite_policy": null
   }
 }

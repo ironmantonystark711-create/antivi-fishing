@@ -1,0 +1,26 @@
+{
+  "format": "IF-RUNTIME-STRESS-1",
+  "reference_environment": {
+    "node": "v24.19.0",
+    "os": "linux",
+    "architecture": "x64",
+    "logical_cpus": 2,
+    "memory_bytes": 17179869184,
+    "isolated_environment": true
+  },
+  "started_at_monotonic_ms": 348.666941,
+  "requested_duration_ms": 60000,
+  "measured_duration_ms": 60000.13058999999,
+  "valid_allows_before_churn": 10000,
+  "cache_churn_attempts": 96,
+  "cache_capacity_rejections": 33,
+  "adversarial_scope_denials": 76111000,
+  "unexpected_outcomes": 0,
+  "heap_baseline_bytes": 6524328,
+  "heap_peak_bytes": 81467584,
+  "heap_growth_bytes": 74943256,
+  "containment": [],
+  "cached_capabilities": 64,
+  "production_capacity_claim": false,
+  "caveat": "Single-process synthetic stress test. It demonstrates bounded local-gate state and stable denial under adversarial requests; it is not a production soak, multi-node, packet-filter, or customer workload claim."
+}

@@ -52,12 +52,18 @@ try {
  await page.getByRole('button', { name: 'Runtime access', exact: true }).click(); await page.getByLabel('Allowed row identifiers, comma-separated').fill('row-1'); await page.getByLabel('Allowed columns, comma-separated').fill('id,name'); await page.getByLabel('Maximum information units for this capability').fill('4'); await page.getByRole('button', { name: 'Issue narrow capability' }).click(); await page.locator('#runtime-read').waitFor(); await page.getByRole('button', { name: 'Read exact authorised selection' }).click(); await page.waitForFunction(() => document.getElementById('runtime-result').textContent.includes('Synthetic Ada')); check('browser-scoped-data-flow', !(await page.locator('#runtime-result').textContent()).includes('passport'));
  await page.setViewportSize({ width: 1440, height: 1000 }); await page.screenshot({ path: 'reports/browser/runtime.png', fullPage: true });
  check('operator-cannot-open-audit-export', await page.getByRole('button', { name: 'Audit export', exact: true }).count() === 0);
- const financeContext = await browser.newContext({ viewport: { width: 1440, height: 1000 } }), finance = await financeContext.newPage();
+ const recordFinance = process.env.IF_RECORD_BROWSER === '1';
+ const financeContext = await browser.newContext({ viewport: { width: 1440, height: 1000 }, ...(recordFinance ? { recordVideo: { dir: 'reports/browser', size: { width: 1440, height: 1000 } } } : {}) }), finance = await financeContext.newPage();
  await finance.goto('http://127.0.0.1:17788/workspace'); await finance.getByLabel('Locally provisioned access token').fill(setup.credentials.acme['finance-reviewer']); await finance.getByRole('button', { name: 'Connect to workspace' }).click(); await finance.locator('#view-audit').waitFor({ state: 'visible' });
  check('finance-cannot-open-protected-actions', await finance.getByRole('button', { name: 'Actions', exact: true }).count() === 0);
+ check('finance-cannot-open-unauthorized-coverage', await finance.getByRole('button', { name: 'Coverage', exact: true }).count() === 0);
  check('finance-only-authorized-projection', JSON.stringify(await finance.locator('#audit-view option').evaluateAll(options => options.map(option => option.value))) === JSON.stringify(['', 'finance']));
+ if (recordFinance) await finance.waitForTimeout(1000);
  await finance.getByLabel('Export scope').selectOption('finance'); await finance.getByLabel('Authorised export purpose').fill('Browser test least-privilege export'); const auditDownload = finance.waitForEvent('download'); await finance.getByRole('button', { name: 'Download signed audit bundle' }).click(); check('audit-projection-download', (await auditDownload).suggestedFilename().includes('finance'));
- await finance.screenshot({ path: 'reports/browser/finance-audit.png', fullPage: true }); await financeContext.close();
+ await finance.screenshot({ path: 'reports/browser/finance-audit.png', fullPage: true });
+ if (recordFinance) await finance.waitForTimeout(1500);
+ const financeVideo = finance.video(); await financeContext.close();
+ if (financeVideo) { const original = await financeVideo.path(); await financeVideo.saveAs('reports/browser/finance-audit-verified.webm'); rmSync(original); }
  const missing = await page.evaluate(() => [...document.querySelectorAll('input,textarea,select')].filter(el => !el.labels?.length).map(el => el.id)); check('all-controls-have-labels', missing.length === 0);
  check('reduced-motion-honored', await page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior === 'auto'));
  await context.setOffline(true); await page.getByRole('button', { name: 'Actions', exact: true }).click(); await page.getByRole('alert').waitFor(); check('offline-error-visible', await page.locator('#notice').isVisible()); await context.setOffline(false);

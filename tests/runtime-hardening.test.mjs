@@ -13,6 +13,7 @@ function serviceGate(h, maxEntries = 8, handler = payload => ({ payload })) {
   const capability = h.f.runtime.issue(h.p(), runtimeInput({ action: 'service.connect', resource: 'erp-service', destination: 'erp-service', columns: [], row_ids: [] }));
   const audit = h.f.keys('acme').audit;
   const gate = new LocalNetworkGate({ tenant: 'acme', gate: h.f.config.gate_id, publicKeys: h.f.executionPublic('acme'), configurationKeys: h.f.identities('acme'), revocationKeys: { [audit.key_id]: { public_key: audit.public_key } }, clock: h.now, maxEntries, policyDigest: capability.payload.policy_digest, snapshot: h.setup.config.tenants.acme.runtime_snapshot });
+  gate.reportEndpointHealth(signed({ tenant_id: 'acme', gate_id: h.f.config.gate_id, device_id: 'operator-device', reported_at: h.now(), expires_at: h.now() + 5000, status: 'HEALTHY', nonce: 'runtime-health-1' }, h.setup.deviceKeys.acme, 'endpoint-health'));
   gate.register('erp-service', handler); gate.importCapability(capability);
   const request = { capability_id: capability.payload.capability_id, tenant_id: 'acme', subject_id: 'operator', device_id: 'operator-device', destination: 'erp-service', protocol: 'https', port: 443, request_id: 'runtime-hardening-1' };
   return { gate, capability, request };

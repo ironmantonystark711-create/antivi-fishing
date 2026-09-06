@@ -7,6 +7,7 @@ test('NFR-TST-001 TRACE-001: ledger enumerates the SRS, not historical completio
   const rows = enumerateRequirements(readFileSync(new URL('../spec/Invariant_Fabric_SRS_and_System_Architecture.md', import.meta.url), 'utf8'));
   assert.equal(rows.filter(r => r.numbered).length, 211);
   assert.equal(rows.filter(r => r.id.startsWith('FAIL-')).length, 10);
+  for (const [prefix, count] of [['TB-', 7], ['UC-', 12], ['OBJ-', 7], ['IFC-', 12], ['ERR-', 9], ['VFY-', 6], ['REL-', 6], ['DSN-', 7]]) assert.equal(rows.filter(r => r.id.startsWith(prefix)).length, count, prefix);
   assert.ok(rows.some(r => r.id === 'TRACE-001'));
   assert.ok(rows.every(r => r.requirement && r.acceptance && r.line > 0));
   assert.throws(() => enumerateRequirements('| ACT-001 | One | Two |\n| ACT-001 | Duplicate | Three |'));

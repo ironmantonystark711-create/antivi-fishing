@@ -9,6 +9,7 @@ import { canonical } from '../src/canonical.mjs';
 function network(h) {
  const cap = h.f.runtime.issue(h.p(), runtimeInput({ action: 'service.connect', resource: 'erp-service', destination: 'erp-service', columns: [], row_ids: [] }));
  const gate = new LocalNetworkGate({ tenant: 'acme', gate: h.f.config.gate_id, publicKeys: h.f.executionPublic('acme'), configurationKeys: h.f.identities('acme'), revocationKeys: { [h.f.keys('acme').audit.key_id]: { public_key: h.f.keys('acme').audit.public_key } }, clock: h.now, maxEntries: 2, policyDigest: cap.payload.policy_digest, snapshot: h.setup.config.tenants.acme.runtime_snapshot });
+ gate.reportEndpointHealth(signed({ tenant_id: 'acme', gate_id: h.f.config.gate_id, device_id: 'operator-device', reported_at: h.now(), expires_at: h.now() + 5000, status: 'HEALTHY', nonce: 'network-health-1' }, h.setup.deviceKeys.acme, 'endpoint-health'));
  let delivered = 0; gate.register('erp-service', p => { delivered++; return { received: p }; }); gate.importCapability(cap);
  const request = { capability_id: cap.payload.capability_id, tenant_id: 'acme', subject_id: 'operator', device_id: 'operator-device', destination: 'erp-service', protocol: 'https', port: 443, request_id: 'request-1' };
  return { gate, cap, request, delivered: () => delivered };

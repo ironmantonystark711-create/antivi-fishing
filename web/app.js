@@ -15,6 +15,11 @@ export function formatQuantity(c) { if (c.action.type === 'finance.payment.first
 export function auditOptions(roles) {
   return [['full', 'Full signed chain', ['auditor', 'security']], ['finance', 'Finance: workflow metadata', ['audit_finance']], ['security', 'Security: incident metadata', ['audit_security']], ['privacy', 'Privacy: retention metadata', ['audit_privacy']], ['technical', 'Technical: integrity digests', ['audit_technical']]].filter(([, , allowed]) => roles.some(role => allowed.includes(role))).map(([value, label]) => ({ value, label }));
 }
+export function workspaceAccess(roles) {
+  const can = (...allowed) => roles.some(role => allowed.includes(role));
+  const actions = can('operator', 'approver', 'custodian', 'security', 'policy_admin');
+  return { batches: actions, actions, propose: can('operator'), coverage: actions || can('auditor'), policy: can('policy_admin', 'security'), runtime: can('operator'), audit: auditOptions(roles).length > 0 };
+}
 
 if (typeof document !== 'undefined') {
   const $ = id => document.getElementById(id);
@@ -77,7 +82,7 @@ if (typeof document !== 'undefined') {
     state.schemas = await api('/v1/schemas'); $('action-type').replaceChildren(new Option('Choose action type', '')); for (const s of state.schemas.filter(s => s.type.startsWith('finance.'))) $('action-type').append(new Option(s.type, s.type));
     const canActions = state.me.roles.some(r => ['operator', 'approver', 'custodian', 'security', 'policy_admin'].includes(r));
     const projections = auditOptions(state.me.roles);
-    const access = { batches: canActions, actions: canActions, propose: state.me.roles.includes('operator'), coverage: true, policy: state.me.roles.some(r => ['policy_admin', 'security'].includes(r)), runtime: state.me.roles.includes('operator'), audit: projections.length > 0 };
+    const access = workspaceAccess(state.me.roles);
     $('audit-view').replaceChildren(new Option('Choose an authorised projection', ''));
     for (const { value, label } of projections) $('audit-view').append(new Option(label, value));
     for (const el of $('batch-form').elements) el.disabled = !state.me.roles.some(r => ['operator', 'policy_admin'].includes(r));

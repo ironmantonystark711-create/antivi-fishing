@@ -9,8 +9,8 @@ export class Store {
   constructor(path, tenantKeys, auditKeys) {
     mkdirSync(dirname(path), { recursive: true, mode: 0o700 });
     this.db = new DatabaseSync(path); chmodSync(path, 0o600);
-    this.tenantKeys = tenantKeys; this.auditKeys = auditKeys; this.recordCache = new Map(); this.statementCache = new Map();
-    this.db.exec('PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL; PRAGMA foreign_keys=ON; PRAGMA busy_timeout=5000;');
+    this.tenantKeys = tenantKeys; this.auditKeys = auditKeys; this.recordCache = new Map(); this.statementCache = new Map(); this.pendingSecureErase = false; this.lastSecureErase = null;
+    this.db.exec('PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL; PRAGMA secure_delete=ON; PRAGMA foreign_keys=ON; PRAGMA busy_timeout=5000;');
     const version = this.statement('PRAGMA user_version').get().user_version;
     requireThat(version <= 1, 'INV-503-STORAGE', 'Database schema is newer than this application', 503);
     this.db.exec(`
@@ -34,12 +34,20 @@ export class Store {
   statement(sql) { if (!this.statementCache.has(sql)) { if (this.statementCache.size >= 128) this.statementCache.delete(this.statementCache.keys().next().value); this.statementCache.set(sql, this.db.prepare(sql)); } return this.statementCache.get(sql); }
   close() { this.recordCache.clear(); this.statementCache.clear(); this.db.close(); }
   tx(fn) {
+    let committed = false;
     this.db.exec('BEGIN IMMEDIATE');
     try {
       const result = fn();
       if (result && typeof result.then === 'function') throw new Error('Transactions must be synchronous');
-      this.db.exec('COMMIT'); return result;
-    } catch (e) { this.db.exec('ROLLBACK'); throw e; }
+      this.db.exec('COMMIT'); committed = true;
+      if (this.pendingSecureErase) {
+        this.pendingSecureErase = false;
+        // SQLite's secure-delete overwrites freed cells; compaction drops prior WAL frames.
+        this.db.exec('PRAGMA wal_checkpoint(TRUNCATE); VACUUM; PRAGMA wal_checkpoint(TRUNCATE);');
+        this.lastSecureErase = { completed: true, method: 'SQLITE_SECURE_DELETE_WAL_CHECKPOINT_VACUUM' };
+      }
+      return result;
+    } catch (e) { this.pendingSecureErase = false; if (!committed) this.db.exec('ROLLBACK'); throw e; }
   }
   key(tenant) {
     requireThat(this.tenantKeys[tenant], 'INV-404-NOT-FOUND', 'Resource not found', 404);
@@ -66,7 +74,10 @@ export class Store {
   list(tenant, kind, limit = 500, offset = 0) {
     return this.statement('SELECT id,value FROM records WHERE tenant=? AND kind=? ORDER BY created DESC,id LIMIT ? OFFSET ?').all(tenant, kind, limit, offset).map(row => decrypt(row.value, this.key(tenant), `${tenant}/${kind}/${row.id}`));
   }
-  remove(tenant, kind, id) { this.statement('DELETE FROM records WHERE tenant=? AND kind=? AND id=?').run(tenant, kind, id); }
+  remove(tenant, kind, id) {
+    this.statement('DELETE FROM records WHERE tenant=? AND kind=? AND id=?').run(tenant, kind, id);
+    this.recordCache.delete(`${tenant}/${kind}/${id}`); this.pendingSecureErase = true;
+  }
   clock(now) {
     requireThat(Number.isSafeInteger(now) && now > 0, 'INV-503-TIME', 'Clock unavailable', 503);
     const row = this.statement('SELECT last FROM clock WHERE id=1').get();

@@ -5,6 +5,10 @@
       "passed": true
     },
     {
+      "name": "AUD-010 UX-010: role-scoped reviewers cannot navigate to unauthorized coverage or action data",
+      "passed": true
+    },
+    {
       "name": "ACT-001 ACT-003: stable field order and exact material binding",
       "passed": true
     },
@@ -77,7 +81,7 @@
       "passed": true
     },
     {
-      "name": "AIG-003 AIG-004 AIG-007: advisory extraction preserves spans/context and enforces narrow source, tenant and output authority",
+      "name": "AIG-003 AIG-004 AIG-007: advisory extraction preserves runner-bound provenance and enforces narrow source, tenant and output authority",
       "passed": true
     },
     {
@@ -89,11 +93,19 @@
       "passed": true
     },
     {
-      "name": "COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle",
+      "name": "COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: real isolated tests detect direct bypass and keep coverage UNKNOWN",
       "passed": true
     },
     {
-      "name": "COV-003 COV-004 COV-005 COV-009: assessor revocation and expiry withdraw coverage and close its interval",
+      "name": "COM-012: HTTP aggregate reconciliation verifies the journal without repeating target mutations",
+      "passed": true
+    },
+    {
+      "name": "COV-003 COV-010: isolated Fabric/target execution detects the direct target bypass and cannot claim enforcement",
+      "passed": true
+    },
+    {
+      "name": "COV-005: a protected transaction preserves the direct-bypass withdrawal without a coverage read",
       "passed": true
     },
     {
@@ -101,7 +113,11 @@
       "passed": true
     },
     {
-      "name": "AIG-010: only the configured local model can pass a complete versioned promotion report",
+      "name": "AIG-004 AIG-010: only an executable durable local regression can promote the configured advisory model",
+      "passed": true
+    },
+    {
+      "name": "CON-006: unregistered versions and post-floor retrograde registration fail closed",
       "passed": true
     },
     {
@@ -122,6 +138,14 @@
     },
     {
       "name": "DAT-012 AUD-006: customer retention instructions cap evidence retention and preserve legal holds",
+      "passed": true
+    },
+    {
+      "name": "DAT-005 POL-004 DAT-011: SHIELD creates a new reduced capsule that needs independent evidence and authority before execution",
+      "passed": true
+    },
+    {
+      "name": "DAT-012: local evidence erasure removes the prior ciphertext from live database and WAL storage",
       "passed": true
     },
     {
@@ -169,6 +193,14 @@
       "passed": true
     },
     {
+      "name": "COM-005 COM-012: a real process kill after batch reservation restarts into journal-only aggregate reconciliation",
+      "passed": true
+    },
+    {
+      "name": "COM-005 COM-012: response loss after an atomic commit reconciles the one target journal without redispatch",
+      "passed": true
+    },
+    {
       "name": "ACT-012 POL-009: policy activation cannot be hidden inside a batch",
       "passed": true
     },
@@ -189,11 +221,23 @@
       "passed": true
     },
     {
+      "name": "POL-008: a revoked verified policy artifact cannot remain promotion authority",
+      "passed": true
+    },
+    {
+      "name": "POL-008: a revoked build issuer invalidates a previously signed policy promotion",
+      "passed": true
+    },
+    {
       "name": "NFR-OPS-003 NFR-OPS-004: high-severity alerts enforce owner acknowledgement and incidents cannot skip recovery stages",
       "passed": true
     },
     {
       "name": "NFR-OPS-005: deployment must progress staging to canary to production and rollback retains current policy/key integrity",
+      "passed": true
+    },
+    {
+      "name": "NFR-OPS-001 NFR-OPS-005: unsigned or revoked artifacts cannot be staged or selected for rollback",
       "passed": true
     },
     {
@@ -253,11 +297,23 @@
       "passed": true
     },
     {
+      "name": "IDN-001 IDN-007 IDN-008: revoked identity keys, hardware policy, and lifecycle epochs withdraw active authority",
+      "passed": true
+    },
+    {
       "name": "KEY-004 KEY-005 KEY-007 KEY-008 KEY-010 KEY-012: threshold key rotation preserves audit verification and prevents suite downgrade",
       "passed": true
     },
     {
       "name": "KEY-005 KEY-008: same-suite renewal and multiple rotation restart restore the newest public key",
+      "passed": true
+    },
+    {
+      "name": "KEY-005 KEY-008 KEY-009 KEY-012: stale rotations or recoveries cannot supersede the current key",
+      "passed": true
+    },
+    {
+      "name": "KEY-005 KEY-006: migration sign and verification cutoffs are enforced from persisted key policy",
       "passed": true
     },
     {
@@ -405,6 +461,18 @@
       "passed": true
     },
     {
+      "name": "PER-007 KEY-011: existing sessions lose output immediately on attestor, firmware or device revocation",
+      "passed": true
+    },
+    {
+      "name": "PER-003 PER-006 PER-007: scope, purpose, clock rollback and expired sessions cannot release output",
+      "passed": true
+    },
+    {
+      "name": "PER-006 PER-009 PER-010: bounded fallback recovers capacity and rejects weak display keys or hardware claims",
+      "passed": true
+    },
+    {
       "name": "NFR-SEC-005 UX-010: preview permits only configured hosts and origin-bound secure sessions",
       "passed": true
     },
@@ -465,7 +533,7 @@
       "passed": true
     },
     {
-      "name": "DAT-005 POL-004: restricted export requires explicit new SHIELD proposal",
+      "name": "DAT-005 POL-004: restricted export requires a separately evidenced reduced-scope SHIELD successor",
       "passed": true
     },
     {
@@ -525,19 +593,75 @@
       "passed": true
     },
     {
+      "name": "NET-001 NET-003: loopback proxy mediates an actual HTTP request and blocks non-enrolled paths",
+      "passed": true
+    },
+    {
+      "name": "RUN-004: Fabric revocation is durably fed and acknowledged by a local gate",
+      "passed": true
+    },
+    {
+      "name": "RUN-004: a restarted gate recovers the durable feed, rejects invalid envelopes, and fails closed for stale entries",
+      "passed": true
+    },
+    {
+      "name": "RUN-002: service capability consumption rejects a changed resource state",
+      "passed": true
+    },
+    {
+      "name": "RUN-005 NET-005 NET-006: configured constrained remediation is the only non-fail-closed infrastructure behavior",
+      "passed": true
+    },
+    {
+      "name": "RUN-008: bounded revocation state withdraws the gate rather than evicting security state",
+      "passed": true
+    },
+    {
+      "name": "RUN-006: primary runtime enforcement exposes bounded reason-coded counters without payloads",
+      "passed": true
+    },
+    {
+      "name": "NET-005 NET-006 NET-010: signed endpoint-health expiry and agent-loss hooks quarantine, report duration, and recover only on fresh proof",
+      "passed": true
+    },
+    {
+      "name": "ACT-002: every action schema rejects all missing capsule, actor, action, state and requested fields",
+      "passed": true
+    },
+    {
+      "name": "ACT-008: all schemas reject missing, unknown or substituted identifiers and digests",
+      "passed": true
+    },
+    {
+      "name": "ACT-002 ACT-011: the gate supplies tenant and collision-resistant capsule identity, never caller overrides",
+      "passed": true
+    },
+    {
+      "name": "IDN-005 IDN-008 IDN-009: reset invalidates bearer and cookie credentials; independent custodians reissue one short-lived credential",
+      "passed": true
+    },
+    {
+      "name": "IDN-001 IDN-007 IDN-008: credential reissue rejects an unattested custodian device",
+      "passed": true
+    },
+    {
       "name": "NFR-SEC-001 NFR-PERF-005: aborted and oversized clients cannot crash the HTTP gate",
+      "passed": true
+    },
+    {
+      "name": "NFR-SEC-001: repeated oversized aborts drain streams without an asynchronous transport failure after request completion",
       "passed": true
     }
   ],
-  "total": 132,
-  "passed": 132,
+  "total": 163,
+  "passed": 163,
   "failed": 0,
   "skipped": 0,
   "cancelled": 0,
   "todo": 0,
-  "source_revision": "ed7136c6853901e2643a3c24083593390d4f685e",
-  "source_fingerprint": "17f1ab2dd974be473e3e9fbbe2923468bd8fe1f079c4d2e4653a835acb03ea33",
-  "command": "node --test --test-reporter=tap --test-concurrency=1 tests/audit-ui.test.mjs tests/canonical.test.mjs tests/completion-evidence.test.mjs tests/completion-security.test.mjs tests/coverage-advisory-hardening.test.mjs tests/data-audit-hardening.test.mjs tests/extended-security.test.mjs tests/governance-hardening.test.mjs tests/http-concurrency-ui.test.mjs tests/key-identity-hardening.test.mjs tests/lifecycle.test.mjs tests/network-perception.test.mjs tests/preview-origin.test.mjs tests/runtime-audit.test.mjs tests/runtime-hardening.test.mjs tests/transport-abort.test.mjs",
+  "source_revision": "a2d88ac3bfe0f8837e38bf2d1441ae5f568fbfef",
+  "source_fingerprint": "a428136fe383a9d7f3f24eabfdfaba2eea7f14a7baef1c9e3de147e6409136c9",
+  "command": "node --test --test-reporter=tap --test-concurrency=1 tests/audit-ui.test.mjs tests/canonical.test.mjs tests/completion-evidence.test.mjs tests/completion-security.test.mjs tests/composition-http.test.mjs tests/coverage-advisory-hardening.test.mjs tests/data-audit-hardening.test.mjs tests/extended-security.test.mjs tests/governance-hardening.test.mjs tests/http-concurrency-ui.test.mjs tests/key-identity-hardening.test.mjs tests/lifecycle.test.mjs tests/network-perception.test.mjs tests/perception-lifecycle.test.mjs tests/preview-origin.test.mjs tests/runtime-audit.test.mjs tests/runtime-hardening.test.mjs tests/runtime-network-proxy.test.mjs tests/schema-contract.test.mjs tests/session-lifecycle.test.mjs tests/transport-abort.test.mjs",
   "exit_code": 0,
   "stderr": "",
   "environment": {
@@ -545,6 +669,6 @@
     "platform": "linux",
     "arch": "x64"
   },
-  "finished_at": "2026-09-06T05:06:07.654Z",
+  "finished_at": "2026-09-06T05:44:36.682Z",
   "source_unchanged": true
 }
