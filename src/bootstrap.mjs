@@ -2,7 +2,7 @@ import { mkdirSync, writeFileSync, existsSync, chmodSync, readFileSync } from 'n
 import { join, resolve } from 'node:path';
 import { randomBytes } from 'node:crypto';
 import { generateKey, signed } from './crypto.mjs';
-import { hashBytes, canonical } from './canonical.mjs';
+import { hashBytes, canonical, parseStrict } from './canonical.mjs';
 import { defaultPolicy } from './policy.mjs';
 import { requireThat } from './errors.mjs';
 import { Fabric } from './fabric.mjs';
@@ -55,4 +55,4 @@ export function seedSyntheticResources(fabric, tenants) {
     fabric.target.seed(tenant, 'dataset-1', { columns: ['id', 'name', 'region', 'passport'], classification: 'internal', jurisdiction: 'EU', rows: [{ id: 'row-1', name: 'Synthetic Ada', region: 'EU', passport: 'SYNTHETIC-NOT-REAL-1' }, { id: 'row-2', name: 'Synthetic Lin', region: 'EU', passport: 'SYNTHETIC-NOT-REAL-2' }, { id: 'row-3', name: 'Synthetic Sam', region: 'EU', passport: 'SYNTHETIC-NOT-REAL-3' }] });
   }
 }
-export function loadConfiguration(directory) { return JSON.parse(readFileSync(join(resolve(directory), 'config.json'), 'utf8')); }
+export function loadConfiguration(directory) { return parseStrict(readFileSync(join(resolve(directory), 'config.json'), 'utf8')); }

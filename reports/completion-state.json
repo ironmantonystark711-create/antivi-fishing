@@ -1,10 +1,10 @@
 {
-  "baseline_sha": "15471290ff4bded90b4d7bb434a7635be0954045",
+  "baseline_sha": "ac7812eccee0c86ebfe70f7ad09252e42162ac17",
   "source_sha256": "64dd0b013feb8455906342cb6df1ca8fde6a0717a35b91b3e4c968e59320b3a1",
   "total_requirements": 211,
-  "VERIFIED": 4,
+  "VERIFIED": 5,
   "PARTIAL": 110,
-  "NOT_IMPLEMENTED": 97,
+  "NOT_IMPLEMENTED": 96,
   "BLOCKED_EXTERNAL": 0,
   "failing_tests": [],
   "baseline_tests": {
@@ -1247,6 +1247,10 @@
         {
           "file": "tests/runtime-audit.test.mjs",
           "declaration": "test('RUN-003: stale configured device health prevents renewal', t => { const h = fixture(t); h.advance(86400001); assert.throws(() => h.f.runtime.issue(h.p(), runtimeInput()), hasCode('INV-403-HEALTH')); });"
+        },
+        {
+          "file": "tests/runtime-integrity.test.mjs",
+          "declaration": "test('RUN-010 RUN-003: expiry, revoked custodian, duplicate signer and stale process withdraw local authority', t => {"
         }
       ],
       "verification_evidence": [],
@@ -1359,17 +1363,52 @@
       "requirement": "Every runtime gate SHALL support a signed configuration snapshot and local integrity check.",
       "minimum_acceptance": "Unauthorised local configuration change is detected and gate privileges are withdrawn.",
       "source_line": 289,
-      "implementation": [],
+      "implementation": [
+        "src/runtime-config.mjs",
+        "src/bootstrap.mjs",
+        "src/runtime.mjs",
+        "src/store.mjs"
+      ],
       "tests": [
         {
           "file": "tests/completion-security.test.mjs",
           "declaration": "test('RUN-010: signed startup, tampering withdrawal, quorum reload and downgrade rejection', t => {"
+        },
+        {
+          "file": "tests/runtime-integrity.test.mjs",
+          "declaration": "test('RUN-010: restart cannot roll back signed configuration or rebind an accepted version', t => {"
+        },
+        {
+          "file": "tests/runtime-integrity.test.mjs",
+          "declaration": "test('RUN-010 RUN-003: expiry, revoked custodian, duplicate signer and stale process withdraw local authority', t => {"
+        },
+        {
+          "file": "tests/runtime-integrity.test.mjs",
+          "declaration": "test('RUN-010 NFR-SEC-006: duplicate JSON configuration keys are rejected at startup', t => {"
         }
       ],
-      "verification_evidence": [],
-      "status": "PARTIAL",
+      "verification_evidence": [
+        {
+          "command": "node --test --test-reporter=junit tests/runtime-integrity.test.mjs",
+          "result_file": "reports/evidence/runtime-integrity.xml",
+          "result_sha256": "270c0a3a4375b8e4dceaa2421132b02e84cf2671288b3e0b695463acd59f5b11",
+          "passing_test_names": [
+            "RUN-010: restart cannot roll back signed configuration or rebind an accepted version",
+            "RUN-010 RUN-003: expiry, revoked custodian, duplicate signer and stale process withdraw local authority",
+            "RUN-010 NFR-SEC-006: duplicate JSON configuration keys are rejected at startup"
+          ],
+          "source_hashes": {
+            "src/runtime-config.mjs": "49db2c0ea6697995ebb9551c834ce62cefb3e209a2cd24d8e9bee93471c44373",
+            "src/bootstrap.mjs": "46e621d6616a967adcfa62444734198392be23ed963d084a23f9e6df8e82a015",
+            "src/runtime.mjs": "589b472a7723c2a1e687e57d8693d8d4224ffeea76656122448cdad9bee695d1",
+            "src/store.mjs": "4745d84dcfde76f030b9e4c4ce348fd7c467af25e1b6d917efc2fcc4ec4a78be",
+            "tests/runtime-integrity.test.mjs": "b66a92e0fce2fd53a3b717cc0e5d49e2734597c7445d3fba7d7ae491552fb499"
+          }
+        }
+      ],
+      "status": "VERIFIED",
       "blocker_reason": null,
-      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+      "remaining_work": null
     },
     {
       "id": "DAT-001",
@@ -2898,9 +2937,14 @@
       "minimum_acceptance": "Configuration inventory and scanner results.",
       "source_line": 439,
       "implementation": [],
-      "tests": [],
+      "tests": [
+        {
+          "file": "tests/runtime-integrity.test.mjs",
+          "declaration": "test('RUN-010 NFR-SEC-006: duplicate JSON configuration keys are rejected at startup', t => {"
+        }
+      ],
       "verification_evidence": [],
-      "status": "NOT_IMPLEMENTED",
+      "status": "PARTIAL",
       "blocker_reason": null,
       "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
     },

@@ -96,5 +96,35 @@
         }
       }
     ]
+  },
+  "RUN-010": {
+    "implementation": [
+      "src/runtime-config.mjs",
+      "src/bootstrap.mjs",
+      "src/runtime.mjs",
+      "src/store.mjs"
+    ],
+    "status": "VERIFIED",
+    "blocker_reason": null,
+    "remaining_work": null,
+    "verification_evidence": [
+      {
+        "command": "node --test --test-reporter=junit tests/runtime-integrity.test.mjs",
+        "result_file": "reports/evidence/runtime-integrity.xml",
+        "result_sha256": "270c0a3a4375b8e4dceaa2421132b02e84cf2671288b3e0b695463acd59f5b11",
+        "passing_test_names": [
+          "RUN-010: restart cannot roll back signed configuration or rebind an accepted version",
+          "RUN-010 RUN-003: expiry, revoked custodian, duplicate signer and stale process withdraw local authority",
+          "RUN-010 NFR-SEC-006: duplicate JSON configuration keys are rejected at startup"
+        ],
+        "source_hashes": {
+          "src/runtime-config.mjs": "49db2c0ea6697995ebb9551c834ce62cefb3e209a2cd24d8e9bee93471c44373",
+          "src/bootstrap.mjs": "46e621d6616a967adcfa62444734198392be23ed963d084a23f9e6df8e82a015",
+          "src/runtime.mjs": "589b472a7723c2a1e687e57d8693d8d4224ffeea76656122448cdad9bee695d1",
+          "src/store.mjs": "4745d84dcfde76f030b9e4c4ce348fd7c467af25e1b6d917efc2fcc4ec4a78be",
+          "tests/runtime-integrity.test.mjs": "b66a92e0fce2fd53a3b717cc0e5d49e2734597c7445d3fba7d7ae491552fb499"
+        }
+      }
+    ]
   }
 }

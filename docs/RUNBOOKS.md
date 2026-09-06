@@ -37,3 +37,17 @@ A detected backward clock movement stops security mutations with `INV-503-TIME`.
 Verify archive checksums, the complete test suite and machine-readable release gate. Install to a new versioned directory, preserve the existing application version and data, and test against a restored synthetic copy before traffic changes. Do not run different incompatible binaries against live state. Current schema version is 1; the program refuses a newer schema. No destructive migration exists. Do not claim safe rollback across future migrations without an independently tested plan.
 
 Before production change, establish the exact target, recovery owner and rollback method, then build, migrate non-destructively, restart only the assigned service, verify health/logs and run an authorised critical flow. Those live steps could not be executed without an assigned customer environment.
+
+### Signed runtime snapshot renewal and rollback rejection
+
+Renew `/v1/runtime/configuration` before the snapshot expires, advancing its
+version and collecting at least three distinct, non-revoked customer custodians
+from three independent failure domains. Snapshot validity is bounded to seven
+days. A durable database high-water mark binds each accepted version to its
+exact digest, including across restart and concurrent processes. An older
+process withdraws authority after another process accepts a higher version.
+Reload all gates with the newly accepted snapshot; do not restore an older
+configuration file over newer gate state. A crash between configuration-file
+replacement and state acceptance fails closed and the signed file is rechecked
+on restart. Rollback of the entire host *and* its database requires an external
+witness/hardware monotonic anchor; local storage cannot attest its own rollback.
