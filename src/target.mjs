@@ -3,6 +3,7 @@ import { dirname } from 'node:path';
 import { mkdirSync, chmodSync } from 'node:fs';
 import { digest, clone } from './canonical.mjs';
 import { encrypt, decrypt } from './crypto.mjs';
+import { SCHEMAS } from './schema.mjs';
 import { requireThat } from './errors.mjs';
 
 // Controlled target simulator. It NEVER talks to a real bank, ERP, OS, or cloud.
@@ -83,6 +84,6 @@ export class SimulatedTarget {
     return rows.map(row => Object.fromEntries(columns.map(c => [c, row[c] ?? null])));
   }
   manifest() {
-    return { connector_id: 'controlled-sqlite-target', version: '1.0.0', environment: 'simulation', production_supported: false, credentials: 'customer-local software encryption key; no external target credentials', idempotency: 'durable unique transaction id; mutating timeout never retried automatically', permissions: ['local simulated resource read', 'local simulated resource mutation'], limitations: ['No bank/ERP API integration', 'No target-wide bypass guarantee', 'No hardware-backed credential isolation', 'No actual network/cloud/identity/secret/backup mutation'], upgrade_rule: 'coverage becomes UNKNOWN until compatibility and bypass tests pass' };
+    return { connector_id: 'controlled-sqlite-target', version: '1.1.0', supported_actions: Object.keys(SCHEMAS), read_permissions: ['local-resource-read'], write_permissions: ['exact-local-mutation'], admin_permissions: [], atomic_batch: true, environment: 'simulation', production_supported: false, credentials: 'customer-local software encryption key; no external target credentials', idempotency: 'durable unique transaction id; mutating timeout never retried automatically', permissions: ['local simulated resource read', 'local simulated resource mutation'], limitations: ['No bank/ERP API integration', 'No target-wide bypass guarantee', 'No hardware-backed credential isolation', 'No actual network/cloud/identity/secret/backup mutation'], upgrade_rule: 'coverage becomes UNKNOWN until compatibility and bypass tests pass' };
   }
 }

@@ -1,5 +1,5 @@
 {
-  "source_revision": "10e9ce998df91dfada013c27dbcce360293e89c2",
+  "source_revision": "f1c2de4291db66f644ffe3c965f0c1d98324f854",
   "source_hashes": {
     "src/advisory.mjs": "0c32f6a215b88bd982937355bb4366ab65028789f4bd35fab4929bc3c9146b32",
     "src/audit-views.mjs": "f9acd573a8eead6087ef0eb4c601cd04d9c4a446810ed80946bc7fda665ef63a",
@@ -11,9 +11,9 @@
     "src/crypto.mjs": "e808ec0323ae8810b3b4dcbd4da0807d2de4f9547aaafb6007fba4d87f2b2a78",
     "src/emergency.mjs": "f359ad36d7066413e0fe09743287fa6c610e21386389d5262e3c80f7b3939789",
     "src/errors.mjs": "e900a157bf23fc341185206e00c3c0d9746d98fe9ff64c25ef65cdf1b687dcbb",
-    "src/fabric.mjs": "1d12f93e073fa5c2968081a71686ab32f06efe2cff9ea723f9438ffba4893dd6",
+    "src/fabric.mjs": "06fe31bd5db1699ff5cfb454a244e8daca92aa597dbec579e242cd5856410201",
     "src/key-governance.mjs": "383b83e59886954e24a829c852c612c40d1284e13b3a2e03b00b0436f80d1253",
-    "src/lifecycle.mjs": "cef68fb3b571ef627964ed12f45b3b5e77c6e47dc68fdfdd941b70d0fa192eaa",
+    "src/lifecycle.mjs": "d4680acc70c19ca25985c425e02e68c93b1ec34aacb3eedc61860f7e19297189",
     "src/network.mjs": "2fd43f1921304550ce194302ac1f7c6945e655a9a5353561e0bbe1bb123b9584",
     "src/output.mjs": "b5cd60b714e9654627992d827958c52c7d45904e6db7312f91934108847010ca",
     "src/perception.mjs": "1f543fd7f078c4e962952a8958ad55088276ed60ebbf7a7ba0b6226a55102b0e",
@@ -22,10 +22,10 @@
     "src/runtime-config.mjs": "49db2c0ea6697995ebb9551c834ce62cefb3e209a2cd24d8e9bee93471c44373",
     "src/runtime.mjs": "589b472a7723c2a1e687e57d8693d8d4224ffeea76656122448cdad9bee695d1",
     "src/schema.mjs": "f25998733019c69d2c9b5e6a0ad69b4ea240dce75f6e513c192fcc61c412a9e2",
-    "src/server.mjs": "d336d697aa6e39d8f5bf01b014cbe9d450d0b4e9a960e5142101d79a3383f1b1",
+    "src/server.mjs": "f905e43f8a4f7ef3469336bce7d630d885ae0a68574371598fc847458f89c863",
     "src/store.mjs": "dedd6be74eb6925b59991b298dfb2e3dcb1f628474f32cb7da4bb036fe101bc2",
     "src/suites.mjs": "5f7876250d914e475d4f449e2676a971c404622fa063aeba321040a19ab2206e",
-    "src/target.mjs": "8fa29c7938b45d78eed615424967ecccdc91fe9386cae5a3eaa817e117ad4826",
+    "src/target.mjs": "7b2dad331d6db4a24d752e83649f0a8d09afe39748ce4e8a10e614c09a381040",
     "web/app.js": "5181dc52cd9b5f2306167a060e014f23264e2f4998c5282cad846b305be19275",
     "web/index.html": "569277b413e3b6fa58b9c2d687672c94e501b12d7be9d1100eae7046918c5779",
     "web/style.css": "38c561cd85c404dc9625f93c6216379777ea2ded8b0984ae27069ae2c35e67db",
@@ -33,6 +33,7 @@
     "tests/atomic-batch.test.mjs": "4c037a0513fdd0376e4494daa5f1e6f23fdc78368d076f64bd5b3b7596de67e9",
     "tests/canonical.test.mjs": "1caae6ca6c72c66ea363fc89b42a4d3de8e2f0f990f673aabebb50c63eae6bcb",
     "tests/completion-security.test.mjs": "0439d65482591c45546e77d06d085e332f9ea321c1f1fd1529e6782532c5bc4e",
+    "tests/connector-lifecycle.test.mjs": "173b82a5f0f3c6c51f81504b735f746e1341139b7bc18f89f77b3d7ef4e8af14",
     "tests/coverage-lifecycle.test.mjs": "69e2d4bf9087b354231442822ca05bd7a2ae75394e8e17d663b141e5bd2c3a6d",
     "tests/crypto-agility.test.mjs": "533b96eeac2f81fd0da5c3bd51bfc0d53d7b701bf6f65a92cad0b078309e1d7d",
     "tests/extended-security.test.mjs": "bfdd6f456777290452e2ec06216135d7bc26d8ed7d89bf15888be47f58ef181c",
@@ -67,7 +68,7 @@
       ],
       "exit_code": 0,
       "result_file": "reports/evidence/source-check.txt",
-      "sha256": "87873ba2d25a1c0f3d9307564bc3a73ea8f1fdbed506dcfdd6beb833450d0084"
+      "sha256": "f162c1f6848561d0cfaee85f3c4911635095ea2d101da7b95b9d12827f6364b8"
     },
     {
       "command": [
@@ -78,6 +79,7 @@
         "tests/atomic-batch.test.mjs",
         "tests/canonical.test.mjs",
         "tests/completion-security.test.mjs",
+        "tests/connector-lifecycle.test.mjs",
         "tests/coverage-lifecycle.test.mjs",
         "tests/crypto-agility.test.mjs",
         "tests/extended-security.test.mjs",
@@ -90,7 +92,7 @@
       ],
       "exit_code": 0,
       "result_file": "reports/evidence/current-tests.xml",
-      "sha256": "11edbfbce326afa843869bb0444a4389c34b0e25c7ef3aa22015dd10498affe8"
+      "sha256": "da43cceccc438c387edfe220b8a9d9dac2eb833af4beb24f77bff871a22f5b5b"
     },
     {
       "command": [
@@ -103,7 +105,7 @@
       "sha256": "4b6d1b4757f0770b7cbe90b5d1c5560be4fc2911b56383c6c248c79121c56208"
     }
   ],
-  "passed": 120,
+  "passed": 123,
   "failed": 0,
   "failing_tests": [],
   "skipped": 0,

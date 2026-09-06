@@ -12,7 +12,7 @@ import { auditView } from './audit-views.mjs';
 import { AdvisoryPlane } from './advisory.mjs';
 import { digest, clone, canonical } from './canonical.mjs';
 import { signed, verifySigned } from './crypto.mjs';
-import { fields, text, identifier, integer, uniqueStrings, validateProposal } from './schema.mjs';
+import { fields, text, identifier, integer, uniqueStrings, validateProposal, SCHEMAS } from './schema.mjs';
 import { evaluatePolicy, validatePolicy, policyDiff } from './policy.mjs';
 import { declarePath, coverageManifest, CoverageLifecycle } from './coverage.mjs';
 import { requireThat, InvariantError } from './errors.mjs';
@@ -87,9 +87,19 @@ export class Fabric {
     const identity = Object.values(this.tenant(t).identities).find(x => x.subject_id === subject);
     requireThat(identity && identity.device_id === device && identity.health_expires_at > now, 'INV-403-HEALTH', 'Configured device health evidence expired or mismatched', 403);
   }
+  assertSupported(t, capsule) {
+    const schema = SCHEMAS[capsule.action.type], connector = this.target.manifest();
+    this.versions.check(t, 'schema', capsule.schema_id, String(schema.version));
+    this.versions.check(t, 'connector', connector.connector_id, connector.version);
+    requireThat(connector.supported_actions.includes(capsule.action.type), 'INV-410-VERSION', 'Connector does not support this action', 410);
+  }
+  connectorManifest(p) {
+    this.authorize(p, ['operator', 'security', 'auditor', 'policy_admin']);
+    return signed({ format: 'IF-CONNECTOR-MANIFEST-1', tenant_id: p.tenant_id, issued_at: this.clock(), manifest: this.target.manifest() }, this.keys(p.tenant_id).audit, 'connector-manifest');
+  }
   getCapsule(p, id) { this.authorize(p, ['operator', 'approver', 'custodian', 'security', 'policy_admin']); return this.store.must(p.tenant_id, 'capsule', identifier(id)); }
   propose(p, input, idempotencyKey) {
-    this.authorize(p, ['operator', 'workload', 'policy_admin']); validateProposal(input); this.versions.check(p.tenant_id, 'schema', input.schema_id, '1');
+    this.authorize(p, ['operator', 'workload', 'policy_admin']); validateProposal(input); this.assertSupported(p.tenant_id, input);
     requireThat(input.actor.subject_id === p.subject_id && input.actor.identity_class === this.identity(p).identity_class, 'INV-403-ACTOR', 'Actor must match authenticated identity', 403);
     return this.transaction(p, now => this.store.idempotent(p.tenant_id, 'propose', idempotencyKey, digest(input), () => {
       const policy = this.policy(p.tenant_id); this.assertHealthy(p.tenant_id, p.subject_id, input.actor.device_id, now);
@@ -188,6 +198,7 @@ export class Fabric {
     return this.transaction(p, now => {
       const t = p.tenant_id, r = this.store.must(t, 'capsule', id); this.ensureMutable(r);
       requireThat(!r.certificate_id, 'INV-409-REPLAY', 'Action already has a certificate', 409);
+      this.assertSupported(t, r.capsule);
       const decision = this.evaluation(t, r, now), policy = this.policy(t);
       requireThat(decision.decision === 'ALLOW', 'INV-412-EVIDENCE', 'Only ALLOW may receive an execution certificate', 412, decision);
       this.assertHealthy(t, r.capsule.actor.subject_id, r.capsule.actor.device_id, now);
@@ -208,6 +219,7 @@ export class Fabric {
       requireThat(cert.tenant_id === t && cert.target_gate_id === this.config.gate_id, 'INV-403-SCOPE', 'Certificate scope mismatch', 403);
       requireThat(!this.revoked(t, 'key', envelope.protected.key_id) && !this.revoked(t, 'certificate', cert.certificate_id) && cert.issued_at <= now && cert.expires_at > now, 'INV-401-CERTIFICATE', 'Certificate expired or revoked', 401);
       const stored = this.store.must(t, 'certificate', cert.certificate_id), record = this.store.must(t, 'capsule', cert.capsule_id);
+      this.assertSupported(t, record.capsule);
       requireThat(digest(stored.envelope) === digest(envelope), 'INV-401-CERTIFICATE', 'Certificate does not match issued authority', 401);
       requireThat(!stored.consumed && record.status === 'CERTIFIED', 'INV-409-REPLAY', 'Certificate already consumed or action cancelled', 409);
       requireThat(record.capsule_digest === cert.capsule_digest && this.graph(t, record).digest === cert.evidence_graph_digest && digest(this.policy(t)) === cert.policy_digest, 'INV-409-STATE', 'Action, evidence or policy changed', 409);

@@ -130,6 +130,7 @@ export function createServer(fabric, { port = 8080, host = '127.0.0.1', origin =
       if (path === '/v1/revocations' && req.method === 'POST') return send(201, fabric.revoke(p, await body(req)));
       if (path === '/v1/coverage' && req.method === 'GET') return send(200, fabric.coverage(p));
       if (path === '/v1/coverage' && req.method === 'POST') return send(201, fabric.declareCoverage(p, await body(req)));
+      if (path === '/v1/connectors/manifest' && req.method === 'GET') return send(200, fabric.connectorManifest(p));
       if (path === '/v1/connectors' && req.method === 'GET') return send(200, fabric.target.manifest());
       if (path === '/v1/policies/stage' && req.method === 'POST') return send(200, fabric.policyLifecycle.stage(p, await body(req)));
       if (path === '/v1/policies/rollback-candidate' && req.method === 'POST') { const input = await body(req); fields(input, ['version']); return send(200, fabric.policyLifecycle.rollbackCandidate(p, input.version)); }

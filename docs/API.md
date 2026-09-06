@@ -95,3 +95,14 @@ as a **new, forward-version proposal**. It does not restore old signatures,
 capabilities, revoked identities, devices or keys. It must complete simulation,
 staging and exact customer approvals again. `/v1/policies/simulate` remains
 non-mutating and can compare candidates without promoting them.
+
+### Connector compatibility lifecycle
+
+`GET /v1/connectors/manifest` returns the tenant-signed manifest; the original
+`GET /v1/connectors` response remains available for existing clients. Simulator
+1.1.0 declares supported actions, separate read/write scopes, no administrative
+scope, atomic-batch support, idempotency and explicit production limitations.
+The signed schema/connector lifecycle is rechecked at proposal, certificate
+issuance **and execution**, so a certificate cannot outlive support withdrawal.
+End-of-support cannot be postponed after publication to revive expired authority.
+Connector lifecycle changes withdraw corresponding coverage pending revalidation.
