@@ -1,5 +1,5 @@
 {
-  "source_revision": "f42b589594363888e65249793138c305a3e75990",
+  "source_revision": "6213aa37474ea81540ef87e563bbc59efea8d94a",
   "source_hashes": {
     "src/advisory.mjs": "0c32f6a215b88bd982937355bb4366ab65028789f4bd35fab4929bc3c9146b32",
     "src/audit-views.mjs": "f9acd573a8eead6087ef0eb4c601cd04d9c4a446810ed80946bc7fda665ef63a",
@@ -43,7 +43,7 @@
     "tests/runtime-audit.test.mjs": "920094272c82e2de2a11b9942de32e22261f5d1f93a4d74236a70e84177aa23a",
     "tests/runtime-integrity.test.mjs": "b66a92e0fce2fd53a3b717cc0e5d49e2734597c7445d3fba7d7ae491552fb499",
     "scripts/benchmark.mjs": "cb1b51797a543d22f45c4e30012d2d89ae94653d230db59864a98d79ce46b652",
-    "scripts/browser-check.mjs": "a7e12a5ae12287dae3ab0758a335610d67be65c7a0c10d5bf2bff65e381e2d34",
+    "scripts/browser-check.mjs": "fd39e1d5cead8ce00a23f403ceb2466c602424043ff151b52c9ea651c63abc09",
     "scripts/canonical-vectors.py": "bf9b7e46ec4f206c18a0140fb318a923c4b736d1284d9f082023977bbb22a340",
     "scripts/check.mjs": "a394a08c1681e1dfb64edd1efa658a235a93fa4e83142fe09414c479c6fee5c4",
     "scripts/completion-ledger.py": "bfa4c41e4545340e996ca78f3ca7545a809962924dc42d33ff8e419c6449230d",
@@ -87,7 +87,7 @@
       ],
       "exit_code": 0,
       "result_file": "reports/evidence/current-tests.xml",
-      "sha256": "f64a88c7178693e69c46c83b34d3970e3458f3862ea9929b2bb9de55baaf5feb"
+      "sha256": "bbe44608dee61281287e6484116c2f2524ab57444ea9d54052b0552d8f7758b4"
     },
     {
       "command": [
