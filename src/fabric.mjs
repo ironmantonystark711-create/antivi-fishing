@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { KeyGovernance } from './key-governance.mjs';
 import { Store } from './store.mjs';
 import { SimulatedTarget } from './target.mjs';
 import { RuntimeGate } from './runtime.mjs';
@@ -23,6 +24,11 @@ export class Fabric {
     const encryption = {}, audit = {};
     for (const [tenant, t] of Object.entries(config.tenants)) { encryption[tenant] = t.encryption_key; audit[tenant] = t.keys.audit; }
     this.store = new Store(join(directory, 'fabric.db'), encryption, audit);
+    for (const [tenant, t] of Object.entries(config.tenants)) {
+      for (const purpose of ['execution', 'audit']) { const active = this.store.get(tenant, 'active-key', purpose); if (active) t.keys[purpose] = active; }
+      this.store.auditKeys[tenant] = t.keys.audit;
+    }
+    this.keyGovernance = new KeyGovernance(this);
     this.target = new SimulatedTarget(join(directory, 'target.db'), encryption); this.runtime = new RuntimeGate(this); this.runtimeIntegrity = new RuntimeIntegrity(this); this.compositions = new Compositions(this); this.emergencies = new EmergencyPolicies(this); this.coverageLifecycle = new CoverageLifecycle(this); this.versions = new VersionLifecycle(this); this.advisory = new AdvisoryPlane(this);
     try { for (const [tenant, t] of Object.entries(config.tenants)) {
       this.runtimeIntegrity.check(tenant);
@@ -45,7 +51,11 @@ export class Fabric {
   }
   close() { this.target.close(); this.store.close(); }
   tenant(t) { const row = this.config.tenants[t]; requireThat(row, 'INV-404-NOT-FOUND', 'Resource not found', 404); return row; }
-  keys(t) { return this.tenant(t).keys; }
+  keys(t) {
+    const keys = this.tenant(t).keys;
+    for (const purpose of ['execution', 'audit']) { const active = this.store.get(t, 'active-key', purpose); if (active) keys[purpose] = active; }
+    this.store.auditKeys[t] = keys.audit; return keys;
+  }
   executionPublic(t) { const key = this.keys(t).execution; return { [key.key_id]: { public_key: key.public_key } }; }
   identity(p) {
     const identity = Object.values(this.tenant(p.tenant_id).identities).find(x => x.subject_id === p.subject_id);

@@ -17,12 +17,14 @@ const bytes = v => new TextEncoder().encode(encode(v));
 async function hash(v) { return Buffer.from(await crypto.subtle.digest('SHA-256', bytes(v))).toString('hex'); }
 async function verify(envelope, keys, purpose) {
   check(Object.keys(envelope).sort().join() === 'payload,protected,signature', 'Invalid envelope');
-  const h = envelope.protected; check(Object.keys(h).sort().join() === 'key_id,profile,purpose,suite' && h.profile === 'IF-CJSON-1' && h.suite === 'Ed25519' && h.purpose === purpose, 'Bad context');
-  const source = keys[h.key_id]; check(source && !source.revoked, 'Untrusted key');
+  const h = envelope.protected; check(Object.keys(h).sort().join() === 'key_id,profile,purpose,suite' && h.profile === 'IF-CJSON-1' && ['Ed25519', 'ECDSA-P256-SHA256-v1'].includes(h.suite) && h.purpose === purpose, 'Bad context');
+  const source = Object.hasOwn(keys, h.key_id) ? keys[h.key_id] : null; check(source && !source.revoked, 'Untrusted key');
   check(/^[A-Za-z0-9_-]{86}$/.test(envelope.signature), 'Bad signature encoding');
   const raw = Buffer.from(source.public_key.replace(/-----[^-]+-----|\s/g, ''), 'base64');
-  const key = await crypto.subtle.importKey('spki', raw, { name: 'Ed25519' }, false, ['verify']);
-  check(await crypto.subtle.verify('Ed25519', key, Buffer.from(envelope.signature, 'base64url'), bytes({ protected: h, payload: envelope.payload })), 'Bad signature'); return envelope.payload;
+  const algorithm = h.suite === 'Ed25519' ? { name: 'Ed25519' } : { name: 'ECDSA', namedCurve: 'P-256', hash: 'SHA-256' };
+  check(Buffer.from(envelope.signature, 'base64url').toString('base64url') === envelope.signature, 'Noncanonical signature encoding');
+  const key = await crypto.subtle.importKey('spki', raw, algorithm, false, ['verify']);
+  check(await crypto.subtle.verify(algorithm, key, Buffer.from(envelope.signature, 'base64url'), bytes({ protected: h, payload: envelope.payload })), 'Bad signature'); return envelope.payload;
 }
 function noDuplicates(raw) {
   const stack = [];

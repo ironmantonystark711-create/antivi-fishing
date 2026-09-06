@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites>
+	<testcase name="KEY-005 COM-002: key algorithm, suite, signature encoding and verification cutoff cannot be confused" time="0.005489" classname="test" file="/tmp/antivi-fishing/tests/crypto-agility.test.mjs"/>
+	<testcase name="KEY-005 KEY-010 NFR-MNT-002: independent verifiers accept mixed-suite audit history and reject cross-suite tampering" time="0.230384" classname="test" file="/tmp/antivi-fishing/tests/crypto-agility.test.mjs"/>
+	<testcase name="KEY-005 KEY-008 KEY-010: customer-quorum suite rotation survives restart and preserves independently pinned audit history" time="0.110721" classname="test" file="/tmp/antivi-fishing/tests/crypto-agility.test.mjs"/>
+	<testcase name="KEY-005: execution suite rotation invalidates old live authority and a stale peer cannot mint with the retired key" time="0.089624" classname="test" file="/tmp/antivi-fishing/tests/crypto-agility.test.mjs"/>
+	<!-- tests 4 -->
+	<!-- suites 0 -->
+	<!-- pass 4 -->
+	<!-- fail 0 -->
+	<!-- cancelled 0 -->
+	<!-- skipped 0 -->
+	<!-- todo 0 -->
+	<!-- duration_ms 514.359503 -->
+</testsuites>

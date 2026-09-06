@@ -1,10 +1,14 @@
 import { generateKeyPairSync, createPrivateKey, createPublicKey, sign, verify, randomBytes, createCipheriv, createDecipheriv, timingSafeEqual } from 'node:crypto';
-import { canonical, digest } from './canonical.mjs';
+import { canonical, digest, clone } from './canonical.mjs';
 import { requireThat } from './errors.mjs';
 import { suite } from './suites.mjs';
 const privateCache = new WeakMap(), publicCache = new Map();
 function privateObject(key) { let cached = privateCache.get(key); if (!cached || cached.source !== key.private_key) { cached = { source: key.private_key, value: createPrivateKey(key.private_key) }; privateCache.set(key, cached); } return cached.value; }
 function publicObject(pem) { if (!publicCache.has(pem)) { if (publicCache.size >= 256) publicCache.delete(publicCache.keys().next().value); publicCache.set(pem, createPublicKey(pem)); } return publicCache.get(pem); }
+
+function requireSuiteKey(key, profile) {
+  requireThat(key.asymmetricKeyType === profile.key_type && (!profile.curve || key.asymmetricKeyDetails?.namedCurve === profile.curve), 'INV-401-SIGNATURE', 'Key does not match cryptographic suite', 401);
+}
 
 export function generateKey(suiteId = 'Ed25519') {
   const s = suite(suiteId, 'sign');
@@ -14,20 +18,22 @@ export function generateKey(suiteId = 'Ed25519') {
 }
 export function signed(payload, key, purpose, options = {}) {
   const s = suite(key.suite ?? 'Ed25519', 'sign', options.now ?? Date.now(), options.policy);
+  const privateKey = privateObject(key); requireSuiteKey(privateKey, s);
   const protectedHeader = { profile: 'IF-CJSON-1', suite: s.id, key_id: key.key_id, purpose };
   const message = Buffer.from(canonical({ protected: protectedHeader, payload }));
-  return { protected: protectedHeader, payload, signature: sign(s.digest, message, { key: privateObject(key), dsaEncoding: 'ieee-p1363' }).toString('base64url') };
+  return { protected: protectedHeader, payload: clone(payload), signature: sign(s.digest, message, { key: privateKey, dsaEncoding: 'ieee-p1363' }).toString('base64url') };
 }
-export function verifySigned(envelope, publicKeys, purpose) {
+export function verifySigned(envelope, publicKeys, purpose, options = {}) {
   requireThat(envelope && Object.keys(envelope).sort().join() === 'payload,protected,signature', 'INV-401-SIGNATURE', 'Invalid signed envelope', 401);
   const h = envelope.protected;
   requireThat(h && Object.keys(h).sort().join() === 'key_id,profile,purpose,suite' && h.profile === 'IF-CJSON-1' && h.purpose === purpose, 'INV-401-SIGNATURE', 'Unsupported signature context', 401);
-  const s = suite(h.suite);
+  const s = suite(h.suite, 'verify', options.now ?? Date.now(), options.policy);
   const key = Object.hasOwn(publicKeys, h.key_id) ? publicKeys[h.key_id] : null;
   requireThat(key && !key.revoked, 'INV-401-SIGNATURE', 'Signer unavailable', 401);
   requireThat(typeof envelope.signature === 'string' && /^[A-Za-z0-9_-]{86}$/.test(envelope.signature), 'INV-401-SIGNATURE', 'Invalid signature encoding', 401);
+  requireThat(Buffer.from(envelope.signature, 'base64url').toString('base64url') === envelope.signature, 'INV-401-SIGNATURE', 'Noncanonical signature encoding', 401);
   let ok = false;
-  try { ok = verify(s.digest, Buffer.from(canonical({ protected: h, payload: envelope.payload })), { key: publicObject(key.public_key), dsaEncoding: 'ieee-p1363' }, Buffer.from(envelope.signature, 'base64url')); } catch { ok = false; }
+  try { const publicKey = publicObject(key.public_key); requireSuiteKey(publicKey, s); ok = verify(s.digest, Buffer.from(canonical({ protected: h, payload: envelope.payload })), { key: publicKey, dsaEncoding: 'ieee-p1363' }, Buffer.from(envelope.signature, 'base64url')); } catch { ok = false; }
   requireThat(ok, 'INV-401-SIGNATURE', 'Signature verification failed', 401);
   return envelope.payload;
 }

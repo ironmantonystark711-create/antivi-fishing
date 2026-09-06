@@ -74,6 +74,7 @@ export class Store {
     this.statement('INSERT INTO clock VALUES(1,?) ON CONFLICT(id) DO UPDATE SET last=excluded.last').run(now);
   }
   audit(tenant, type, actor, reference, metadata, now) {
+    const active = this.get(tenant, 'active-key', 'audit'); if (active) this.auditKeys[tenant] = active;
     const last = this.statement('SELECT seq,hash FROM audit WHERE tenant=? ORDER BY seq DESC LIMIT 1').get(tenant);
     const entry = { tenant_id: tenant, sequence: (last?.seq ?? 0) + 1, previous: last?.hash ?? '0'.repeat(64), type, actor, reference, metadata, time: now };
     const hash = digest(entry), envelope = signed(entry, this.auditKeys[tenant], 'audit');
@@ -81,8 +82,10 @@ export class Store {
     return { hash, envelope };
   }
   auditExport(tenant) {
+    const active = this.get(tenant, 'active-key', 'audit'); if (active) this.auditKeys[tenant] = active;
     const rows = this.statement('SELECT hash,envelope FROM audit WHERE tenant=? ORDER BY seq').all(tenant).map(r => ({ hash: r.hash, envelope: JSON.parse(r.envelope) }));
-    const key = this.auditKeys[tenant], public_keys = { [key.key_id]: { public_key: key.public_key } };
+    const key = this.auditKeys[tenant], public_keys = Object.fromEntries(this.list(tenant, 'audit-public-key', 10000).map(k => [k.key_id, { public_key: k.public_key, suite: k.suite }]));
+    public_keys[key.key_id] = { public_key: key.public_key };
     const checkpoint = signed({ tenant_id: tenant, size: rows.length, head: rows.at(-1)?.hash ?? '0'.repeat(64) }, key, 'checkpoint');
     return { format: 'IF-AUDIT-1', public_keys, checkpoint, entries: rows };
   }

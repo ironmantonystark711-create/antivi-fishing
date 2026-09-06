@@ -61,3 +61,21 @@ leaves no target child mutated; a lost response marks all outcomes uncertain.
 never dispatches again. Shared-resource children and policy activation inside a
 batch are rejected because their state/transaction boundaries differ. Existing
 sequential-format compositions must be re-proposed rather than silently upgraded.
+
+### Customer-controlled key/suite rotation
+
+`POST /v1/keys/prepare` (security) accepts `purpose` (`execution` or `audit`),
+`suite` (the closed suite registry), and `not_before` (at least 60 seconds ahead).
+It returns the exact public `IF-KEY-ROTATION-1` statement, never private material.
+Three independent, non-revoked customer custodians sign it with purpose
+`key-rotation`. `POST /v1/keys/activate` accepts `rotation_id` and `signatures`.
+Activation is delayed, single-use, state/policy-bound, tenant-bound and audited.
+`GET /v1/keys/history` returns public transitions and customer signatures.
+
+New signing uses the new key after activation, including in existing peer
+processes. Old execution certificates must be re-authorised. Old audit signatures
+remain independently verifiable with previously pinned public keys and the
+customer-approved new public key. A retired signing suite cannot be restored;
+historical verification remains enabled. Node and independent WebCrypto audit
+verifiers support both Ed25519 and P-256. These are software key custody APIs,
+not a claim of HSM/MPC custody or post-quantum protection.
