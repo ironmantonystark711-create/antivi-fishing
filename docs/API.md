@@ -106,3 +106,14 @@ The signed schema/connector lifecycle is rechecked at proposal, certificate
 issuance **and execution**, so a certificate cannot outlive support withdrawal.
 End-of-support cannot be postponed after publication to revive expired authority.
 Connector lifecycle changes withdraw corresponding coverage pending revalidation.
+
+### Protected-display transport lifecycle
+
+The software `PerceptionBroker` checks live assessor/device revocation and trusted
+firmware measurements before every encrypted delivery, not only session opening.
+Measurement revocation invalidates existing sessions. Challenges and sessions are
+bounded and expire; content and selected fields are purpose/tenant/subject-bound.
+Real hardware-required policies still fail closed: lower-assurance software
+transport never advertises OS-resistant plaintext, trusted physical input or a
+secure hardware indicator. Hardware integration and independent device review
+remain separate acceptance work, not inferred from encryption tests.

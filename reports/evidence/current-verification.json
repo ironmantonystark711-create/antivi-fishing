@@ -1,5 +1,5 @@
 {
-  "source_revision": "f1c2de4291db66f644ffe3c965f0c1d98324f854",
+  "source_revision": "c754213f6d860f07299fb2db3e94aad3a05b9218",
   "source_hashes": {
     "src/advisory.mjs": "0c32f6a215b88bd982937355bb4366ab65028789f4bd35fab4929bc3c9146b32",
     "src/audit-views.mjs": "f9acd573a8eead6087ef0eb4c601cd04d9c4a446810ed80946bc7fda665ef63a",
@@ -16,7 +16,7 @@
     "src/lifecycle.mjs": "d4680acc70c19ca25985c425e02e68c93b1ec34aacb3eedc61860f7e19297189",
     "src/network.mjs": "2fd43f1921304550ce194302ac1f7c6945e655a9a5353561e0bbe1bb123b9584",
     "src/output.mjs": "b5cd60b714e9654627992d827958c52c7d45904e6db7312f91934108847010ca",
-    "src/perception.mjs": "1f543fd7f078c4e962952a8958ad55088276ed60ebbf7a7ba0b6226a55102b0e",
+    "src/perception.mjs": "e563284669b41a3f883d6ab8daed4efc59aecf58d62f2836cb484910068ac2b5",
     "src/policy-lifecycle.mjs": "9ed57b0036e9b89124c7beb37d74380cd40fe224ea1aadff7870cef0a517a254",
     "src/policy.mjs": "645e292f57b8e8d77ca8f6a8ba4f473ae314c74388cfb6bdeed60eb448bb9c2c",
     "src/runtime-config.mjs": "49db2c0ea6697995ebb9551c834ce62cefb3e209a2cd24d8e9bee93471c44373",
@@ -41,6 +41,7 @@
     "tests/http-concurrency-ui.test.mjs": "ebc21347a612d813870258db6c7defac6a861805acb35f15d25e1da6446e1c88",
     "tests/lifecycle.test.mjs": "d032ec54bc0b21224baf22b2b947fbf4d14476867be3f1bb55078df92abec81e",
     "tests/network-perception.test.mjs": "81509ea94406ba8125fd8cdabbe49f6faf7dbfa765f9aa38618c88612c5029ba",
+    "tests/perception-lifecycle.test.mjs": "7deb792d083f463f9e6f04c8c6288c257cdcc72fc37a88ed2d76fdf7f94acd8d",
     "tests/policy-staging.test.mjs": "72c0dc996d8e40ab797fc24598bdc1fb4b13b4039a5ede5eb5b9aca12990db2b",
     "tests/race-worker.mjs": "fec3148b854cb107b7f1dd1002743d1847c9fc14129de6c17bdbce13c22e03ef",
     "tests/runtime-audit.test.mjs": "920094272c82e2de2a11b9942de32e22261f5d1f93a4d74236a70e84177aa23a",
@@ -68,7 +69,7 @@
       ],
       "exit_code": 0,
       "result_file": "reports/evidence/source-check.txt",
-      "sha256": "f162c1f6848561d0cfaee85f3c4911635095ea2d101da7b95b9d12827f6364b8"
+      "sha256": "d7b7425b08a3e5e0b79931d3d142acaa25aa17f8d08daf2af1c7902190232da5"
     },
     {
       "command": [
@@ -86,13 +87,14 @@
         "tests/http-concurrency-ui.test.mjs",
         "tests/lifecycle.test.mjs",
         "tests/network-perception.test.mjs",
+        "tests/perception-lifecycle.test.mjs",
         "tests/policy-staging.test.mjs",
         "tests/runtime-audit.test.mjs",
         "tests/runtime-integrity.test.mjs"
       ],
       "exit_code": 0,
       "result_file": "reports/evidence/current-tests.xml",
-      "sha256": "da43cceccc438c387edfe220b8a9d9dac2eb833af4beb24f77bff871a22f5b5b"
+      "sha256": "2df5fc72ead0f55d16cd07e3e3423c9132dfeaeaf31ce7b1e2713bd260e77962"
     },
     {
       "command": [
@@ -105,7 +107,7 @@
       "sha256": "4b6d1b4757f0770b7cbe90b5d1c5560be4fc2911b56383c6c248c79121c56208"
     }
   ],
-  "passed": 123,
+  "passed": 127,
   "failed": 0,
   "failing_tests": [],
   "skipped": 0,
