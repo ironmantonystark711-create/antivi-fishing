@@ -1,8 +1,11 @@
 import { readFileSync } from 'node:fs';
-const acceptance = JSON.parse(readFileSync(new URL('../docs/production-acceptance.json', import.meta.url), 'utf8'));
-const requirements = JSON.parse(readFileSync(new URL('../reports/requirements-summary.json', import.meta.url), 'utf8'));
-const blocked = acceptance.items.filter(item => item.status !== 'VERIFIED');
-if (!requirements.production_ready && !blocked.some(b => b.id === 'full-srs-implementation')) blocked.push({ id: 'requirement-acceptance', status: 'BLOCKED', reason: 'Requirement-level production acceptance is incomplete.' });
-const pass = acceptance.production_ready === true && requirements.production_ready === true && blocked.length === 0;
-console.log(JSON.stringify({ release: acceptance.release, production_release: pass ? 'PASS' : 'BLOCKED', blocked_items: blocked, engineering_tests_do_not_override_external_acceptance: true }, null, 2));
+import { spawnSync } from 'node:child_process';
+const generated = spawnSync('python3', ['scripts/completion-ledger.py'], { encoding: 'utf8' });
+if (generated.status !== 0) { console.error(generated.stderr); process.exit(1); }
+const state = JSON.parse(readFileSync('reports/completion-state.json', 'utf8'));
+const acceptance = JSON.parse(readFileSync('docs/production-acceptance.json', 'utf8'));
+const unmet = state.requirements.filter(r => r.status !== 'VERIFIED');
+const externalAcceptance = acceptance.items.filter(item => item.status !== 'VERIFIED');
+const pass = unmet.length === 0 && state.current_verification?.pass === true && externalAcceptance.length === 0 && acceptance.production_ready === true;
+console.log(JSON.stringify({ production_release: pass ? 'PASS' : 'BLOCKED', software_requirements: { VERIFIED: state.VERIFIED, PARTIAL: state.PARTIAL, NOT_IMPLEMENTED: state.NOT_IMPLEMENTED, BLOCKED_EXTERNAL: state.BLOCKED_EXTERNAL }, external_acceptance: externalAcceptance, engineering_tests_do_not_override_external_acceptance: true }, null, 2));
 if (!pass) process.exitCode = 1;

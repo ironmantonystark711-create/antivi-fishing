@@ -14,19 +14,29 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444
         with:
           node-version: '24.16.0'
-      - run: node scripts/check.mjs
-      - run: node --test --test-concurrency=1 tests/*.test.mjs
-      - run: python3 scripts/canonical-vectors.py examples/canonical-vectors.json
+      - run: python3 scripts/record-verification.py
+      - run: |
+          node scripts/simulate.mjs
+          node scripts/verify-export.mjs reports/sample-audit.json reports/sample-pinned-trust.json
+          node scripts/verify-export-webcrypto.mjs reports/sample-audit.json reports/sample-pinned-trust.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: software-evidence
+          path: reports/evidence/
+          if-no-files-found: error
   browser:
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    permissions:
-      contents: write
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444
         with:
           node-version: '24.16.0'
@@ -35,16 +45,42 @@ jobs:
           npm install --no-save --ignore-scripts --package-lock=false playwright@1.63.0
           npx playwright install --with-deps chromium
       - run: node scripts/browser-check.mjs
-      - name: Publish browser evidence on an isolated branch
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
+        with:
+          name: browser-evidence
+          path: reports/browser/
+          if-no-files-found: error
+  publish-evidence:
+    needs: [software, browser]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: software-evidence
+          path: reports/evidence/
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: browser-evidence
+          path: reports/browser/
+      - name: Publish data only; never execute code with repository write authority
         env:
           SOURCE_SHA: ${{ github.sha }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          GH_TOKEN: ${{ github.token }}
         run: |
-          if test -f reports/browser/results.json; then
-            git config user.name 'Invariant Verification'
-            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git switch -c "verification/browser-${SOURCE_SHA}"
-            git add reports/browser
-            git commit -m "Record browser evidence for ${SOURCE_SHA}"
-            git push origin "verification/browser-${SOURCE_SHA}"
-          fi
+          git config user.name 'Invariant Verification'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git config credential.helper '!f() { printf "username=x-access-token\npassword=%s\n" "$GH_TOKEN"; }; f'
+          git switch -c "verification/evidence-${SOURCE_SHA}-${RUN_ID}-${RUN_ATTEMPT}"
+          git add reports/evidence reports/browser
+          git commit -m "Record executed verification evidence for ${SOURCE_SHA}"
+          git push origin HEAD
