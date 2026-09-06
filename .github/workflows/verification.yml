@@ -1,0 +1,50 @@
+name: Engineering verification
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: verification-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  software:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444
+        with:
+          node-version: '24.16.0'
+      - run: node scripts/check.mjs
+      - run: node --test --test-concurrency=1 tests/*.test.mjs
+      - run: python scripts/canonical-vectors.py
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444
+        with:
+          node-version: '24.16.0'
+      - name: Install isolated verification-only browser tooling
+        run: |
+          npm install --no-save --ignore-scripts --package-lock=false playwright@1.63.0
+          npx playwright install --with-deps chromium
+      - run: node scripts/browser-check.mjs
+      - name: Publish browser evidence on an isolated branch
+        if: always()
+        env:
+          SOURCE_SHA: ${{ github.sha }}
+        run: |
+          if test -f reports/browser/results.json; then
+            git config user.name 'Invariant Verification'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git switch -c "verification/browser-${SOURCE_SHA}"
+            git add reports/browser
+            git commit -m "Record browser evidence for ${SOURCE_SHA}"
+            git push origin "verification/browser-${SOURCE_SHA}"
+          fi

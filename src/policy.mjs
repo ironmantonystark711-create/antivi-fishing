@@ -32,7 +32,8 @@ export function validatePolicy(p) {
     uniqueStrings(r.destinations, 'destinations'); uniqueStrings(r.forbidden_fields, 'forbidden fields'); integer(r.max_evidence_age_ms, 'evidence age', 1000, 2592000000);
   }
   const r = p.runtime;
-  fields(r, ['max_cost', 'rate_per_second', 'max_fanout', 'windows', 'destinations', 'services', 'forbidden_columns', 'jurisdictions', 'purposes', 'classifications', 'sensitivity_weights']);
+  fields(r, ['max_cost', 'rate_per_second', 'max_fanout', 'windows', 'destinations', 'services', 'forbidden_columns', 'jurisdictions', 'purposes', 'classifications', 'sensitivity_weights'], ['watermark']);
+  if (r.watermark) { fields(r.watermark, ['enabled', 'lawful_basis', 'mode']); requireThat(typeof r.watermark.enabled === 'boolean' && (!r.watermark.enabled || (typeof r.watermark.lawful_basis === 'string' && r.watermark.lawful_basis.length > 0)), 'INV-451-PRIVACY', 'Explicit lawful watermark basis required', 451); oneOf(r.watermark.mode, ['metadata', 'visible'], 'watermark mode'); }
   integer(r.max_cost, 'runtime cost', 1, 1e9); integer(r.rate_per_second, 'runtime rate', 1, 10000); integer(r.max_fanout, 'fanout', 1, 100);
   requireThat(Array.isArray(r.windows) && r.windows.length >= 1 && r.windows.length <= 8, 'INV-400-SCHEMA', 'Invalid budget windows');
   for (const w of r.windows) { fields(w, ['duration_ms', 'limit']); integer(w.duration_ms, 'window duration', 1000, 2592000000); integer(w.limit, 'window limit', 1, 1e12); }

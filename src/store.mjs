@@ -9,9 +9,9 @@ export class Store {
   constructor(path, tenantKeys, auditKeys) {
     mkdirSync(dirname(path), { recursive: true, mode: 0o700 });
     this.db = new DatabaseSync(path); chmodSync(path, 0o600);
-    this.tenantKeys = tenantKeys; this.auditKeys = auditKeys;
+    this.tenantKeys = tenantKeys; this.auditKeys = auditKeys; this.recordCache = new Map(); this.statementCache = new Map();
     this.db.exec('PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL; PRAGMA foreign_keys=ON; PRAGMA busy_timeout=5000;');
-    const version = this.db.prepare('PRAGMA user_version').get().user_version;
+    const version = this.statement('PRAGMA user_version').get().user_version;
     requireThat(version <= 1, 'INV-503-STORAGE', 'Database schema is newer than this application', 503);
     this.db.exec(`
       CREATE TABLE IF NOT EXISTS records (tenant TEXT NOT NULL, kind TEXT NOT NULL, id TEXT NOT NULL,
@@ -31,7 +31,8 @@ export class Store {
       PRAGMA user_version=1;
     `);
   }
-  close() { this.db.close(); }
+  statement(sql) { if (!this.statementCache.has(sql)) { if (this.statementCache.size >= 128) this.statementCache.delete(this.statementCache.keys().next().value); this.statementCache.set(sql, this.db.prepare(sql)); } return this.statementCache.get(sql); }
+  close() { this.recordCache.clear(); this.statementCache.clear(); this.db.close(); }
   tx(fn) {
     this.db.exec('BEGIN IMMEDIATE');
     try {
@@ -45,50 +46,55 @@ export class Store {
     return Buffer.from(this.tenantKeys[tenant], 'base64url');
   }
   get(tenant, kind, id) {
-    const row = this.db.prepare('SELECT value FROM records WHERE tenant=? AND kind=? AND id=?').get(tenant, kind, id);
-    return row ? decrypt(row.value, this.key(tenant), `${tenant}/${kind}/${id}`) : null;
+    const row = this.statement('SELECT value FROM records WHERE tenant=? AND kind=? AND id=?').get(tenant, kind, id);
+    if (!row) return null;
+    const cacheKey = `${tenant}/${kind}/${id}`, cached = this.recordCache.get(cacheKey);
+    if (cached?.ciphertext === row.value) return structuredClone(cached.value);
+    const value = decrypt(row.value, this.key(tenant), cacheKey);
+    if (this.recordCache.size >= 256) this.recordCache.delete(this.recordCache.keys().next().value);
+    this.recordCache.set(cacheKey, { ciphertext: row.value, value }); return structuredClone(value);
   }
   must(tenant, kind, id) {
     const row = this.get(tenant, kind, id); requireThat(row, 'INV-404-NOT-FOUND', 'Resource not found', 404); return row;
   }
   put(tenant, kind, id, value, at) {
-    this.db.prepare('INSERT INTO records VALUES(?,?,?,?,?) ON CONFLICT(tenant,kind,id) DO UPDATE SET value=excluded.value').run(tenant, kind, id, encrypt(value, this.key(tenant), `${tenant}/${kind}/${id}`), at);
+    this.statement('INSERT INTO records VALUES(?,?,?,?,?) ON CONFLICT(tenant,kind,id) DO UPDATE SET value=excluded.value').run(tenant, kind, id, encrypt(value, this.key(tenant), `${tenant}/${kind}/${id}`), at);
   }
   insert(tenant, kind, id, value, at) {
     requireThat(!this.get(tenant, kind, id), 'INV-409-CONFLICT', 'Record already exists', 409); this.put(tenant, kind, id, value, at);
   }
   list(tenant, kind, limit = 500, offset = 0) {
-    return this.db.prepare('SELECT id,value FROM records WHERE tenant=? AND kind=? ORDER BY created DESC,id LIMIT ? OFFSET ?').all(tenant, kind, limit, offset).map(row => decrypt(row.value, this.key(tenant), `${tenant}/${kind}/${row.id}`));
+    return this.statement('SELECT id,value FROM records WHERE tenant=? AND kind=? ORDER BY created DESC,id LIMIT ? OFFSET ?').all(tenant, kind, limit, offset).map(row => decrypt(row.value, this.key(tenant), `${tenant}/${kind}/${row.id}`));
   }
-  remove(tenant, kind, id) { this.db.prepare('DELETE FROM records WHERE tenant=? AND kind=? AND id=?').run(tenant, kind, id); }
+  remove(tenant, kind, id) { this.statement('DELETE FROM records WHERE tenant=? AND kind=? AND id=?').run(tenant, kind, id); }
   clock(now) {
     requireThat(Number.isSafeInteger(now) && now > 0, 'INV-503-TIME', 'Clock unavailable', 503);
-    const row = this.db.prepare('SELECT last FROM clock WHERE id=1').get();
+    const row = this.statement('SELECT last FROM clock WHERE id=1').get();
     requireThat(!row || now >= row.last, 'INV-503-TIME', 'Clock regression; security operations halted', 503);
-    this.db.prepare('INSERT INTO clock VALUES(1,?) ON CONFLICT(id) DO UPDATE SET last=excluded.last').run(now);
+    this.statement('INSERT INTO clock VALUES(1,?) ON CONFLICT(id) DO UPDATE SET last=excluded.last').run(now);
   }
   audit(tenant, type, actor, reference, metadata, now) {
-    const last = this.db.prepare('SELECT seq,hash FROM audit WHERE tenant=? ORDER BY seq DESC LIMIT 1').get(tenant);
+    const last = this.statement('SELECT seq,hash FROM audit WHERE tenant=? ORDER BY seq DESC LIMIT 1').get(tenant);
     const entry = { tenant_id: tenant, sequence: (last?.seq ?? 0) + 1, previous: last?.hash ?? '0'.repeat(64), type, actor, reference, metadata, time: now };
     const hash = digest(entry), envelope = signed(entry, this.auditKeys[tenant], 'audit');
-    this.db.prepare('INSERT INTO audit VALUES(?,?,?,?,?)').run(tenant, entry.sequence, entry.previous, hash, canonical(envelope));
+    this.statement('INSERT INTO audit VALUES(?,?,?,?,?)').run(tenant, entry.sequence, entry.previous, hash, canonical(envelope));
     return { hash, envelope };
   }
   auditExport(tenant) {
-    const rows = this.db.prepare('SELECT hash,envelope FROM audit WHERE tenant=? ORDER BY seq').all(tenant).map(r => ({ hash: r.hash, envelope: JSON.parse(r.envelope) }));
+    const rows = this.statement('SELECT hash,envelope FROM audit WHERE tenant=? ORDER BY seq').all(tenant).map(r => ({ hash: r.hash, envelope: JSON.parse(r.envelope) }));
     const key = this.auditKeys[tenant], public_keys = { [key.key_id]: { public_key: key.public_key } };
     const checkpoint = signed({ tenant_id: tenant, size: rows.length, head: rows.at(-1)?.hash ?? '0'.repeat(64) }, key, 'checkpoint');
     return { format: 'IF-AUDIT-1', public_keys, checkpoint, entries: rows };
   }
   idempotent(tenant, scope, key, requestHash, fn) {
     requireThat(typeof key === 'string' && /^[A-Za-z0-9_-]{8,128}$/.test(key), 'INV-400-SCHEMA', 'An 8–128 character Idempotency-Key is required');
-    const row = this.db.prepare('SELECT hash,result FROM idempotency WHERE tenant=? AND scope=? AND key=?').get(tenant, scope, key);
+    const row = this.statement('SELECT hash,result FROM idempotency WHERE tenant=? AND scope=? AND key=?').get(tenant, scope, key);
     if (row) {
       requireThat(row.hash === requestHash, 'INV-409-IDEMPOTENCY', 'Idempotency key reused for a different request', 409);
       return decrypt(row.result, this.key(tenant), `${tenant}/idempotency/${scope}/${key}`);
     }
     const result = fn();
-    this.db.prepare('INSERT INTO idempotency VALUES(?,?,?,?,?)').run(tenant, scope, key, requestHash, encrypt(result, this.key(tenant), `${tenant}/idempotency/${scope}/${key}`));
+    this.statement('INSERT INTO idempotency VALUES(?,?,?,?,?)').run(tenant, scope, key, requestHash, encrypt(result, this.key(tenant), `${tenant}/idempotency/${scope}/${key}`));
     return result;
   }
 }

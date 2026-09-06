@@ -2,11 +2,17 @@ import { randomUUID } from 'node:crypto';
 import { Store } from './store.mjs';
 import { SimulatedTarget } from './target.mjs';
 import { RuntimeGate } from './runtime.mjs';
+import { RuntimeIntegrity } from './runtime-config.mjs';
+import { Compositions } from './composition.mjs';
+import { EmergencyPolicies } from './emergency.mjs';
+import { VersionLifecycle } from './lifecycle.mjs';
+import { auditView } from './audit-views.mjs';
+import { AdvisoryPlane } from './advisory.mjs';
 import { digest, clone, canonical } from './canonical.mjs';
 import { signed, verifySigned } from './crypto.mjs';
 import { fields, text, identifier, integer, uniqueStrings, validateProposal } from './schema.mjs';
 import { evaluatePolicy, validatePolicy, policyDiff } from './policy.mjs';
-import { declarePath, coverageManifest } from './coverage.mjs';
+import { declarePath, coverageManifest, CoverageLifecycle } from './coverage.mjs';
 import { requireThat, InvariantError } from './errors.mjs';
 import { join } from 'node:path';
 
@@ -17,8 +23,9 @@ export class Fabric {
     const encryption = {}, audit = {};
     for (const [tenant, t] of Object.entries(config.tenants)) { encryption[tenant] = t.encryption_key; audit[tenant] = t.keys.audit; }
     this.store = new Store(join(directory, 'fabric.db'), encryption, audit);
-    this.target = new SimulatedTarget(join(directory, 'target.db'), encryption); this.runtime = new RuntimeGate(this);
+    this.target = new SimulatedTarget(join(directory, 'target.db'), encryption); this.runtime = new RuntimeGate(this); this.runtimeIntegrity = new RuntimeIntegrity(this); this.compositions = new Compositions(this); this.emergencies = new EmergencyPolicies(this); this.coverageLifecycle = new CoverageLifecycle(this); this.versions = new VersionLifecycle(this); this.advisory = new AdvisoryPlane(this);
     try { for (const [tenant, t] of Object.entries(config.tenants)) {
+      this.runtimeIntegrity.check(tenant);
       validatePolicy(t.genesis_policy);
       requireThat(t.genesis_policy.tenant_id === tenant, 'INV-503-CONFIG', 'Genesis tenant mismatch', 503);
       const roots = new Set(), domains = new Set();
@@ -52,7 +59,7 @@ export class Fabric {
     return identity;
   }
   transaction(principal, fn) {
-    this.authorize(principal, ['operator', 'approver', 'custodian', 'security', 'auditor', 'policy_admin', 'workload']);
+    this.authorize(principal, ['operator', 'approver', 'custodian', 'security', 'auditor', 'policy_admin', 'workload', 'audit_finance', 'audit_privacy', 'audit_technical', 'audit_security']);
     try { return this.store.tx(() => { const now = this.clock(); this.store.clock(now); return fn(now); }); }
     catch (error) {
       if (error instanceof InvariantError && error.code !== 'INV-503-TIME') {
@@ -71,7 +78,7 @@ export class Fabric {
   }
   getCapsule(p, id) { this.authorize(p, ['operator', 'approver', 'custodian', 'security', 'policy_admin']); return this.store.must(p.tenant_id, 'capsule', identifier(id)); }
   propose(p, input, idempotencyKey) {
-    this.authorize(p, ['operator', 'workload', 'policy_admin']); validateProposal(input);
+    this.authorize(p, ['operator', 'workload', 'policy_admin']); validateProposal(input); this.versions.check(p.tenant_id, 'schema', input.schema_id, '1');
     requireThat(input.actor.subject_id === p.subject_id && input.actor.identity_class === this.identity(p).identity_class, 'INV-403-ACTOR', 'Actor must match authenticated identity', 403);
     return this.transaction(p, now => this.store.idempotent(p.tenant_id, 'propose', idempotencyKey, digest(input), () => {
       const policy = this.policy(p.tenant_id); this.assertHealthy(p.tenant_id, p.subject_id, input.actor.device_id, now);
@@ -144,13 +151,14 @@ export class Fabric {
   }
   evaluation(t, record, now, policy = this.policy(t)) {
     const graph = this.graph(t, record), identities = this.identities(t);
+    if (this.emergencies.restriction(t, record.capsule, now)) return { decision: 'DENY', reasons: [{ code: 'EMERGENCY_RESTRICTION', message: 'A scoped customer emergency policy prohibits this action.' }], explanation: 'Emergency restriction; no bypass.', policy_version: policy.version, policy_digest: digest(policy), owner: record.capsule.actor.subject_id, expires_at: record.capsule.expires_at, evaluated_at: now };
     if (record.capsule.action.type === 'policy.change') {
       const candidateDigest = digest(record.capsule.requested_state.policy);
       const reviewed = this.store.list(t, 'simulation', 500).some(s => s.candidate_digest === candidateDigest && s.baseline_digest === digest(this.policy(t)));
       if (!reviewed) return { decision: 'ESCROW', reasons: [{ code: 'SIMULATION_REQUIRED', message: 'Simulate the exact candidate policy against the active baseline before activation.' }], explanation: 'Exact policy simulation is required.', owner: record.capsule.actor.subject_id, expires_at: record.capsule.expires_at, evaluated_at: now, policy_version: policy.version, policy_digest: digest(policy) };
     }
     const approvals = record.approvals.filter(a => a.payload.policy_digest === digest(policy) && a.payload.evidence_graph_digest === graph.digest).map(a => {
-      try { return verifySigned(a, identities, 'action-approval'); } catch { return null; }
+      try { return a.batch_envelope ? this.compositions.resolve(t, a) : verifySigned(a, identities, 'action-approval'); } catch { return null; }
     }).filter(Boolean);
     return evaluatePolicy({ capsule: record.capsule, policy, evidence: graph.items, approvals, identities, quarantined: this.revoked(t, 'subject', record.capsule.actor.subject_id) || this.revoked(t, 'device', record.capsule.actor.device_id), now });
   }
@@ -290,10 +298,11 @@ export class Fabric {
       this.store.insert(p.tenant_id, 'simulation', result.simulation_id, result, now); this.store.audit(p.tenant_id, 'POLICY_SIMULATED', p.subject_id, result.simulation_id, { candidate_digest: digest(candidate), result_digest: digest(result) }, now); return result;
     });
   }
-  coverage(p) { this.authorize(p, ['operator', 'approver', 'custodian', 'security', 'auditor', 'policy_admin']); return coverageManifest(p.tenant_id, this.store.list(p.tenant_id, 'coverage'), this.clock(), this.keys(p.tenant_id).audit); }
+  auditView(p, role, purpose) { return auditView(this, p, role, purpose); }
+  coverage(p) { this.authorize(p, ['operator', 'approver', 'custodian', 'security', 'auditor', 'policy_admin']); this.coverageLifecycle.refresh(p); return coverageManifest(p.tenant_id, this.store.list(p.tenant_id, 'coverage'), this.clock(), this.keys(p.tenant_id).audit); }
   declareCoverage(p, input) {
     this.authorize(p, ['security']); return this.transaction(p, now => {
-      const path = declarePath(input, now); this.store.put(p.tenant_id, 'coverage', path.path_id, path, now);
+      const path = declarePath(input, now); this.coverageLifecycle.history(p.tenant_id, path, now, 'DECLARED'); this.store.put(p.tenant_id, 'coverage', path.path_id, path, now);
       this.store.audit(p.tenant_id, 'COVERAGE_DECLARED', p.subject_id, path.path_id, { digest: digest(path), status: path.status }, now); return path;
     });
   }

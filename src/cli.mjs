@@ -28,7 +28,7 @@ try {
   } else if (command === 'sign') {
     const keyPath = option('key'), inputPath = option('input'), outputPath = option('output'), purpose = option('purpose', 'action-approval');
     requireThat(keyPath && inputPath && outputPath, 'INV-400-SCHEMA', 'sign requires --key, --input and --output');
-    requireThat(['action-approval', 'evidence', 'root-policy'].includes(purpose), 'INV-400-SCHEMA', 'Unsupported signing purpose');
+    requireThat(['action-approval', 'evidence', 'root-policy', 'batch-approval', 'runtime-config', 'emergency-policy', 'coverage-test'].includes(purpose), 'INV-400-SCHEMA', 'Unsupported signing purpose');
     requireThat((statSync(keyPath).mode & 0o077) === 0, 'INV-503-CONFIG', 'Signing key file permissions must be 0600', 503);
     const payload = parseStrict(readFileSync(inputPath, 'utf8')), key = parseStrict(readFileSync(keyPath, 'utf8'));
     writeFileSync(outputPath, canonical(signed(payload, key, purpose)) + '\n', { flag: 'wx', mode: 0o600 });

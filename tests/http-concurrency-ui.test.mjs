@@ -85,6 +85,6 @@ test('UX-002 UX-003: UI state logic exposes no generic approval or executable no
   for (const value of ['', '0', '-1', '1.1', '1e3']) assert.throws(() => typedValue(value, 'positive')); assert.equal(typedValue('100', 'positive'), 100); assert.throws(() => csvSelection('a,a'));
 });
 test('UX-007: static interface labels all named inputs and uses no unsafe DOM injection sink', () => {
-  const html = readFileSync(new URL('../web/index.html', import.meta.url), 'utf8'), js = readFileSync(new URL('../web/app.js', import.meta.url), 'utf8');
+  const html = readFileSync(new URL('../web/workspace.html', import.meta.url), 'utf8'), js = readFileSync(new URL('../web/app.js', import.meta.url), 'utf8');
   for (const m of html.matchAll(/<(?:input|select|textarea)\b[^>]*\bid="([^"]+)"/g)) assert.ok(html.includes(`for="${m[1]}"`), m[1]); assert.doesNotMatch(js, /\.innerHTML\s*=|insertAdjacentHTML|\beval\(/); assert.match(html, /not Secure Perception/); assert.match(html, /role="status"/);
 });

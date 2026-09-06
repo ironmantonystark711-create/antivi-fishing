@@ -6,13 +6,14 @@ import { hashBytes, canonical } from './canonical.mjs';
 import { defaultPolicy } from './policy.mjs';
 import { requireThat } from './errors.mjs';
 import { Fabric } from './fabric.mjs';
+import { runtimeConfiguration, signRuntimeConfiguration } from './runtime-config.mjs';
 
 export function createConfiguration(tenantNames = ['acme'], now = Date.now()) {
   const config = { format: 'IF-CONFIG-1', profile: 'engineering', gate_id: 'local-software-gate', tenants: {} }, credentials = {}, custodianKeys = {}, issuerKeys = {};
   for (const tenant of tenantNames) {
     requireThat(/^[a-z][a-z0-9-]{1,31}$/.test(tenant), 'INV-400-SCHEMA', 'Tenant must use lowercase alphanumeric characters');
     const policy = defaultPolicy(tenant), identities = {}, auth = {}, identityPrivate = {};
-    const roles = [['operator', ['operator']], ['security', ['security']], ['auditor', ['auditor']], ['policy-admin', ['policy_admin']], ...Array.from({ length: 5 }, (_, i) => [`custodian-${i + 1}`, ['approver', 'custodian']])];
+    const roles = [['operator', ['operator']], ['security', ['security']], ['auditor', ['auditor']], ['privacy-reviewer', ['audit_privacy']], ['finance-reviewer', ['audit_finance']], ['technical-reviewer', ['audit_technical']], ['security-reviewer', ['audit_security']], ['policy-admin', ['policy_admin']], ...Array.from({ length: 5 }, (_, i) => [`custodian-${i + 1}`, ['approver', 'custodian']])];
     credentials[tenant] = {}; custodianKeys[tenant] = {}; issuerKeys[tenant] = {};
     for (const [subject, role] of roles) {
       const key = generateKey(), token = randomBytes(32).toString('base64url');
@@ -25,7 +26,7 @@ export function createConfiguration(tenantNames = ['acme'], now = Date.now()) {
       const key = generateKey(); issuerKeys[tenant][name] = key;
       issuers[key.key_id] = { public_key: key.public_key, failure_domain: `${tenant}-${name}`, channel, kinds: ['ownership', 'dataset_authority', 'identity_proof', 'recovery_authority', 'build_provenance', 'test_result', 'workload_attestation', 'governance_review'] };
     }
-    config.tenants[tenant] = { encryption_key: randomBytes(32).toString('base64url'), keys: { execution: generateKey(), audit: generateKey() }, identities, issuers, auth, genesis_policy: policy, genesis_signatures: Object.values(custodianKeys[tenant]).slice(0, 3).map(k => signed(policy, k, 'root-policy')) };
+    config.tenants[tenant] = { runtime_snapshot: signRuntimeConfiguration(runtimeConfiguration(tenant, config.gate_id, now), Object.values(custodianKeys[tenant]).slice(0, 3)), encryption_key: randomBytes(32).toString('base64url'), keys: { execution: generateKey(), audit: generateKey() }, identities, issuers, auth, genesis_policy: policy, genesis_signatures: Object.values(custodianKeys[tenant]).slice(0, 3).map(k => signed(policy, k, 'root-policy')) };
   }
   return { config, credentials, custodianKeys, issuerKeys };
 }

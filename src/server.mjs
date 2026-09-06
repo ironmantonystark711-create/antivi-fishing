@@ -26,7 +26,7 @@ export function createServer(fabric, { port = 8080, host = '127.0.0.1', origin =
       const entry = t.auth[hash];
       if (entry && entry.expires_at > fabric.clock()) {
         const principal = { tenant_id: tenant, subject_id: entry.subject_id };
-        fabric.authorize(principal, ['operator', 'approver', 'custodian', 'security', 'auditor', 'policy_admin', 'workload']);
+        fabric.authorize(principal, ['operator', 'approver', 'custodian', 'security', 'auditor', 'policy_admin', 'workload', 'audit_finance', 'audit_privacy', 'audit_technical', 'audit_security']);
         return { principal, expires: entry.expires_at };
       }
     }
@@ -38,7 +38,7 @@ export function createServer(fabric, { port = 8080, host = '127.0.0.1', origin =
     const sid = /(?:^|;\s*)if_session=([A-Za-z0-9_-]{43})(?:;|$)/.exec(req.headers.cookie ?? '')?.[1], session = sid ? sessions.get(hashBytes(sid)) : null;
     requireThat(session && session.expires > Date.now(), 'INV-401-AUTH', 'Authentication required', 401);
     if (req.method !== 'GET') requireThat(req.headers['x-csrf-token'] === session.csrf && req.headers.origin === origin, 'INV-403-CSRF', 'Request origin or CSRF token rejected', 403);
-    fabric.authorize(session.principal, ['operator', 'approver', 'custodian', 'security', 'auditor', 'policy_admin', 'workload']); return session.principal;
+    fabric.authorize(session.principal, ['operator', 'approver', 'custodian', 'security', 'auditor', 'policy_admin', 'workload', 'audit_finance', 'audit_privacy', 'audit_technical', 'audit_security']); return session.principal;
   }
   async function body(req) {
     requireThat(req.headers['content-type']?.split(';')[0] === 'application/json', 'INV-415-CONTENT', 'Use application/json', 415);
@@ -63,7 +63,7 @@ export function createServer(fabric, { port = 8080, host = '127.0.0.1', origin =
       rateLimit(`ip:${req.socket.remoteAddress}`, 600);
       if (path === '/healthz' && req.method === 'GET') return send(200, { status: 'ok', profile: 'engineering', production_ready: false });
       if (path === '/readyz' && req.method === 'GET') { fabric.store.db.prepare('SELECT 1').get(); return send(200, { status: 'ready', profile: 'engineering', real_targets: false }); }
-      const assets = { '/': ['index.html', 'text/html; charset=utf-8'], '/app.js': ['app.js', 'text/javascript; charset=utf-8'], '/style.css': ['style.css', 'text/css; charset=utf-8'] };
+      const assets = { '/': ['index.html', 'text/html; charset=utf-8'], '/workspace': ['workspace.html', 'text/html; charset=utf-8'], '/mark.svg': ['mark.svg', 'image/svg+xml'], '/app.js': ['app.js', 'text/javascript; charset=utf-8'], '/style.css': ['style.css', 'text/css; charset=utf-8'] };
       if (req.method === 'GET' && assets[path]) { const [file, type] = assets[path]; return send(200, readFileSync(join(web, file)), type); }
       if (path === '/session' && req.method === 'POST') {
         rateLimit(`login:${req.socket.remoteAddress}`, 20);
@@ -98,6 +98,23 @@ export function createServer(fabric, { port = 8080, host = '127.0.0.1', origin =
         return send(200, m[2] === 'evaluate' ? fabric.evaluate(p, m[1]) : fabric.cancel(p, m[1]));
       }
       if (path === '/v1/approvals' && req.method === 'POST') return send(201, fabric.approve(p, await body(req)));
+      if (path === '/v1/compositions' && req.method === 'POST') return send(201, fabric.compositions.create(p, await body(req), req.headers['idempotency-key']));
+      if (path === '/v1/compositions' && req.method === 'GET') { fabric.authorize(p, ['operator', 'approver', 'custodian', 'policy_admin', 'security']); return send(200, fabric.store.list(p.tenant_id, 'composition', 100).map(r => r.envelope)); }
+      if ((m = /^\/v1\/compositions\/([A-Za-z0-9-]+)\/challenge$/.exec(path)) && req.method === 'GET') return send(200, fabric.compositions.challenge(p, m[1]));
+      if (path === '/v1/batch-approvals' && req.method === 'POST') return send(201, fabric.compositions.approve(p, await body(req)));
+      if (path === '/gate/v1/compositions/execute' && req.method === 'POST') return send(200, fabric.compositions.execute(p, await body(req)));
+      if (path === '/v1/emergencies/simulate' && req.method === 'POST') return send(200, fabric.emergencies.simulate(p, await body(req)));
+      if (path === '/v1/emergencies/activate' && req.method === 'POST') return send(201, fabric.emergencies.activate(p, await body(req)));
+      if (path === '/v1/emergencies/expire' && req.method === 'POST') { fields(await body(req), []); return send(200, fabric.emergencies.sweep(p)); }
+      if (path === '/v1/runtime/configuration' && req.method === 'POST') return send(200, fabric.runtimeIntegrity.reload(p, await body(req)));
+      if (path === '/v1/coverage/drift' && req.method === 'POST') return send(200, fabric.coverageLifecycle.drift(p, await body(req)));
+      if (path === '/v1/coverage/revalidate' && req.method === 'POST') return send(200, fabric.coverageLifecycle.revalidate(p, await body(req)));
+      if (path === '/v1/versions' && req.method === 'POST') return send(201, fabric.versions.publish(p, await body(req)));
+      if (path === '/v1/versions' && req.method === 'GET') { fabric.authorize(p, ['operator', 'policy_admin', 'security']); return send(200, fabric.store.list(p.tenant_id, 'version-lifecycle')); }
+      if (path === '/v1/advisory/capabilities' && req.method === 'POST') return send(201, fabric.advisory.issue(p, await body(req)));
+      if (path === '/v1/advisory/extract' && req.method === 'POST') return send(200, fabric.advisory.extract(p, await body(req)));
+      if (path === '/v1/audit-views' && req.method === 'POST') { const input = await body(req); fields(input, ['role', 'purpose']); return send(200, fabric.auditView(p, input.role, input.purpose)); }
+      if (path === '/v1/notifications' && req.method === 'GET') { fabric.authorize(p, ['security', 'policy_admin']); return send(200, fabric.store.list(p.tenant_id, 'notification')); }
       if (path === '/v1/certificates' && req.method === 'POST') { const input = await body(req); fields(input, ['capsule_id']); identifier(input.capsule_id); return send(201, fabric.certificate(p, input.capsule_id)); }
       if ((m = /^\/v1\/certificates\/([A-Za-z0-9-]+)$/.exec(path)) && req.method === 'GET') { fabric.authorize(p, ['operator', 'policy_admin', 'security']); return send(200, fabric.store.must(p.tenant_id, 'certificate', m[1]).envelope); }
       if (path === '/gate/v1/execute' && req.method === 'POST') { const input = await body(req); fields(input, ['certificate', 'dry_run']); requireThat(typeof input.dry_run === 'boolean', 'INV-400-SCHEMA', 'dry_run must be boolean'); return send(200, fabric.execute(p, input.certificate, { dryRun: input.dry_run })); }
