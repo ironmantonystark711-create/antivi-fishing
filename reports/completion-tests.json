@@ -659,7 +659,7 @@
   "skipped": 0,
   "cancelled": 0,
   "todo": 0,
-  "source_revision": "a2d88ac3bfe0f8837e38bf2d1441ae5f568fbfef",
+  "source_revision": "7f7588525a8a691b511d91a2e26a638f974f6882",
   "source_fingerprint": "a428136fe383a9d7f3f24eabfdfaba2eea7f14a7baef1c9e3de147e6409136c9",
   "command": "node --test --test-reporter=tap --test-concurrency=1 tests/audit-ui.test.mjs tests/canonical.test.mjs tests/completion-evidence.test.mjs tests/completion-security.test.mjs tests/composition-http.test.mjs tests/coverage-advisory-hardening.test.mjs tests/data-audit-hardening.test.mjs tests/extended-security.test.mjs tests/governance-hardening.test.mjs tests/http-concurrency-ui.test.mjs tests/key-identity-hardening.test.mjs tests/lifecycle.test.mjs tests/network-perception.test.mjs tests/perception-lifecycle.test.mjs tests/preview-origin.test.mjs tests/runtime-audit.test.mjs tests/runtime-hardening.test.mjs tests/runtime-network-proxy.test.mjs tests/schema-contract.test.mjs tests/session-lifecycle.test.mjs tests/transport-abort.test.mjs",
   "exit_code": 0,
@@ -669,6 +669,6 @@
     "platform": "linux",
     "arch": "x64"
   },
-  "finished_at": "2026-09-06T05:44:36.682Z",
+  "finished_at": "2026-09-06T05:48:51.657Z",
   "source_unchanged": true
 }

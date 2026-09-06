@@ -12,42 +12,42 @@
   "core_deterministic_evaluation": {
     "samples": 2000,
     "errors": 0,
-    "p50_ms": 0.07773000000000252,
-    "p95_ms": 0.13966000000002055,
-    "p99_ms": 0.26759899999998993,
-    "operations_per_second": 11253.744697615313
+    "p50_ms": 0.07755900000000793,
+    "p95_ms": 0.14309000000000083,
+    "p99_ms": 0.309568999999982,
+    "operations_per_second": 11112.366993787526
   },
   "protected_action_evaluation_with_sqlite_audit": {
     "samples": 500,
     "errors": 0,
-    "p50_ms": 1.7009469999998146,
-    "p95_ms": 2.2654449999999997,
-    "p99_ms": 3.209873000000016,
-    "operations_per_second": 542.6608755663482
+    "p50_ms": 1.7022670000000062,
+    "p95_ms": 2.8127139999999144,
+    "p99_ms": 6.644655000000057,
+    "operations_per_second": 495.86909752422275
   },
   "runtime_authorization_with_signed_audit": {
     "samples": 500,
     "errors": 0,
-    "p50_ms": 0.9716779999998835,
-    "p95_ms": 1.2896979999998166,
-    "p99_ms": 2.097155000000157,
-    "operations_per_second": 936.869911069029
+    "p50_ms": 0.9865979999999581,
+    "p95_ms": 1.5313269999999193,
+    "p99_ms": 2.6757350000000315,
+    "operations_per_second": 908.6312952967805
   },
   "cached_local_runtime_dataplane": {
     "samples": 5000,
     "errors": 0,
-    "p50_ms": 0.002560000000130458,
-    "p95_ms": 0.0041300000000319415,
-    "p99_ms": 0.010459999999966385,
-    "operations_per_second": 280749.63746799406
+    "p50_ms": 0.0025599999999030842,
+    "p95_ms": 0.0040300000000570435,
+    "p99_ms": 0.009399999999914144,
+    "operations_per_second": 282410.5343196021
   },
   "loopback_http_proxy_under_concurrent_load": {
     "samples": 1000,
     "errors": 0,
-    "p50_ms": 8.878721000000041,
-    "p95_ms": 14.508428999999978,
-    "p99_ms": 58.9354350000001,
-    "operations_per_second": 1443.1339551846613
+    "p50_ms": 9.369919999999638,
+    "p95_ms": 19.424777999999606,
+    "p99_ms": 43.640018000000055,
+    "operations_per_second": 1357.9120114840246
   },
   "external_connector_latency": {
     "status": "NOT_CONFIGURED",
