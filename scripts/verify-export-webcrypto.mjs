@@ -1,6 +1,7 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
 // Independent canonicalizer and audit verifier. No imports from src/.
-// Run under Bun to exercise a different runtime and WebCrypto signature path.
+// Uses WebCrypto rather than the primary verifier’s node:crypto implementation.
+// Portable across Node and Bun; implementation independence does not require Bun.
 import { readFileSync } from 'node:fs';
 function check(condition, message) { if (!condition) throw new Error(message); }
 function encode(v, depth = 0) {
@@ -37,7 +38,7 @@ function noDuplicates(raw) {
   }
 }
 async function main() {
-  const [file, trust, witness] = process.argv.slice(2); check(file && trust, 'Usage: bun scripts/verify-export-webcrypto.mjs BUNDLE PINNED-TRUST [PRIOR-CHECKPOINT]');
+  const [file, trust, witness] = process.argv.slice(2); check(file && trust, 'Usage: node scripts/verify-export-webcrypto.mjs BUNDLE PINNED-TRUST [PRIOR-CHECKPOINT]');
   const read = p => { const raw = readFileSync(p, 'utf8'); check(Buffer.byteLength(raw) <= 20 * 1024 * 1024, 'File too large'); noDuplicates(raw); const value = JSON.parse(raw); encode(value); return value; };
   const bundle = read(file), keys = read(trust), prior = witness ? read(witness) : null;
   check(bundle.format === 'IF-AUDIT-1' && Array.isArray(bundle.entries), 'Bad bundle'); const checkpoint = await verify(bundle.checkpoint, keys, 'checkpoint');

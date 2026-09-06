@@ -1,0 +1,3277 @@
+{
+  "baseline_sha": "7d92076602d6c6485aa96bcb2a26bfac11afd861",
+  "source_sha256": "64dd0b013feb8455906342cb6df1ca8fde6a0717a35b91b3e4c968e59320b3a1",
+  "total_requirements": 211,
+  "VERIFIED": 0,
+  "PARTIAL": 114,
+  "NOT_IMPLEMENTED": 97,
+  "BLOCKED_EXTERNAL": 0,
+  "failing_tests": [],
+  "baseline_tests": {
+    "passed": 98,
+    "failed": 0,
+    "command": "node --test --test-concurrency=1 tests/*.test.mjs",
+    "evidence": "reports/baseline-tests.tap"
+  },
+  "ci_state": "BASELINE_FAILURE: independent verifier invokes Bun absent from workflow",
+  "performance_state": "NOT_VERIFIED_FOR_FINAL_REVISION",
+  "additional_contracts": "Sections 3–5 and 8–14 must also be covered; numbered requirement count is not a waiver.",
+  "last_completed_requirement": null,
+  "next_action": "COV-001: Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof.",
+  "requirements": [
+    {
+      "id": "COV-001",
+      "requirement": "The system SHALL maintain a versioned inventory of every declared execution path for each protected action, including web UI, mobile, API, CLI, batch, import, service account, direct database, recovery and emergency paths.",
+      "minimum_acceptance": "A test tenant shows every configured path with owner, target, last evidence time and status.",
+      "source_line": 193,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/completion-security.test.mjs",
+          "declaration": "test('COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "COV-002",
+      "requirement": "Every path SHALL be labelled ENFORCED, MONITORED, UNCOVERED or UNKNOWN; no other state may be represented as protected.",
+      "minimum_acceptance": "API and UI reject a “protected” badge when any required path is UNCOVERED or UNKNOWN.",
+      "source_line": 194,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/runtime-audit.test.mjs",
+          "declaration": "test('COV-002 COV-007 COV-008: no manual declaration can claim ENFORCED or production guarantee', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "COV-003",
+      "requirement": "The Coverage Mapper SHALL record the evidence supporting ENFORCED status, including connector configuration, credential ownership, target rejection behaviour and last negative test.",
+      "minimum_acceptance": "An assessor can export the evidence bundle and reproduce the rejection test.",
+      "source_line": 195,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/completion-security.test.mjs",
+          "declaration": "test('COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "COV-004",
+      "requirement": "The system SHALL detect drift in relevant target configuration, credentials, permissions, endpoints and integration versions.",
+      "minimum_acceptance": "A controlled configuration change moves the affected path to UNKNOWN within the configured detection window.",
+      "source_line": 196,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/completion-security.test.mjs",
+          "declaration": "test('COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "COV-005",
+      "requirement": "The system SHALL block publication of an enforcement guarantee when evidence is stale beyond the customer-defined maximum age.",
+      "minimum_acceptance": "Expired evidence automatically changes the claim state and generates an owner task.",
+      "source_line": 197,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/completion-security.test.mjs",
+          "declaration": "test('COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "COV-006",
+      "requirement": "Coverage status SHALL be scoped by tenant, action type, target instance, environment and connector version.",
+      "minimum_acceptance": "Two environments can hold different coverage states without cross-contamination.",
+      "source_line": 198,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/completion-security.test.mjs",
+          "declaration": "test('COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "COV-007",
+      "requirement": "The platform SHALL expose a machine-readable Coverage Manifest signed by the customer trust root or delegated policy key.",
+      "minimum_acceptance": "Manifest signature verifies independently and includes all scoped paths.",
+      "source_line": 199,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/runtime-audit.test.mjs",
+          "declaration": "test('COV-002 COV-007 COV-008: no manual declaration can claim ENFORCED or production guarantee', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "COV-008",
+      "requirement": "The Coverage Mapper SHALL support manual declarations only as MONITORED or UNKNOWN until technical enforcement evidence is attached.",
+      "minimum_acceptance": "A manual checkbox alone cannot produce ENFORCED.",
+      "source_line": 200,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/runtime-audit.test.mjs",
+          "declaration": "test('COV-002 COV-007 COV-008: no manual declaration can claim ENFORCED or production guarantee', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "COV-009",
+      "requirement": "The system SHALL retain historical coverage states and the exact time intervals in which guarantees were active.",
+      "minimum_acceptance": "Audit query reconstructs coverage at an arbitrary historical timestamp.",
+      "source_line": 201,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/completion-security.test.mjs",
+          "declaration": "test('COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "COV-010",
+      "requirement": "The system SHALL provide a pre-deployment bypass-test plan for every newly declared protected action.",
+      "minimum_acceptance": "Connector cannot enter production without test cases assigned and executed.",
+      "source_line": 202,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/completion-security.test.mjs",
+          "declaration": "test('COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "ACT-001",
+      "requirement": "Every protected operation SHALL be represented as a Canonical Action Capsule before policy evaluation.",
+      "minimum_acceptance": "Equivalent inputs canonicalise to the same stable representation and hash.",
+      "source_line": 208,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/canonical.test.mjs",
+          "declaration": "test('ACT-001 ACT-003: stable field order and exact material binding', () => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "ACT-002",
+      "requirement": "The Action Capsule SHALL include tenant, actor, device/workload, action type, target resource, current state version, requested state, destination, quantity/volume, purpose, evidence references, policy version, nonce, issue time, expiry and rollback metadata where applicable.",
+      "minimum_acceptance": "Schema validator rejects a capsule missing a mandatory field for its action class.",
+      "source_line": 209,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "ACT-003",
+      "requirement": "Canonicalisation SHALL use deterministic field ordering, type rules, normalisation and versioned schemas.",
+      "minimum_acceptance": "Cross-language reference implementations produce identical test-vector hashes.",
+      "source_line": 210,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/canonical.test.mjs",
+          "declaration": "test('ACT-001 ACT-003: stable field order and exact material binding', () => {"
+        },
+        {
+          "file": "tests/canonical.test.mjs",
+          "declaration": "test('ACT-003: strict parser rejects duplicate keys, trailing values and prototype keys', () => {"
+        },
+        {
+          "file": "tests/canonical.test.mjs",
+          "declaration": "test('ACT-003: 2000 deterministic canonical round trips with integer and Unicode vectors', () => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "ACT-004",
+      "requirement": "The Action Capsule SHALL bind both the current state and proposed state for mutating actions.",
+      "minimum_acceptance": "A state change between approval and execution invalidates the certificate.",
+      "source_line": 211,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('COM-004 ACT-004: stale target state invalidates certificate', t => { const h = fixture(t), { record, certificate } = h.ready(); h.f.target.seed('acme', record.capsule.action.target_resource, { altered: true }); assert.throws(() => h.f.execute(h.p(), certificate), hasCode('INV-409-STATE')); });"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "ACT-005",
+      "requirement": "The system SHALL distinguish request intent, authorised action and observed outcome as separate signed objects.",
+      "minimum_acceptance": "Audit chain contains three linked records and detects a mismatched outcome.",
+      "source_line": 212,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "ACT-006",
+      "requirement": "Free-form text SHALL never be the sole authoritative representation of a protected action.",
+      "minimum_acceptance": "Policy engine consumes typed fields rather than LLM prose.",
+      "source_line": 213,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "ACT-007",
+      "requirement": "Unknown or ambiguous values in a safety-relevant field SHALL produce ESCROW or DENY, never silent default ALLOW.",
+      "minimum_acceptance": "Fuzz tests show all unknown enum values fail safely.",
+      "source_line": 214,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/canonical.test.mjs",
+          "declaration": "test('ACT-007: ambiguous encodings and unknown types rejected', () => {"
+        },
+        {
+          "file": "tests/canonical.test.mjs",
+          "declaration": "test('ACT-007: oversized nesting and bodies rejected', () => { assert.throws(() => parseStrict('['.repeat(40) + '0' + ']'.repeat(40))); assert.throws(() => parseStrict(' '.repeat(1048577))); });"
+        },
+        {
+          "file": "tests/extended-security.test.mjs",
+          "declaration": "test('ACT-007 UX-002: unsupported or ambiguous currency scales fail rather than render a false amount', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "ACT-008",
+      "requirement": "Every Action Capsule SHALL carry a schema identifier and schema digest.",
+      "minimum_acceptance": "A verifier rejects unsupported or tampered schema versions.",
+      "source_line": 215,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('ACT-008: tampered schema digest rejected', t => { const h = fixture(t); assert.throws(() => h.proposed(undefined, undefined, { schema_digest: 'f'.repeat(64) }), hasCode('INV-400-SCHEMA')); });"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "ACT-009",
+      "requirement": "Action schemas SHALL support nested resource scopes and explicit exclusions.",
+      "minimum_acceptance": "A data export can permit named columns while explicitly denying payment tokens.",
+      "source_line": 216,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "ACT-010",
+      "requirement": "The platform SHALL provide human-readable rendering generated from the same canonical fields used for signing.",
+      "minimum_acceptance": "Changing a rendered safety-relevant value changes the signed digest.",
+      "source_line": 217,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('ACT-010: material change or graph change invalidates exact approval', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "ACT-011",
+      "requirement": "Action Capsule identifiers SHALL be globally unique within a tenant and collision-resistant.",
+      "minimum_acceptance": "Duplicate capsule submission is detected and rejected.",
+      "source_line": 218,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('ACT-011 COM-006: proposal idempotency returns exact first result; changed request rejected', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "ACT-012",
+      "requirement": "The platform SHALL support action composition while preventing a composed action from silently acquiring authority not present in its children.",
+      "minimum_acceptance": "A multi-step workflow is denied when any child capability is missing or broader than allowed.",
+      "source_line": 219,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/completion-security.test.mjs",
+          "declaration": "test('ACT-012: deterministic nested composition rejects cycles, duplicates, hidden and missing authority', () => {"
+        },
+        {
+          "file": "tests/completion-security.test.mjs",
+          "declaration": "test('ACT-012 UX-006: exact batch signatures execute each child once and never manufacture child authority', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "EVD-001",
+      "requirement": "Policy SHALL evaluate evidence by type, issuer, freshness, scope, confidence and trust domain.",
+      "minimum_acceptance": "Policy tests distinguish two pieces of evidence from the same compromised domain from two independent domains.",
+      "source_line": 225,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('EVD-001 EVD-002: correlated issuer and derivative evidence cannot satisfy independence', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "EVD-002",
+      "requirement": "The Evidence Graph SHALL model dependency relationships so derivative evidence does not count as independent.",
+      "minimum_acceptance": "An invoice parsed from an email and the email itself count as one source domain.",
+      "source_line": 226,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('EVD-001 EVD-002: correlated issuer and derivative evidence cannot satisfy independence', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "EVD-003",
+      "requirement": "Every evidence item SHALL have an immutable reference, content digest, acquisition time, expiry and verification method.",
+      "minimum_acceptance": "Tampered evidence fails digest verification and invalidates dependent decisions.",
+      "source_line": 227,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('EVD-003: tampered issuer signature and wrong tenant evidence are rejected', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "EVD-004",
+      "requirement": "The system SHALL support customer-defined authoritative sources such as ERP, bank, HRIS, device attestation, legal registry and counterparty credential.",
+      "minimum_acceptance": "Policy can require one item from each selected domain.",
+      "source_line": 228,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "EVD-005",
+      "requirement": "Communication channels SHALL default to explanatory evidence with zero authorising weight unless explicitly and narrowly configured.",
+      "minimum_acceptance": "A valid CEO email alone cannot satisfy a high-risk action policy.",
+      "source_line": 229,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('EVD-005 AIG-006: email/advisory evidence cannot confer authority', t => { const h = fixture(t), r = h.proposed(); h.evidence(r, { issuer: 'email' }); h.evidence(r, { issuer: 'bank', advisory: true }); h.approve(r); assert.equal(h.f.evaluate(h.p(), r.capsule.capsule_id).decision, 'ESCROW'); });"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "EVD-006",
+      "requirement": "Evidence acquisition SHALL be purpose-limited and minimise stored content.",
+      "minimum_acceptance": "The system stores extracted fields and digest when full content is not required.",
+      "source_line": 230,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "EVD-007",
+      "requirement": "Evidence freshness requirements SHALL be action-specific.",
+      "minimum_acceptance": "A bank-ownership proof can expire sooner than a corporate registration proof.",
+      "source_line": 231,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "EVD-008",
+      "requirement": "Evidence revocation SHALL invalidate all unexecuted certificates that depended on it.",
+      "minimum_acceptance": "Revoking a counterparty credential blocks pending actions immediately.",
+      "source_line": 232,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('EVD-008: evidence revocation invalidates pending certificate immediately', t => { const h = fixture(t), { record, certificate } = h.ready(), r = h.f.getCapsule(h.p(), record.capsule.capsule_id); h.f.revoke(h.p('security'), { kind: 'evidence', id: r.evidence[0], reason: 'Test source compromise' }); assert.throws(() => h.f.execute(h.p(), certificate), hasCode('INV-409-STATE')); });"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "EVD-009",
+      "requirement": "The platform SHALL distinguish missing evidence, conflicting evidence and unverifiable evidence in operator output.",
+      "minimum_acceptance": "Each state results in a different machine-readable reason code.",
+      "source_line": 233,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('EVD-009: conflicting evidence remains escrow despite sufficient positive sources', t => { const h = fixture(t), r = h.proposed(); h.evidence(r); h.evidence(r, { issuer: 'registry' }); h.evidence(r, { issuer: 'governance', claim: 'conflict' }); h.approve(r); assert.ok(h.f.evaluate(h.p(), r.capsule.capsule_id).reasons.some(x => x.code === 'EVIDENCE_CONFLICT')); });"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "EVD-010",
+      "requirement": "Evidence connectors SHALL expose provenance and transformation steps.",
+      "minimum_acceptance": "An auditor can determine whether a field came directly from the source or an AI extraction.",
+      "source_line": 234,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "EVD-011",
+      "requirement": "AI-derived evidence SHALL be marked advisory and SHALL require deterministic or authoritative corroboration for high-risk actions.",
+      "minimum_acceptance": "Removing corroboration changes decision from ALLOW to ESCROW or DENY.",
+      "source_line": 235,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "POL-001",
+      "requirement": "Policy evaluation SHALL be deterministic for the same capsule, evidence set, policy version and trusted time.",
+      "minimum_acceptance": "Repeated offline evaluation produces identical result and explanation.",
+      "source_line": 241,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/extended-security.test.mjs",
+          "declaration": "test('POL-001 POL-002 POL-015: exact inputs and trusted test time produce identical decision and reasons', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "POL-002",
+      "requirement": "Policy decisions SHALL be one of ALLOW, SHIELD, ESCROW, DEFER or DENY.",
+      "minimum_acceptance": "No undefined decision reaches an execution gate.",
+      "source_line": 242,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/extended-security.test.mjs",
+          "declaration": "test('POL-001 POL-002 POL-015: exact inputs and trusted test time produce identical decision and reasons', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "POL-003",
+      "requirement": "ALLOW SHALL mean all mandatory conditions are met and the exact action may proceed.",
+      "minimum_acceptance": "Certificate issuance is possible only for ALLOW.",
+      "source_line": 243,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('POL-003 POL-005: missing evidence/approvals cannot mint or execute', t => { const h = fixture(t), r = h.proposed(); assert.equal(h.f.evaluate(h.p(), r.capsule.capsule_id).decision, 'ESCROW'); assert.throws(() => h.f.certificate(h.p(), r.capsule.capsule_id), hasCode('INV-412-EVIDENCE')); assert.throws(() => h.f.execute(h.p(), {}), hasCode('INV-401-SIGNATURE')); });"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "POL-004",
+      "requirement": "SHIELD SHALL allow the action only after automatic risk-reducing transformation such as redaction, limit reduction, destination substitution or sandboxing.",
+      "minimum_acceptance": "Transformed capsule differs explicitly and requires re-evaluation.",
+      "source_line": 244,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/runtime-audit.test.mjs",
+          "declaration": "test('DAT-005 POL-004: restricted export requires explicit new SHIELD proposal', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "POL-005",
+      "requirement": "ESCROW SHALL hold the action pending required evidence or independent approval.",
+      "minimum_acceptance": "Pending action cannot execute and has an owner, expiry and reason.",
+      "source_line": 245,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('POL-003 POL-005: missing evidence/approvals cannot mint or execute', t => { const h = fixture(t), r = h.proposed(); assert.equal(h.f.evaluate(h.p(), r.capsule.capsule_id).decision, 'ESCROW'); assert.throws(() => h.f.certificate(h.p(), r.capsule.capsule_id), hasCode('INV-412-EVIDENCE')); assert.throws(() => h.f.execute(h.p(), {}), hasCode('INV-401-SIGNATURE')); });"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "POL-006",
+      "requirement": "DEFER SHALL impose a defined time or state condition before re-evaluation.",
+      "minimum_acceptance": "Action remains non-executable until the timer/state predicate is met.",
+      "source_line": 246,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('POL-006 COM-013: cooldown defers exact bank change', t => { const h = fixture(t), r = h.proposed('finance.bank.change', { bank_account: 'TESTBANK000002', currency: 'EUR' }); assert.equal(h.f.evaluate(h.p(), r.capsule.capsule_id).decision, 'DEFER'); h.advance(60001); assert.equal(h.f.evaluate(h.p(), r.capsule.capsule_id).decision, 'ESCROW'); });"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "POL-007",
+      "requirement": "DENY SHALL permanently reject the evaluated action instance and record a reason.",
+      "minimum_acceptance": "The same capsule nonce cannot be resubmitted after DENY.",
+      "source_line": 247,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('POL-007: denied nonce cannot be revived or re-evaluated', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "POL-008",
+      "requirement": "Policies SHALL be versioned, signed, testable and deployable through staged environments.",
+      "minimum_acceptance": "Production policy version maps to a reviewed commit and signature.",
+      "source_line": 248,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "POL-009",
+      "requirement": "Safety-relevant policy changes SHALL themselves be protected actions.",
+      "minimum_acceptance": "Changing an export limit requires a PolicyChange capsule and governance route.",
+      "source_line": 249,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('COM-014 POL-009: 3-of-5 customer software quorum protects exact policy activation', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "POL-010",
+      "requirement": "The system SHALL render an exact policy diff and simulated impact before activation.",
+      "minimum_acceptance": "Reviewer sees affected action classes, tenants and historical decisions.",
+      "source_line": 250,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('POL-010: exact candidate simulation required before policy certificate', t => {"
+        },
+        {
+          "file": "tests/runtime-audit.test.mjs",
+          "declaration": "test('POL-010 UX-008: policy simulation records diff without activating candidate', t => { const h = fixture(t); h.proposed(); const p = clone(h.f.policy('acme')); p.rules['finance.payment.first'].max_quantity = 10; const result = h.f.simulate(h.p('policy-admin'), p); assert.ok(result.diff.length); assert.equal(result.activation, false); assert.notEqual(h.f.policy('acme').rules['finance.payment.first'].max_quantity, 10); });"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "POL-011",
+      "requirement": "Policies SHALL support separation of duties, rolling budgets, cool-down periods, threshold approvals, destination allowlists, device health and state predicates.",
+      "minimum_acceptance": "Each control has executable test cases.",
+      "source_line": 251,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/extended-security.test.mjs",
+          "declaration": "test('IDN-001 POL-011: an initiator cannot approve their own protected action even with an eligible signing key', t => {"
+        },
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('POL-011: duplicate signer cannot satisfy threshold', t => { const h = fixture(t), r = h.proposed(); h.evidence(r); h.evidence(r, { issuer: 'registry' }); h.approve(r, 1); assert.throws(() => h.approve(r, 1), hasCode('INV-409-REPLAY')); assert.throws(() => h.f.certificate(h.p(), r.capsule.capsule_id), hasCode('INV-412-EVIDENCE')); });"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "POL-012",
+      "requirement": "No single vendor-controlled credential SHALL be able to activate a customer root policy.",
+      "minimum_acceptance": "Vendor compromise simulation cannot satisfy activation threshold.",
+      "source_line": 252,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/runtime-audit.test.mjs",
+          "declaration": "test('POL-012: fewer than 3 customer bootstrap signers cannot start the service', t => { const h = fixture(t), config = clone(h.setup.config); config.tenants.acme.genesis_signatures.length = 2; assert.throws(() => { const f = new h.f.constructor(config, h.directory, h.now); f.close(); }, hasCode('INV-503-CONFIG')); });"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "POL-013",
+      "requirement": "Emergency policies SHALL be pre-defined, narrow, expiring and observable; no universal bypass SHALL exist.",
+      "minimum_acceptance": "Emergency test proves scope, expiry and alerts.",
+      "source_line": 253,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/completion-security.test.mjs",
+          "declaration": "test('POL-013 POL-014: emergency requires simulation and quorum, restricts exact scope, expires without reviving revocations', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "POL-014",
+      "requirement": "Policy rollback SHALL require protection equivalent to activation and SHALL not revive revoked keys or invalid evidence.",
+      "minimum_acceptance": "Rollback tests preserve revocations and audit continuity.",
+      "source_line": 254,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/completion-security.test.mjs",
+          "declaration": "test('POL-013 POL-014: emergency requires simulation and quorum, restricts exact scope, expires without reviving revocations', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "POL-015",
+      "requirement": "Every decision SHALL include machine-readable reasons and a concise human explanation derived from deterministic evaluation.",
+      "minimum_acceptance": "Operator can see failed predicates without exposing unnecessary sensitive data.",
+      "source_line": 255,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/extended-security.test.mjs",
+          "declaration": "test('POL-001 POL-002 POL-015: exact inputs and trusted test time produce identical decision and reasons', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "COM-001",
+      "requirement": "A Commit Gate SHALL reject every protected mutation that lacks a valid Action Certificate.",
+      "minimum_acceptance": "Direct API call without certificate fails even with a valid user session.",
+      "source_line": 261,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('COM-001 COM-009 COM-010: exact approved action executes and produces signed verified outcome', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "COM-002",
+      "requirement": "An Action Certificate SHALL bind capsule hash, policy version, evidence graph digest, signer set, target gate, nonce, expiry and execution constraints.",
+      "minimum_acceptance": "Changing any bound field invalidates verification.",
+      "source_line": 262,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/canonical.test.mjs",
+          "declaration": "test('COM-002 KEY-007: Ed25519 domain-separated signatures reject every altered field', () => {"
+        },
+        {
+          "file": "tests/extended-security.test.mjs",
+          "declaration": "test('COM-002: all independently signed certificate binding mutations still fail registered-authority equality', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "COM-003",
+      "requirement": "Certificates SHALL be single-use unless an action schema explicitly permits bounded repeated use.",
+      "minimum_acceptance": "Replay of a consumed certificate is rejected.",
+      "source_line": 263,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/http-concurrency-ui.test.mjs",
+          "declaration": "test('COM-003 NFR-TST-002: eight independent gate workers race; exactly one certificate is consumed', async t => {"
+        },
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('COM-003: consumed certificate is never replayed', t => { const h = fixture(t), { certificate } = h.ready(); h.f.execute(h.p(), certificate); assert.throws(() => h.f.execute(h.p(), certificate), hasCode('INV-409-REPLAY')); });"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "COM-004",
+      "requirement": "The gate SHALL verify trusted time, certificate revocation and target state immediately before execution.",
+      "minimum_acceptance": "Expired, revoked and stale-state certificates fail.",
+      "source_line": 264,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('COM-004 ACT-004: stale target state invalidates certificate', t => { const h = fixture(t), { record, certificate } = h.ready(); h.f.target.seed('acme', record.capsule.action.target_resource, { altered: true }); assert.throws(() => h.f.execute(h.p(), certificate), hasCode('INV-409-STATE')); });"
+        },
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('COM-004: expired certificate fails closed', t => { const h = fixture(t), { certificate } = h.ready(); h.advance(60001); assert.throws(() => h.f.execute(h.p(), certificate), hasCode('INV-401-CERTIFICATE')); });"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "COM-005",
+      "requirement": "Execution SHALL be atomic or use a documented compensating transaction when atomicity is unavailable.",
+      "minimum_acceptance": "Failure injection leaves either no change or a verified compensation record.",
+      "source_line": 265,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('COM-005 COM-012: target failure before commit rolls back and stays uncertain without blind retry', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "COM-006",
+      "requirement": "The gate SHALL enforce idempotency for retryable actions.",
+      "minimum_acceptance": "Network retry cannot create duplicate vendor, beneficiary or payment.",
+      "source_line": 266,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('ACT-011 COM-006: proposal idempotency returns exact first result; changed request rejected', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "COM-007",
+      "requirement": "The target-facing credential SHALL be held by the Root/Commit Gate where technically possible, not by the calling application.",
+      "minimum_acceptance": "Compromised application cannot directly authenticate to the resource.",
+      "source_line": 267,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "COM-008",
+      "requirement": "The gate SHALL minimise target credential scope to the protected action set.",
+      "minimum_acceptance": "Credential cannot perform an unrelated administrator operation.",
+      "source_line": 268,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "COM-009",
+      "requirement": "The system SHALL verify the observed target outcome against the authorised action.",
+      "minimum_acceptance": "A deliberately altered downstream response triggers incident status.",
+      "source_line": 269,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/extended-security.test.mjs",
+          "declaration": "test('DAT-001 COM-009: exact data export cannot return extra columns from downstream', t => {"
+        },
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('COM-001 COM-009 COM-010: exact approved action executes and produces signed verified outcome', t => {"
+        },
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "for (const fault of ['malformed-response', 'altered-response']) test(`CON-004 COM-009: ${fault} cannot produce false success`, t => { const h = fixture(t), { certificate } = h.ready(); assert.equal(h.f.execute(h.p(), certificate, { fault }).payload.status, 'UNCERTAIN'); assert.equal(h.f.reconcile(h.p(), certificate.payload.certificate_id).payload.status, 'VERIFIED'); });"
+        },
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('COM-009: self-consistent but unauthorised observed state must not pass reconciliation', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "COM-010",
+      "requirement": "Execution result SHALL be signed and linked to the certificate.",
+      "minimum_acceptance": "Independent verifier reconstructs the chain.",
+      "source_line": 270,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('COM-001 COM-009 COM-010: exact approved action executes and produces signed verified outcome', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "COM-011",
+      "requirement": "The gate SHALL support a dry-run mode that never mutates the target.",
+      "minimum_acceptance": "Pilot can measure decisions safely.",
+      "source_line": 271,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('COM-011: dry-run does not mutate or consume certificate', t => { const h = fixture(t), { record, certificate } = h.ready(); assert.equal(h.f.execute(h.p(), certificate, { dryRun: true }).no_mutation, true); assert.equal(h.f.target.state('acme', record.capsule.action.target_resource).version, 0); assert.equal(h.f.execute(h.p(), certificate).payload.status, 'VERIFIED'); });"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "COM-012",
+      "requirement": "The gate SHALL expose explicit timeout and uncertain-outcome states; it SHALL not automatically assume success.",
+      "minimum_acceptance": "Injected timeout produces reconciliation rather than duplicate retry.",
+      "source_line": 272,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/extended-security.test.mjs",
+          "declaration": "test('CON-004 COM-012: missing data-output fields return UNCERTAIN rather than an exception after dispatch', t => {"
+        },
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('COM-012: post-commit timeout becomes UNCERTAIN; reconciliation finds one durable mutation', t => {"
+        },
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('COM-005 COM-012: target failure before commit rolls back and stays uncertain without blind retry', t => {"
+        },
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('COM-012: process crash reservation survives restart and prevents replay', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "COM-013",
+      "requirement": "High-risk actions SHALL support deliberate delay and cancellation windows.",
+      "minimum_acceptance": "A bank-detail change can be cancelled before first-payment eligibility.",
+      "source_line": 273,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('POL-006 COM-013: cooldown defers exact bank change', t => { const h = fixture(t), r = h.proposed('finance.bank.change', { bank_account: 'TESTBANK000002', currency: 'EUR' }); assert.equal(h.f.evaluate(h.p(), r.capsule.capsule_id).decision, 'DEFER'); h.advance(60001); assert.equal(h.f.evaluate(h.p(), r.capsule.capsule_id).decision, 'ESCROW'); });"
+        },
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('COM-013: cancellation closes issued authority', t => { const h = fixture(t), { record, certificate } = h.ready(); h.f.cancel(h.p(), record.capsule.capsule_id); assert.throws(() => h.f.execute(h.p(), certificate), hasCode('INV-409-REPLAY')); });"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "COM-014",
+      "requirement": "The platform SHALL support customer-controlled threshold authorisation for root and critical action classes.",
+      "minimum_acceptance": "A 3-of-5 test succeeds with any valid three shares and fails with two.",
+      "source_line": 274,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('COM-014 POL-009: 3-of-5 customer software quorum protects exact policy activation', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "RUN-001",
+      "requirement": "Runtime policy enforcement SHALL execute locally at the endpoint, gateway, service proxy or resource gate; ordinary dataplane decisions SHALL NOT require a round trip to the vendor cloud.",
+      "minimum_acceptance": "Disconnecting vendor cloud does not interrupt cached permitted runtime traffic.",
+      "source_line": 280,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/network-perception.test.mjs",
+          "declaration": "test('NET-001 NET-002 NET-003 NET-007 NET-009 RUN-001: local process dispatch requires exact tenant/device/service capability, even offline', t => {"
+        },
+        {
+          "file": "tests/runtime-audit.test.mjs",
+          "declaration": "test('RUN-001 DAT-001: local scoped synthetic data read enforces rows and columns', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "RUN-002",
+      "requirement": "Runtime capabilities SHALL bind subject, device/workload, action, resource, destination, volume, rate, time and state.",
+      "minimum_acceptance": "Changing destination or exceeding rate causes enforcement.",
+      "source_line": 281,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/runtime-audit.test.mjs",
+          "declaration": "for (const [field, value] of [['destination', 'evil-vault'], ['device_id', 'stolen-device'], ['resource', 'dataset-2'], ['purpose', 'marketing']]) test(`RUN-002 DAT-004: ${field} binding cannot be broadened`, t => { const h = fixture(t), cap = h.f.runtime.issue(h.p(), runtimeInput()); assert.throws(() => h.f.runtime.consume(h.p(), runtimeRequest(cap, { [field]: value }))); });"
+        },
+        {
+          "file": "tests/runtime-audit.test.mjs",
+          "declaration": "test('RUN-002: runtime request replay does not spend twice or return data twice', t => { const h = fixture(t), cap = h.f.runtime.issue(h.p(), runtimeInput()), request = runtimeRequest(cap); h.f.runtime.consume(h.p(), request); assert.throws(() => h.f.runtime.consume(h.p(), request), hasCode('INV-409-REPLAY')); });"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "RUN-003",
+      "requirement": "Capabilities SHALL be short-lived and continuously renewable only while required health and policy conditions hold.",
+      "minimum_acceptance": "Loss of device attestation prevents renewal.",
+      "source_line": 282,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/runtime-audit.test.mjs",
+          "declaration": "test('RUN-003: stale configured device health prevents renewal', t => { const h = fixture(t); h.advance(86400001); assert.throws(() => h.f.runtime.issue(h.p(), runtimeInput()), hasCode('INV-403-HEALTH')); });"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "RUN-004",
+      "requirement": "The system SHALL support immediate revocation with bounded propagation time.",
+      "minimum_acceptance": "Revoked subject loses access within configured SLO.",
+      "source_line": 283,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/extended-security.test.mjs",
+          "declaration": "test('RUN-004: runtime issuer-key revocation and active-policy change invalidate cached token', t => {"
+        },
+        {
+          "file": "tests/network-perception.test.mjs",
+          "declaration": "test('NET-004 NET-005 NET-006 NET-010 RUN-004 RUN-008 RUN-009: rate, quarantine, revocation, exhaustion and containment counters', t => {"
+        },
+        {
+          "file": "tests/runtime-audit.test.mjs",
+          "declaration": "test('RUN-004 IDN-008: device quarantine rejects issued capability immediately', t => { const h = fixture(t), cap = h.f.runtime.issue(h.p(), runtimeInput()); h.f.revoke(h.p('security'), { kind: 'device', id: 'operator-device', reason: 'Synthetic compromised device' }); assert.throws(() => h.f.runtime.consume(h.p(), runtimeRequest(cap)), hasCode('INV-403-QUARANTINE')); });"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "RUN-005",
+      "requirement": "Local gates SHALL use fail behaviour defined per action class.",
+      "minimum_acceptance": "Test matrix demonstrates fail-closed, cached-allow or constrained fail-open as configured.",
+      "source_line": 284,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "RUN-006",
+      "requirement": "Runtime enforcement SHALL expose reason-coded counters without logging sensitive payload by default.",
+      "minimum_acceptance": "Operations dashboard diagnoses blocks while respecting minimisation.",
+      "source_line": 285,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "RUN-007",
+      "requirement": "The dataplane SHALL implement resource and tenant isolation.",
+      "minimum_acceptance": "Cross-tenant capability is rejected even with a syntactically valid token.",
+      "source_line": 286,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/runtime-audit.test.mjs",
+          "declaration": "test('RUN-007: cross-tenant capability cannot be consumed', t => { const h = fixture(t), cap = h.f.runtime.issue(h.p(), runtimeInput()); assert.throws(() => h.f.runtime.consume(h.p('operator', 'globex'), runtimeRequest(cap)), hasCode('INV-401-SIGNATURE')); });"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "RUN-008",
+      "requirement": "Runtime gates SHALL rate-limit their own control interfaces and resist decision-cache exhaustion.",
+      "minimum_acceptance": "Adversarial load does not evict critical policy or crash the gate.",
+      "source_line": 287,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/network-perception.test.mjs",
+          "declaration": "test('NET-004 NET-005 NET-006 NET-010 RUN-004 RUN-008 RUN-009: rate, quarantine, revocation, exhaustion and containment counters', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "RUN-009",
+      "requirement": "The system SHALL distinguish policy denial, capacity throttling, quarantine and infrastructure failure.",
+      "minimum_acceptance": "Clients receive stable, documented error codes.",
+      "source_line": 288,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/network-perception.test.mjs",
+          "declaration": "test('NET-004 NET-005 NET-006 NET-010 RUN-004 RUN-008 RUN-009: rate, quarantine, revocation, exhaustion and containment counters', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "RUN-010",
+      "requirement": "Every runtime gate SHALL support a signed configuration snapshot and local integrity check.",
+      "minimum_acceptance": "Unauthorised local configuration change is detected and gate privileges are withdrawn.",
+      "source_line": 289,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/completion-security.test.mjs",
+          "declaration": "test('RUN-010: signed startup, tampering withdrawal, quorum reload and downgrade rejection', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "DAT-001",
+      "requirement": "Data policy SHALL support row, column, field, classification, jurisdiction, purpose and destination constraints.",
+      "minimum_acceptance": "A permitted query returns only authorised columns and rows.",
+      "source_line": 295,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/extended-security.test.mjs",
+          "declaration": "test('DAT-001 COM-009: exact data export cannot return extra columns from downstream', t => {"
+        },
+        {
+          "file": "tests/extended-security.test.mjs",
+          "declaration": "test('DAT-001: caller cannot mislabel dataset jurisdiction or sensitivity', t => {"
+        },
+        {
+          "file": "tests/runtime-audit.test.mjs",
+          "declaration": "test('RUN-001 DAT-001: local scoped synthetic data read enforces rows and columns', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "DAT-002",
+      "requirement": "The system SHALL enforce rolling information budgets across configurable minute, hour, day and month windows.",
+      "minimum_acceptance": "Low-and-slow extraction exceeds a cumulative budget and is blocked.",
+      "source_line": 296,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/http-concurrency-ui.test.mjs",
+          "declaration": "test('DAT-002: concurrent gates cannot overspend shared rolling budget', async t => {"
+        },
+        {
+          "file": "tests/runtime-audit.test.mjs",
+          "declaration": "test('DAT-002 DAT-009: low-and-slow extraction accumulates across newly minted capabilities', t => {"
+        },
+        {
+          "file": "tests/runtime-audit.test.mjs",
+          "declaration": "test('DAT-002: rolling budget recovers after bounded window expires', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "DAT-003",
+      "requirement": "Budgets SHALL account for sensitivity or information value, not bytes alone.",
+      "minimum_acceptance": "A small export of passport records consumes more budget than ordinary marketing assets.",
+      "source_line": 297,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/runtime-audit.test.mjs",
+          "declaration": "test('DAT-003: server-controlled sensitivity weight increases information charge', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "DAT-004",
+      "requirement": "Data capabilities SHALL bind an approved destination or protected output channel.",
+      "minimum_acceptance": "Export to an unapproved domain or storage account fails.",
+      "source_line": 298,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/runtime-audit.test.mjs",
+          "declaration": "for (const [field, value] of [['destination', 'evil-vault'], ['device_id', 'stolen-device'], ['resource', 'dataset-2'], ['purpose', 'marketing']]) test(`RUN-002 DAT-004: ${field} binding cannot be broadened`, t => { const h = fixture(t), cap = h.f.runtime.issue(h.p(), runtimeInput()); assert.throws(() => h.f.runtime.consume(h.p(), runtimeRequest(cap, { [field]: value }))); });"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "DAT-005",
+      "requirement": "The platform SHALL support automatic SHIELD transformations including masking, aggregation, tokenisation and field removal.",
+      "minimum_acceptance": "Policy transforms an overbroad export into a compliant result.",
+      "source_line": 299,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/completion-security.test.mjs",
+          "declaration": "test('DAT-005 DAT-011: watermark is opt-in, attributed, deterministic and never mutates source data', () => {"
+        },
+        {
+          "file": "tests/runtime-audit.test.mjs",
+          "declaration": "test('DAT-005 POL-004: restricted export requires explicit new SHIELD proposal', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "DAT-006",
+      "requirement": "Query rewriting SHALL preserve database safety and SHALL be verifiable against the authorised schema.",
+      "minimum_acceptance": "Adversarial SQL cannot escape row/column constraints.",
+      "source_line": 300,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/runtime-audit.test.mjs",
+          "declaration": "test('DAT-006: SQL-shaped columns and unrestricted row sets rejected', t => { const h = fixture(t); assert.throws(() => h.f.runtime.issue(h.p(), runtimeInput({ columns: ['name; DROP TABLE resources'] })), hasCode('INV-403-SCOPE')); const cap = h.f.runtime.issue(h.p(), runtimeInput()); assert.throws(() => h.f.runtime.consume(h.p(), runtimeRequest(cap, { columns: ['passport'] })), hasCode('INV-403-SCOPE')); });"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "DAT-007",
+      "requirement": "Database credentials SHALL be isolated at the data Root Gate where possible.",
+      "minimum_acceptance": "Application compromise does not reveal reusable database credentials.",
+      "source_line": 301,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "DAT-008",
+      "requirement": "The system SHALL support bulk-export escrow and exact approval for exceptional legitimate use.",
+      "minimum_acceptance": "Approved export has fixed dataset, fields, row ceiling, destination and expiry.",
+      "source_line": 302,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "DAT-009",
+      "requirement": "The platform SHALL detect repeated overlapping queries intended to reconstruct a restricted dataset.",
+      "minimum_acceptance": "Test sequence triggers cumulative reconstruction control.",
+      "source_line": 303,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/runtime-audit.test.mjs",
+          "declaration": "test('DAT-002 DAT-009: low-and-slow extraction accumulates across newly minted capabilities', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "DAT-010",
+      "requirement": "Data access logs SHALL record policy-relevant metadata and digests while minimising plaintext.",
+      "minimum_acceptance": "Auditor can verify access without receiving full record contents.",
+      "source_line": 304,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "DAT-011",
+      "requirement": "Protected outputs SHALL support watermarking and user/session attribution where lawful and appropriate.",
+      "minimum_acceptance": "Rendered/exported output identifies authorised session without altering source data.",
+      "source_line": 305,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/completion-security.test.mjs",
+          "declaration": "test('DAT-005 DAT-011: watermark is opt-in, attributed, deterministic and never mutates source data', () => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "DAT-012",
+      "requirement": "The system SHALL support deletion, retention and legal-hold controls for its own evidence store.",
+      "minimum_acceptance": "Retention policy is demonstrable and legal-hold prevents deletion.",
+      "source_line": 306,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/runtime-audit.test.mjs",
+          "declaration": "test('DAT-012: expired evidence is held for active actions and legal hold; terminal evidence logically deleted', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "IDN-001",
+      "requirement": "Administrative and high-risk actions SHALL require phishing-resistant authentication and action-bound confirmation.",
+      "minimum_acceptance": "Password/OTP-only test cannot authorise configured high-risk action.",
+      "source_line": 312,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/extended-security.test.mjs",
+          "declaration": "test('IDN-001 POL-011: an initiator cannot approve their own protected action even with an eligible signing key', t => {"
+        },
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('IDN-001: software signature cannot satisfy hardware-required policy', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "IDN-002",
+      "requirement": "Authentication SHALL establish identity but SHALL NOT by itself grant protected action authority.",
+      "minimum_acceptance": "Valid login without capability fails at the gate.",
+      "source_line": 313,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('IDN-002: auditor login grants no mutation authority', t => { const h = fixture(t); assert.throws(() => h.proposed(undefined, undefined, {}, h.p('auditor')), hasCode('INV-403-ROLE')); });"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "IDN-003",
+      "requirement": "The platform SHALL support workforce, workload, device and counterparty identities.",
+      "minimum_acceptance": "Policies can distinguish and combine all four identity classes.",
+      "source_line": 314,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "IDN-004",
+      "requirement": "Standing administrator access SHALL be minimised in favour of just-in-time, scoped capabilities.",
+      "minimum_acceptance": "Admin privilege expires automatically and cannot be reused outside scope.",
+      "source_line": 315,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "IDN-005",
+      "requirement": "MFA reset, authenticator enrolment and account recovery SHALL be separate protected actions.",
+      "minimum_acceptance": "Helpdesk cannot collapse reset and enrolment into one unlogged operation.",
+      "source_line": 316,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "IDN-006",
+      "requirement": "Recovery SHALL not be weaker than normal authentication for the recovered privilege class.",
+      "minimum_acceptance": "Social-engineering-only recovery fails.",
+      "source_line": 317,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "IDN-007",
+      "requirement": "Device health and hardware-backed key status SHALL be bound to high-risk capabilities.",
+      "minimum_acceptance": "Moving the session to an unattested device invalidates capability.",
+      "source_line": 318,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "IDN-008",
+      "requirement": "The system SHALL support rapid identity and device quarantine without deleting evidence.",
+      "minimum_acceptance": "Quarantined identity loses access but audit remains available.",
+      "source_line": 319,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/runtime-audit.test.mjs",
+          "declaration": "test('RUN-004 IDN-008: device quarantine rejects issued capability immediately', t => { const h = fixture(t), cap = h.f.runtime.issue(h.p(), runtimeInput()); h.f.revoke(h.p('security'), { kind: 'device', id: 'operator-device', reason: 'Synthetic compromised device' }); assert.throws(() => h.f.runtime.consume(h.p(), runtimeRequest(cap)), hasCode('INV-403-QUARANTINE')); });"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "IDN-009",
+      "requirement": "Service and API credentials SHALL be short-lived or brokered wherever the target supports it.",
+      "minimum_acceptance": "No long-lived secret is exposed to the application in the reference deployment.",
+      "source_line": 320,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "IDN-010",
+      "requirement": "The platform SHALL record identity proofing level and authenticator properties as evidence, not as universal trust.",
+      "minimum_acceptance": "Policy can require higher proofing for root recovery than routine access.",
+      "source_line": 321,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NET-001",
+      "requirement": "Default workstation-to-workstation communication SHALL be denied unless explicitly required.",
+      "minimum_acceptance": "Peer scan from an ordinary workstation yields no reachable peers.",
+      "source_line": 327,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/network-perception.test.mjs",
+          "declaration": "test('NET-001 NET-002 NET-003 NET-007 NET-009 RUN-001: local process dispatch requires exact tenant/device/service capability, even offline', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NET-002",
+      "requirement": "The platform SHALL enforce microsegmentation by identity, workload, service and purpose rather than network location alone.",
+      "minimum_acceptance": "Moving a device to another subnet does not expand authority.",
+      "source_line": 328,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/network-perception.test.mjs",
+          "declaration": "test('NET-001 NET-002 NET-003 NET-007 NET-009 RUN-001: local process dispatch requires exact tenant/device/service capability, even offline', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NET-003",
+      "requirement": "Network capabilities SHALL define destination, protocol, service identity, rate envelope and expiry.",
+      "minimum_acceptance": "A permitted ERP connection cannot be reused to scan adjacent ports.",
+      "source_line": 329,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/network-perception.test.mjs",
+          "declaration": "test('NET-001 NET-002 NET-003 NET-007 NET-009 RUN-001: local process dispatch requires exact tenant/device/service capability, even offline', t => {"
+        },
+        {
+          "file": "tests/runtime-audit.test.mjs",
+          "declaration": "test('NET-003 NET-004: local service envelope rejects other port and excess request rate', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NET-004",
+      "requirement": "Local enforcement SHALL throttle or drop traffic exceeding the configured rate or fan-out envelope.",
+      "minimum_acceptance": "Internal DoS simulation is contained at source.",
+      "source_line": 330,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/network-perception.test.mjs",
+          "declaration": "test('NET-004 NET-005 NET-006 NET-010 RUN-004 RUN-008 RUN-009: rate, quarantine, revocation, exhaustion and containment counters', t => {"
+        },
+        {
+          "file": "tests/runtime-audit.test.mjs",
+          "declaration": "test('NET-003 NET-004: local service envelope rejects other port and excess request rate', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NET-005",
+      "requirement": "A device that loses health attestation or disables the endpoint control SHALL lose ordinary network capability and enter constrained remediation mode.",
+      "minimum_acceptance": "Killing the agent triggers network quarantine rather than protection-off.",
+      "source_line": 331,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/network-perception.test.mjs",
+          "declaration": "test('NET-004 NET-005 NET-006 NET-010 RUN-004 RUN-008 RUN-009: rate, quarantine, revocation, exhaustion and containment counters', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NET-006",
+      "requirement": "Quarantine SHALL permit only explicitly defined remediation, security and business-continuity services.",
+      "minimum_acceptance": "Quarantined device cannot reach databases or peer systems.",
+      "source_line": 332,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/network-perception.test.mjs",
+          "declaration": "test('NET-004 NET-005 NET-006 NET-010 RUN-004 RUN-008 RUN-009: rate, quarantine, revocation, exhaustion and containment counters', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NET-007",
+      "requirement": "The system SHALL support distributed containment that does not depend on a central decision for every packet.",
+      "minimum_acceptance": "Central controller outage does not remove local limits.",
+      "source_line": 333,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/network-perception.test.mjs",
+          "declaration": "test('NET-001 NET-002 NET-003 NET-007 NET-009 RUN-001: local process dispatch requires exact tenant/device/service capability, even offline', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NET-008",
+      "requirement": "Network policy changes SHALL be protected actions and tested for unintended exposure.",
+      "minimum_acceptance": "A rule opening a database to 0.0.0.0/0 is denied by constitution.",
+      "source_line": 334,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NET-009",
+      "requirement": "The system SHALL identify and control east-west traffic generated by service accounts and workloads.",
+      "minimum_acceptance": "Compromised workload cannot laterally scan unrelated services.",
+      "source_line": 335,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/network-perception.test.mjs",
+          "declaration": "test('NET-001 NET-002 NET-003 NET-007 NET-009 RUN-001: local process dispatch requires exact tenant/device/service capability, even offline', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NET-010",
+      "requirement": "The runtime shall expose containment time, dropped traffic and affected capabilities for incident analysis.",
+      "minimum_acceptance": "Incident report reconstructs the containment sequence.",
+      "source_line": 336,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/network-perception.test.mjs",
+          "declaration": "test('NET-004 NET-005 NET-006 NET-010 RUN-004 RUN-008 RUN-009: rate, quarantine, revocation, exhaustion and containment counters', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "PER-001",
+      "requirement": "Protected plaintext SHALL be decrypted only inside an attested trusted component when Secure Perception mode is required.",
+      "minimum_acceptance": "General-purpose OS memory inspection does not reveal protected test plaintext.",
+      "source_line": 342,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/network-perception.test.mjs",
+          "declaration": "test('PER-001 PER-003 PER-006 PER-007 PER-009 PER-010: software transport contract encrypts only allowed fields and never claims hardware assurance', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "PER-002",
+      "requirement": "The protected display path SHALL prevent ordinary application screenshot, DOM extraction, clipboard access and accessibility scraping of protected content.",
+      "minimum_acceptance": "Automated hostile client tests return opaque surface or denied output.",
+      "source_line": 343,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "PER-003",
+      "requirement": "The trusted component SHALL receive protected content directly from an authenticated service or gate, not from untrusted window content.",
+      "minimum_acceptance": "Malware cannot substitute displayed values without invalidating the trusted session.",
+      "source_line": 344,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/network-perception.test.mjs",
+          "declaration": "test('PER-001 PER-003 PER-006 PER-007 PER-009 PER-010: software transport contract encrypts only allowed fields and never claims hardware assurance', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "PER-004",
+      "requirement": "The user SHALL have a hardware- or trusted-path-backed indication that Secure Mode is active.",
+      "minimum_acceptance": "Untrusted OS overlay cannot reproduce the full trusted indication in the threat model.",
+      "source_line": 345,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "PER-005",
+      "requirement": "Safety-relevant input SHALL use a trusted input path when the user is approving or entering protected values.",
+      "minimum_acceptance": "Key/input interception test does not recover protected entry.",
+      "source_line": 346,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "PER-006",
+      "requirement": "The platform SHALL minimise content displayed and apply purpose, field and time constraints.",
+      "minimum_acceptance": "User sees only data required by the active task.",
+      "source_line": 347,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/network-perception.test.mjs",
+          "declaration": "test('PER-001 PER-003 PER-006 PER-007 PER-009 PER-010: software transport contract encrypts only allowed fields and never claims hardware assurance', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "PER-007",
+      "requirement": "Secure Perception SHALL fail closed when attestation, protected path or version trust fails.",
+      "minimum_acceptance": "Modified trusted component receives no decryption material.",
+      "source_line": 348,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/http-concurrency-ui.test.mjs",
+          "declaration": "test('PER-007 PER-009: Secure Perception remains explicitly unavailable and fails closed', async t => { const h = await httpFixture(t), result = await h.request('/v1/secure-perception/session', { method: 'POST', body: {} }); assert.equal(result.status, 501); assert.match(result.data.error.message, /no plaintext release/); });"
+        },
+        {
+          "file": "tests/network-perception.test.mjs",
+          "declaration": "test('PER-001 PER-003 PER-006 PER-007 PER-009 PER-010: software transport contract encrypts only allowed fields and never claims hardware assurance', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "PER-008",
+      "requirement": "The architecture SHALL document residual risks including external camera, deliberate memorisation, compromised trusted hardware and side channels.",
+      "minimum_acceptance": "Product documentation never claims prevention of all visual exfiltration.",
+      "source_line": 349,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "PER-009",
+      "requirement": "Secure Perception SHALL remain an optional gated module until supported hardware and usability meet acceptance criteria.",
+      "minimum_acceptance": "Finance MVP can ship without falsely depending on unavailable hardware.",
+      "source_line": 350,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/http-concurrency-ui.test.mjs",
+          "declaration": "test('PER-007 PER-009: Secure Perception remains explicitly unavailable and fails closed', async t => { const h = await httpFixture(t), result = await h.request('/v1/secure-perception/session', { method: 'POST', body: {} }); assert.equal(result.status, 501); assert.match(result.data.error.message, /no plaintext release/); });"
+        },
+        {
+          "file": "tests/network-perception.test.mjs",
+          "declaration": "test('PER-001 PER-003 PER-006 PER-007 PER-009 PER-010: software transport contract encrypts only allowed fields and never claims hardware assurance', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "PER-010",
+      "requirement": "The platform SHALL support a fallback controlled workspace or remote-rendering mode with clearly lower assurance classification.",
+      "minimum_acceptance": "Fallback is labelled and policy can forbid it for selected data.",
+      "source_line": 351,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/network-perception.test.mjs",
+          "declaration": "test('PER-001 PER-003 PER-006 PER-007 PER-009 PER-010: software transport contract encrypts only allowed fields and never claims hardware assurance', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "KEY-001",
+      "requirement": "No complete customer root private key SHALL be present in vendor-controlled systems.",
+      "minimum_acceptance": "Vendor environment compromise cannot perform root signature.",
+      "source_line": 357,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "KEY-002",
+      "requirement": "Customer root operations SHALL support threshold cryptography or threshold-controlled HSM signing.",
+      "minimum_acceptance": "Configured quorum is required and individual shares never reconstruct in application memory.",
+      "source_line": 358,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "KEY-003",
+      "requirement": "Key shares SHALL be separated across independent custodians, devices and failure domains.",
+      "minimum_acceptance": "Loss/compromise of one location does not meet threshold.",
+      "source_line": 359,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "KEY-004",
+      "requirement": "Key generation SHALL use approved cryptographic random generation; optional quantum entropy SHALL be treated as an input to randomness health, not as a substitute for key governance.",
+      "minimum_acceptance": "Randomness tests and provenance are recorded without overstating “quantum protection.”",
+      "source_line": 360,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "KEY-005",
+      "requirement": "The platform SHALL implement cryptographic agility with versioned algorithms and migration policy.",
+      "minimum_acceptance": "A test tenant can migrate signing algorithms without losing audit verification.",
+      "source_line": 361,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/completion-security.test.mjs",
+          "declaration": "test('KEY-005 KEY-006: algorithm migration preserves historical signatures and binds suite', () => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "KEY-006",
+      "requirement": "Post-quantum algorithms SHALL be introduced according to current standards, interoperability and risk, not marketing labels.",
+      "minimum_acceptance": "Algorithm inventory maps each use to approved profile and transition plan.",
+      "source_line": 362,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/completion-security.test.mjs",
+          "declaration": "test('KEY-005 KEY-006: algorithm migration preserves historical signatures and binds suite', () => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "KEY-007",
+      "requirement": "Root, policy, execution, audit and support keys SHALL be logically and operationally separated.",
+      "minimum_acceptance": "Compromise of support key cannot sign policy or execution.",
+      "source_line": 363,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/canonical.test.mjs",
+          "declaration": "test('COM-002 KEY-007: Ed25519 domain-separated signatures reject every altered field', () => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "KEY-008",
+      "requirement": "Keys SHALL have rotation, revocation, backup, destruction and compromise procedures.",
+      "minimum_acceptance": "Ceremony evidence and drill records exist.",
+      "source_line": 364,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "KEY-009",
+      "requirement": "Key recovery SHALL require a threshold, delay and out-of-band notification appropriate to the root risk.",
+      "minimum_acceptance": "Two custodians cannot recover a 3-of-5 root.",
+      "source_line": 365,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "KEY-010",
+      "requirement": "The system SHALL publish independent verification material without publishing secret key material.",
+      "minimum_acceptance": "Third party verifies certificates and transparency proofs offline.",
+      "source_line": 366,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/extended-security.test.mjs",
+          "declaration": "test('KEY-010 NFR-MNT-002: independent verifiers reject signed-log tampering and duplicate JSON keys', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "KEY-011",
+      "requirement": "HSM and trusted-component firmware/version trust SHALL be policy inputs.",
+      "minimum_acceptance": "Known-revoked firmware loses authorisation.",
+      "source_line": 367,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "KEY-012",
+      "requirement": "Key ceremonies SHALL be documented, witnessed and reproducible.",
+      "minimum_acceptance": "Ceremony checklist records participants, devices, hashes and exceptions.",
+      "source_line": 368,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "AUD-001",
+      "requirement": "Security-relevant records SHALL be append-only and cryptographically linked.",
+      "minimum_acceptance": "Deletion or modification breaks independently verifiable continuity proof.",
+      "source_line": 374,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/runtime-audit.test.mjs",
+          "declaration": "test('AUD-001 AUD-005: export verifies with pinned root and rejects edit, reorder, removal and wrong root', t => {"
+        },
+        {
+          "file": "tests/runtime-audit.test.mjs",
+          "declaration": "test('AUD-001: append-only triggers reject SQL update and deletion', t => { const h = fixture(t); assert.throws(() => h.f.store.db.exec(\"DELETE FROM audit WHERE tenant='acme'\")); assert.throws(() => h.f.store.db.exec(\"UPDATE audit SET hash='forged' WHERE tenant='acme'\")); });"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "AUD-002",
+      "requirement": "The transparency log SHALL record capsule, evidence digest, policy decision, certificate, execution and observed outcome references.",
+      "minimum_acceptance": "Full action chain is reconstructable.",
+      "source_line": 375,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "AUD-003",
+      "requirement": "Sensitive payloads SHALL be minimised, encrypted and access-controlled separately from integrity metadata.",
+      "minimum_acceptance": "Verifier can validate integrity without broad plaintext access.",
+      "source_line": 376,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/canonical.test.mjs",
+          "declaration": "test('AUD-003: AES-GCM binds ciphertext to tenant, record id and key', () => {"
+        },
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('AUD-003 CON-003: stored sensitive fields never appear as plaintext in database/WAL', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "AUD-004",
+      "requirement": "Logs SHALL include trusted timestamps and ordering sufficient to detect replay and policy races.",
+      "minimum_acceptance": "Test replay is identifiable from log state.",
+      "source_line": 377,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('AUD-004: persisted clock regression halts security mutation', t => { const h = fixture(t); h.proposed(); h.advance(-1); assert.throws(() => h.proposed(), hasCode('INV-503-TIME')); });"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "AUD-005",
+      "requirement": "Customers SHALL be able to export their evidence and verify it without continued vendor availability.",
+      "minimum_acceptance": "Offline verifier validates exported bundle.",
+      "source_line": 378,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/runtime-audit.test.mjs",
+          "declaration": "test('AUD-001 AUD-005: export verifies with pinned root and rejects edit, reorder, removal and wrong root', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "AUD-006",
+      "requirement": "Audit retention SHALL be configurable by action class, legal basis and customer instruction.",
+      "minimum_acceptance": "Retention engine applies and records deletion/hold decisions.",
+      "source_line": 379,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "AUD-007",
+      "requirement": "Administrator access to logs SHALL itself be logged and protected.",
+      "minimum_acceptance": "Support access produces immutable record and purpose.",
+      "source_line": 380,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/runtime-audit.test.mjs",
+          "declaration": "test('AUD-007: audit export access is itself recorded', t => { const h = fixture(t), bundle = h.f.exportAudit(h.p('auditor'), 'Authorised inspection'); assert.equal(bundle.entries.at(-1).envelope.payload.type, 'AUDIT_ACCESSED'); });"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "AUD-008",
+      "requirement": "The system SHALL support external witness or checkpoint publication for high-assurance tenants.",
+      "minimum_acceptance": "A forked log is detected by witness comparison.",
+      "source_line": 381,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/runtime-audit.test.mjs",
+          "declaration": "test('AUD-008: externally pinned prior checkpoint detects a fork and truncation', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "AUD-009",
+      "requirement": "Operational telemetry SHALL separate security evidence from product analytics.",
+      "minimum_acceptance": "Disabling optional analytics does not disable required security evidence.",
+      "source_line": 382,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "AUD-010",
+      "requirement": "The platform SHALL provide audit views for finance, security, privacy and technical assessors with least-privilege fields.",
+      "minimum_acceptance": "Each role sees only necessary information.",
+      "source_line": 383,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/completion-security.test.mjs",
+          "declaration": "test('AUD-010: role projections reject cross-role/tenant access and never expose full source envelopes', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "AIG-001",
+      "requirement": "AI SHALL NOT independently issue root, policy or high-risk execution authority.",
+      "minimum_acceptance": "Removing deterministic approval path prevents AI-only execution.",
+      "source_line": 389,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "AIG-002",
+      "requirement": "AI MAY classify intent, extract proposed fields, explain decisions, simulate policy and generate adversarial test cases.",
+      "minimum_acceptance": "All AI output is marked proposed/advisory until validated.",
+      "source_line": 390,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "AIG-003",
+      "requirement": "AI-derived structured fields SHALL preserve source provenance and uncertainty.",
+      "minimum_acceptance": "Operator can trace a field to source span and confidence.",
+      "source_line": 391,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/completion-security.test.mjs",
+          "declaration": "test('AIG-003 AIG-004 AIG-007: advisory extraction preserves spans/context and enforces narrow source, tenant and output authority', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "AIG-004",
+      "requirement": "Prompt, model, provider, version and tool context SHALL be recorded for material AI-assisted decisions.",
+      "minimum_acceptance": "Audit can reproduce or compare the advisory step.",
+      "source_line": 392,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/completion-security.test.mjs",
+          "declaration": "test('AIG-003 AIG-004 AIG-007: advisory extraction preserves spans/context and enforces narrow source, tenant and output authority', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "AIG-005",
+      "requirement": "Customer content SHALL not be used for general model training without explicit lawful agreement.",
+      "minimum_acceptance": "Provider settings and contract evidence support the configured mode.",
+      "source_line": 393,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "AIG-006",
+      "requirement": "Prompt injection and untrusted document content SHALL be treated as attacker-controlled input.",
+      "minimum_acceptance": "Adversarial document cannot change system policy or tool authority.",
+      "source_line": 394,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/extended-security.test.mjs",
+          "declaration": "test('AIG-006: source prose cannot override typed policy fields', t => {"
+        },
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('EVD-005 AIG-006: email/advisory evidence cannot confer authority', t => { const h = fixture(t), r = h.proposed(); h.evidence(r, { issuer: 'email' }); h.evidence(r, { issuer: 'bank', advisory: true }); h.approve(r); assert.equal(h.f.evaluate(h.p(), r.capsule.capsule_id).decision, 'ESCROW'); });"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "AIG-007",
+      "requirement": "AI tools SHALL receive narrow capabilities and output limits.",
+      "minimum_acceptance": "Model cannot access unrelated tenant data or execute unapproved calls.",
+      "source_line": 395,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/completion-security.test.mjs",
+          "declaration": "test('AIG-003 AIG-004 AIG-007: advisory extraction preserves spans/context and enforces narrow source, tenant and output authority', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "AIG-008",
+      "requirement": "High-impact AI recommendations SHALL be corroborated by deterministic checks or authoritative evidence.",
+      "minimum_acceptance": "AI risk score alone cannot satisfy a mandatory predicate.",
+      "source_line": 396,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "AIG-009",
+      "requirement": "The platform SHALL support disabling AI while preserving core enforcement.",
+      "minimum_acceptance": "Tenant can run deterministic system with AI unavailable.",
+      "source_line": 397,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "AIG-010",
+      "requirement": "AI safety and performance SHALL be continuously evaluated with versioned test suites.",
+      "minimum_acceptance": "Model update cannot be promoted without regression report.",
+      "source_line": 398,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/completion-security.test.mjs",
+          "declaration": "test('AIG-010: versioned adversarial regression prevents provider promotion', () => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "CON-001",
+      "requirement": "Every connector SHALL declare supported actions, required permissions, target limitations, idempotency behaviour and coverage implications.",
+      "minimum_acceptance": "Connector manifest is present and signed.",
+      "source_line": 404,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "CON-002",
+      "requirement": "Connectors SHALL use least-privilege target credentials and separate read, write and administrative scopes where possible.",
+      "minimum_acceptance": "Permission review shows no unnecessary scope.",
+      "source_line": 405,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "CON-003",
+      "requirement": "Secrets SHALL be stored in approved secret infrastructure and never logged.",
+      "minimum_acceptance": "Automated tests detect no secret in log or crash dump.",
+      "source_line": 406,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('AUD-003 CON-003: stored sensitive fields never appear as plaintext in database/WAL', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "CON-004",
+      "requirement": "Connector inputs and target responses SHALL be schema-validated.",
+      "minimum_acceptance": "Malformed target response produces uncertain outcome, not success.",
+      "source_line": 407,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/extended-security.test.mjs",
+          "declaration": "test('CON-004 COM-012: missing data-output fields return UNCERTAIN rather than an exception after dispatch', t => {"
+        },
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "for (const fault of ['malformed-response', 'altered-response']) test(`CON-004 COM-009: ${fault} cannot produce false success`, t => { const h = fixture(t), { certificate } = h.ready(); assert.equal(h.f.execute(h.p(), certificate, { fault }).payload.status, 'UNCERTAIN'); assert.equal(h.f.reconcile(h.p(), certificate.payload.certificate_id).payload.status, 'VERIFIED'); });"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "CON-005",
+      "requirement": "Connectors SHALL implement bounded retries and reconciliation.",
+      "minimum_acceptance": "Failure injection does not duplicate a mutating action.",
+      "source_line": 408,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "CON-006",
+      "requirement": "Connector upgrades SHALL trigger compatibility, security and coverage revalidation.",
+      "minimum_acceptance": "Major target API change moves path to UNKNOWN until tests pass.",
+      "source_line": 409,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/completion-security.test.mjs",
+          "declaration": "test('CON-006 NFR-MNT-005: lifecycle forbids EOL use and silent downgrade and preserves migration instructions', t => {"
+        },
+        {
+          "file": "tests/completion-security.test.mjs",
+          "declaration": "test('COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "CON-007",
+      "requirement": "The platform SHALL support customer-hosted connectors and gates for high-assurance deployment.",
+      "minimum_acceptance": "Customer VPC deployment operates without vendor access to target credential.",
+      "source_line": 410,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "CON-008",
+      "requirement": "Connector support access SHALL be time-bound, customer-authorised and audited.",
+      "minimum_acceptance": "Vendor engineer has no standing access.",
+      "source_line": 411,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "CON-009",
+      "requirement": "Connectors SHALL expose health, latency, error and target-rate metrics without exposing unnecessary payload.",
+      "minimum_acceptance": "Operations can diagnose SLA impact safely.",
+      "source_line": 412,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "CON-010",
+      "requirement": "Unsupported target capabilities SHALL be surfaced as limitations, never silently emulated with weaker control.",
+      "minimum_acceptance": "UI shows exact limitation and prevents guarantee label.",
+      "source_line": 413,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "UX-001",
+      "requirement": "Routine low-risk workflows SHALL require no additional human approval when policy and evidence permit straight-through processing.",
+      "minimum_acceptance": "Design-partner workload achieves configured straight-through target.",
+      "source_line": 419,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "UX-002",
+      "requirement": "Approval UI SHALL present the exact material change, old/new values, amount/volume, destination, evidence gaps, policy consequences and expiry.",
+      "minimum_acceptance": "User test identifies the changed field without opening source systems.",
+      "source_line": 420,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/extended-security.test.mjs",
+          "declaration": "test('ACT-007 UX-002: unsupported or ambiguous currency scales fail rather than render a false amount', t => {"
+        },
+        {
+          "file": "tests/http-concurrency-ui.test.mjs",
+          "declaration": "test('UX-002 UX-003: UI state logic exposes no generic approval or executable non-ALLOW state', () => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "UX-003",
+      "requirement": "Generic “Approve” without transaction detail SHALL not be used for protected actions.",
+      "minimum_acceptance": "UI lint/test rejects detail-free critical approval.",
+      "source_line": 421,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/http-concurrency-ui.test.mjs",
+          "declaration": "test('UX-002 UX-003: UI state logic exposes no generic approval or executable non-ALLOW state', () => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "UX-004",
+      "requirement": "Approval screens SHALL visually distinguish trusted Secure Mode from ordinary application UI.",
+      "minimum_acceptance": "User research demonstrates reliable recognition.",
+      "source_line": 422,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "UX-005",
+      "requirement": "Operators SHALL receive concise next actions for ESCROW, DEFER and uncertain outcomes.",
+      "minimum_acceptance": "Every state has owner, reason and resolution path.",
+      "source_line": 423,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "UX-006",
+      "requirement": "The product SHALL minimise approval fatigue by batching only when individual semantic binding remains clear.",
+      "minimum_acceptance": "Batch approval shows each action and aggregate constraints; hidden additions invalidate batch.",
+      "source_line": 424,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/completion-security.test.mjs",
+          "declaration": "test('ACT-012 UX-006: exact batch signatures execute each child once and never manufacture child authority', t => {"
+        },
+        {
+          "file": "tests/completion-security.test.mjs",
+          "declaration": "test('UX-006: hidden additions and changed child evidence invalidate every batch approval', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "UX-007",
+      "requirement": "The system SHALL support accessible interfaces while protecting the secure-display threat model.",
+      "minimum_acceptance": "Accessibility mode is documented with assurance level and tested.",
+      "source_line": 425,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/http-concurrency-ui.test.mjs",
+          "declaration": "test('UX-007: static interface labels all named inputs and uses no unsafe DOM injection sink', () => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "UX-008",
+      "requirement": "Customer administrators SHALL be able to simulate policy before enforcement.",
+      "minimum_acceptance": "Historical replay shows projected allow/deny/friction.",
+      "source_line": 426,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/runtime-audit.test.mjs",
+          "declaration": "test('POL-010 UX-008: policy simulation records diff without activating candidate', t => { const h = fixture(t); h.proposed(); const p = clone(h.f.policy('acme')); p.rules['finance.payment.first'].max_quantity = 10; const result = h.f.simulate(h.p('policy-admin'), p); assert.ok(result.diff.length); assert.equal(result.activation, false); assert.notEqual(h.f.policy('acme').rules['finance.payment.first'].max_quantity, 10); });"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "UX-009",
+      "requirement": "The UI SHALL display coverage and guarantee scope next to protected workflows.",
+      "minimum_acceptance": "User can see whether action is enforced or only monitored.",
+      "source_line": 427,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "UX-010",
+      "requirement": "Error messages SHALL not disclose sensitive policy or resource information to unauthorised users.",
+      "minimum_acceptance": "Pen-test cases receive safe generic response while authorised operator receives reason.",
+      "source_line": 428,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-SEC-001",
+      "requirement": "The default architecture SHALL assume the network, endpoint, user session, calling application and communication channel may be compromised.",
+      "minimum_acceptance": "Threat model review and red-team scenarios.",
+      "source_line": 434,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-SEC-002",
+      "requirement": "The trusted computing base SHALL be minimised and documented by component and line-of-code estimate.",
+      "minimum_acceptance": "Architecture bill of trust and independent review.",
+      "source_line": 435,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-SEC-003",
+      "requirement": "Security-sensitive code SHALL meet a defined OWASP ASVS profile and secure coding standard.",
+      "minimum_acceptance": "Automated and manual verification report.",
+      "source_line": 436,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-SEC-004",
+      "requirement": "No production deployment SHALL contain default, shared or hardcoded privileged credentials.",
+      "minimum_acceptance": "Secret scan and deployment test.",
+      "source_line": 437,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/http-concurrency-ui.test.mjs",
+          "declaration": "test('NFR-SEC-004: bootstrap creates random credentials, private files and refuses overwrite', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-SEC-005",
+      "requirement": "All tenant boundaries SHALL be tested against confused-deputy and cross-tenant token attacks.",
+      "minimum_acceptance": "Negative multi-tenant test suite.",
+      "source_line": 438,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/lifecycle.test.mjs",
+          "declaration": "test('NFR-SEC-005: cross-tenant read and execution rejected', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-SEC-006",
+      "requirement": "The product SHALL support encryption in transit and at rest using current approved profiles and crypto agility.",
+      "minimum_acceptance": "Configuration inventory and scanner results.",
+      "source_line": 439,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-SEC-007",
+      "requirement": "Critical build and release artifacts SHALL be signed and carry provenance.",
+      "minimum_acceptance": "SLSA-aligned provenance and verification.",
+      "source_line": 440,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-SEC-008",
+      "requirement": "The SDLC SHALL implement code review, dependency control, secret scanning, SAST, DAST, fuzzing and independent penetration testing.",
+      "minimum_acceptance": "Release evidence bundle.",
+      "source_line": 441,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-PERF-001",
+      "requirement": "Automated Commit Gate evaluation excluding external evidence calls SHOULD target p95 ≤250 ms and p99 ≤750 ms in the reference environment.",
+      "minimum_acceptance": "Benchmark with published hardware and policy set.",
+      "source_line": 442,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-PERF-002",
+      "requirement": "Cached local runtime decisions SHOULD target p99 ≤1 ms at supported software gates; packet enforcement targets SHALL be set per implementation.",
+      "minimum_acceptance": "Dataplane benchmark under load.",
+      "source_line": 443,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-PERF-003",
+      "requirement": "The system SHALL publish external connector latency separately from core policy latency.",
+      "minimum_acceptance": "Telemetry and benchmark report.",
+      "source_line": 444,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-PERF-004",
+      "requirement": "The reference finance gate SHALL sustain at least 100 protected action evaluations per second per gate instance without error.",
+      "minimum_acceptance": "Load test.",
+      "source_line": 445,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-PERF-005",
+      "requirement": "Runtime enforcement SHALL remain stable under adversarial request and cache-churn load.",
+      "minimum_acceptance": "Soak and exhaustion test.",
+      "source_line": 446,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-AVL-001",
+      "requirement": "Production control services SHOULD target 99.95% monthly availability before enterprise GA; specific SLA appears only after operational evidence.",
+      "minimum_acceptance": "Service metrics and SLA review.",
+      "source_line": 447,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-AVL-002",
+      "requirement": "A single vendor-cloud failure SHALL NOT remove already cached local runtime controls.",
+      "minimum_acceptance": "Disconnection drill.",
+      "source_line": 448,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-AVL-003",
+      "requirement": "Critical tenant gates SHALL support multi-zone deployment and state recovery.",
+      "minimum_acceptance": "Failover test.",
+      "source_line": 449,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-AVL-004",
+      "requirement": "Every action class SHALL have a documented failure policy and maximum stale-policy interval.",
+      "minimum_acceptance": "Failure-mode matrix approved.",
+      "source_line": 450,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-AVL-005",
+      "requirement": "Recovery objectives SHALL be tiered: proposed reference RTO 15 minutes for critical gates and RPO near-zero for signed audit metadata, subject to deployment validation.",
+      "minimum_acceptance": "DR exercise.",
+      "source_line": 451,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-PRV-001",
+      "requirement": "Personal data collection SHALL be purpose-limited and minimised by default.",
+      "minimum_acceptance": "Data inventory and DPIA.",
+      "source_line": 452,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-PRV-002",
+      "requirement": "The system SHALL support regional processing, customer-hosted gates and configurable retention.",
+      "minimum_acceptance": "Deployment and retention tests.",
+      "source_line": 453,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-PRV-003",
+      "requirement": "Biometric templates used to unlock local keys SHALL remain in the platform authenticator where supported and SHALL not be ingested by Invariant.",
+      "minimum_acceptance": "Architecture and device API verification.",
+      "source_line": 454,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-PRV-004",
+      "requirement": "Employee monitoring features SHALL be disabled by default and require lawful basis, transparency and separate configuration.",
+      "minimum_acceptance": "Product configuration and legal review.",
+      "source_line": 455,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-PRV-005",
+      "requirement": "Data subject and customer deletion workflows SHALL preserve legally required integrity metadata only where justified.",
+      "minimum_acceptance": "Deletion test and policy.",
+      "source_line": 456,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-OPS-001",
+      "requirement": "All production changes SHALL use reviewed infrastructure-as-code or equivalent controlled configuration.",
+      "minimum_acceptance": "Change evidence.",
+      "source_line": 457,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-OPS-002",
+      "requirement": "Operational runbooks SHALL cover certificate failure, target uncertainty, gate outage, key compromise, tenant isolation incident and recovery.",
+      "minimum_acceptance": "Runbook exercise.",
+      "source_line": 458,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-OPS-003",
+      "requirement": "High-severity alerts SHALL have defined ownership, acknowledgement and escalation SLOs.",
+      "minimum_acceptance": "On-call test.",
+      "source_line": 459,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-OPS-004",
+      "requirement": "Customer-visible incidents SHALL be tracked from detection through containment, recovery, root cause and corrective action.",
+      "minimum_acceptance": "Incident record template.",
+      "source_line": 460,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-OPS-005",
+      "requirement": "The platform SHALL support safe staged rollout, canary deployment and immediate rollback of software while preserving policy/key integrity.",
+      "minimum_acceptance": "Release drill.",
+      "source_line": 461,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-MNT-001",
+      "requirement": "Public and internal interfaces SHALL be versioned and backward compatibility documented.",
+      "minimum_acceptance": "API compatibility test.",
+      "source_line": 462,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-MNT-002",
+      "requirement": "Core policy and certificate formats SHALL have independent test vectors and at least two verifier implementations before high-assurance GA.",
+      "minimum_acceptance": "Cross-implementation conformance.",
+      "source_line": 463,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/extended-security.test.mjs",
+          "declaration": "test('KEY-010 NFR-MNT-002: independent verifiers reject signed-log tampering and duplicate JSON keys', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-MNT-003",
+      "requirement": "The codebase SHALL maintain a software bill of materials and dependency ownership.",
+      "minimum_acceptance": "SBOM and update workflow.",
+      "source_line": 464,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-MNT-004",
+      "requirement": "Security-critical components SHALL have explicit maintainers and review requirements.",
+      "minimum_acceptance": "Repository policy.",
+      "source_line": 465,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-MNT-005",
+      "requirement": "Deprecated connector or schema versions SHALL have announced end-of-support and safe migration.",
+      "minimum_acceptance": "Lifecycle record.",
+      "source_line": 466,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/completion-security.test.mjs",
+          "declaration": "test('CON-006 NFR-MNT-005: lifecycle forbids EOL use and silent downgrade and preserves migration instructions', t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-USA-001",
+      "requirement": "Routine users SHOULD complete ordinary protected work without learning cryptographic concepts.",
+      "minimum_acceptance": "Usability test.",
+      "source_line": 467,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-USA-002",
+      "requirement": "Critical approval comprehension SHALL be tested for amount, destination, changed state and consequences.",
+      "minimum_acceptance": "User study threshold.",
+      "source_line": 468,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-USA-003",
+      "requirement": "Accessibility SHALL target WCAG 2.2 AA for ordinary interfaces, with documented constraints for trusted hardware UI.",
+      "minimum_acceptance": "Accessibility audit.",
+      "source_line": 469,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-USA-004",
+      "requirement": "Operators SHALL be able to explain every deterministic decision from stored inputs and policy.",
+      "minimum_acceptance": "Decision replay.",
+      "source_line": 470,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-CMP-001",
+      "requirement": "The platform SHALL maintain a control map to NIST CSF, ISO 27001, GDPR security/privacy-by-design obligations and applicable customer-sector requirements.",
+      "minimum_acceptance": "Current control matrix.",
+      "source_line": 471,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-CMP-002",
+      "requirement": "Compliance mappings SHALL be labelled support evidence, not automatic certification.",
+      "minimum_acceptance": "Legal/marketing review.",
+      "source_line": 472,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-CMP-003",
+      "requirement": "Vulnerability reporting, coordinated disclosure and product security update processes SHALL be operational before public beta.",
+      "minimum_acceptance": "Published policy and internal workflow.",
+      "source_line": 473,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-CMP-004",
+      "requirement": "Security-relevant product changes SHALL be assessed for CRA, NIS2, DORA, AI Act and sector impact as applicable.",
+      "minimum_acceptance": "Release compliance checklist.",
+      "source_line": 474,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-TST-001",
+      "requirement": "Every SHALL requirement SHALL map to at least one test, inspection, analysis or demonstration method.",
+      "minimum_acceptance": "Traceability export.",
+      "source_line": 475,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-TST-002",
+      "requirement": "Release acceptance SHALL include adversarial bypass testing, not only expected-path tests.",
+      "minimum_acceptance": "Red-team report.",
+      "source_line": 476,
+      "implementation": [],
+      "tests": [
+        {
+          "file": "tests/http-concurrency-ui.test.mjs",
+          "declaration": "test('COM-003 NFR-TST-002: eight independent gate workers race; exactly one certificate is consumed', async t => {"
+        }
+      ],
+      "verification_evidence": [],
+      "status": "PARTIAL",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-TST-003",
+      "requirement": "Production-like test data SHALL be synthetic or lawfully controlled and isolated.",
+      "minimum_acceptance": "Test-data review.",
+      "source_line": 477,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    },
+    {
+      "id": "NFR-TST-004",
+      "requirement": "Known critical or high-severity exploitable findings SHALL block release unless formally accepted under documented exceptional governance.",
+      "minimum_acceptance": "Release gate evidence.",
+      "source_line": 478,
+      "implementation": [],
+      "tests": [],
+      "verification_evidence": [],
+      "status": "NOT_IMPLEMENTED",
+      "blocker_reason": null,
+      "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
+    }
+  ]
+}

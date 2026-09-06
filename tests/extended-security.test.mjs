@@ -37,7 +37,7 @@ test('AIG-006: source prose cannot override typed policy fields', t => {
 test('KEY-010 NFR-MNT-002: independent verifiers reject signed-log tampering and duplicate JSON keys', t => {
   const h = fixture(t); h.proposed(); const bundle = h.f.exportAudit(h.p('auditor'), 'Verifier adversarial test'), file = join(h.directory, 'audit.json'), trust = join(h.directory, 'trust.json');
   writeFileSync(file, JSON.stringify(bundle)); writeFileSync(trust, JSON.stringify(bundle.public_keys));
-  for (const [command, script] of [[process.execPath, 'scripts/verify-export.mjs'], ['bun', 'scripts/verify-export-webcrypto.mjs']]) {
+  for (const [command, script] of [[process.execPath, 'scripts/verify-export.mjs'], [process.execPath, 'scripts/verify-export-webcrypto.mjs']]) {
     const valid = spawnSync(command, [script, file, trust], { encoding: 'utf8' }); assert.equal(valid.status, 0, valid.stderr);
     const changed = clone(bundle); changed.entries[0].envelope.payload.metadata.policy_digest = 'f'.repeat(64); writeFileSync(file, JSON.stringify(changed));
     assert.equal(spawnSync(command, [script, file, trust]).status, 1);
