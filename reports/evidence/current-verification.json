@@ -1,5 +1,5 @@
 {
-  "source_revision": "c754213f6d860f07299fb2db3e94aad3a05b9218",
+  "source_revision": "2e8e8b1226662e61937473e1210e6a41fa5f7bdd",
   "source_hashes": {
     "src/advisory.mjs": "0c32f6a215b88bd982937355bb4366ab65028789f4bd35fab4929bc3c9146b32",
     "src/audit-views.mjs": "f9acd573a8eead6087ef0eb4c601cd04d9c4a446810ed80946bc7fda665ef63a",
@@ -18,10 +18,10 @@
     "src/output.mjs": "b5cd60b714e9654627992d827958c52c7d45904e6db7312f91934108847010ca",
     "src/perception.mjs": "e563284669b41a3f883d6ab8daed4efc59aecf58d62f2836cb484910068ac2b5",
     "src/policy-lifecycle.mjs": "9ed57b0036e9b89124c7beb37d74380cd40fe224ea1aadff7870cef0a517a254",
-    "src/policy.mjs": "645e292f57b8e8d77ca8f6a8ba4f473ae314c74388cfb6bdeed60eb448bb9c2c",
+    "src/policy.mjs": "38f2f78c6bb29d283d5673ef6888ad7b82cd917a42c65d0344108159ece8e7a4",
     "src/runtime-config.mjs": "49db2c0ea6697995ebb9551c834ce62cefb3e209a2cd24d8e9bee93471c44373",
     "src/runtime.mjs": "589b472a7723c2a1e687e57d8693d8d4224ffeea76656122448cdad9bee695d1",
-    "src/schema.mjs": "f25998733019c69d2c9b5e6a0ad69b4ea240dce75f6e513c192fcc61c412a9e2",
+    "src/schema.mjs": "8146fde23cb97306be93768a8845de6bff801fc24fb467c9c9c63252597087b1",
     "src/server.mjs": "f905e43f8a4f7ef3469336bce7d630d885ae0a68574371598fc847458f89c863",
     "src/store.mjs": "dedd6be74eb6925b59991b298dfb2e3dcb1f628474f32cb7da4bb036fe101bc2",
     "src/suites.mjs": "5f7876250d914e475d4f449e2676a971c404622fa063aeba321040a19ab2206e",
@@ -37,6 +37,7 @@
     "tests/coverage-lifecycle.test.mjs": "69e2d4bf9087b354231442822ca05bd7a2ae75394e8e17d663b141e5bd2c3a6d",
     "tests/crypto-agility.test.mjs": "533b96eeac2f81fd0da5c3bd51bfc0d53d7b701bf6f65a92cad0b078309e1d7d",
     "tests/extended-security.test.mjs": "bfdd6f456777290452e2ec06216135d7bc26d8ed7d89bf15888be47f58ef181c",
+    "tests/firewall-scope.test.mjs": "f503c8ad8d1afdeb224bec6b2ceec891fabfee01543c8e3bd6c46d2e8c80f2f5",
     "tests/helpers.mjs": "741a01305aed56bbeea05679a75333f7bfd8def595043e0c46ce53e8de37d2a3",
     "tests/http-concurrency-ui.test.mjs": "ebc21347a612d813870258db6c7defac6a861805acb35f15d25e1da6446e1c88",
     "tests/lifecycle.test.mjs": "d032ec54bc0b21224baf22b2b947fbf4d14476867be3f1bb55078df92abec81e",
@@ -69,7 +70,7 @@
       ],
       "exit_code": 0,
       "result_file": "reports/evidence/source-check.txt",
-      "sha256": "d7b7425b08a3e5e0b79931d3d142acaa25aa17f8d08daf2af1c7902190232da5"
+      "sha256": "488438066f98a0e9a69ac31f94101f6ebb75db2d85f2afe54ee6f4ef4ceb1210"
     },
     {
       "command": [
@@ -84,6 +85,7 @@
         "tests/coverage-lifecycle.test.mjs",
         "tests/crypto-agility.test.mjs",
         "tests/extended-security.test.mjs",
+        "tests/firewall-scope.test.mjs",
         "tests/http-concurrency-ui.test.mjs",
         "tests/lifecycle.test.mjs",
         "tests/network-perception.test.mjs",
@@ -94,7 +96,7 @@
       ],
       "exit_code": 0,
       "result_file": "reports/evidence/current-tests.xml",
-      "sha256": "2df5fc72ead0f55d16cd07e3e3423c9132dfeaeaf31ce7b1e2713bd260e77962"
+      "sha256": "c756374629c9a139e18b158c66b7df1642c2f5502b5204fa7af0b4742fea6dd5"
     },
     {
       "command": [
@@ -107,7 +109,7 @@
       "sha256": "4b6d1b4757f0770b7cbe90b5d1c5560be4fc2911b56383c6c248c79121c56208"
     }
   ],
-  "passed": 127,
+  "passed": 131,
   "failed": 0,
   "failing_tests": [],
   "skipped": 0,

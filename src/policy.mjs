@@ -1,5 +1,5 @@
 import { digest, clone } from './canonical.mjs';
-import { fields, integer, uniqueStrings, oneOf, text } from './schema.mjs';
+import { fields, integer, uniqueStrings, oneOf, text, validateNetworkRange } from './schema.mjs';
 import { requireThat } from './errors.mjs';
 
 export function defaultPolicy(tenant) {
@@ -51,7 +51,10 @@ export function evaluatePolicy({ capsule, policy, evidence = [], approvals = [],
   if (p.policy_version !== policy.version) return result('DENY', [reason('POLICY_CHANGED', 'Re-propose under the active policy version.')]);
   if (p.quantity > rule.max_quantity) return result('DENY', [reason('QUANTITY_LIMIT', 'Requested quantity exceeds policy.')]);
   if (rule.destinations.length && !rule.destinations.includes(p.destination)) return result('DENY', [reason('DESTINATION_DENIED', 'Destination is not in the allowlist.')]);
-  if (type === 'cloud.firewall.change' && ['0.0.0.0/0', '::/0', '0/0'].includes(p.requested_state.source_cidr)) return result('DENY', [reason('PUBLIC_EXPOSURE', 'Unrestricted public ingress is constitutionally prohibited.')]);
+  if (type === 'cloud.firewall.change') {
+    let range; try { range = validateNetworkRange(p.requested_state.source_cidr); } catch { return result('DENY', [reason('INVALID_NETWORK_RANGE', 'Malformed or ambiguous network scope is prohibited.')]); }
+    if (range.prefix === 0) return result('DENY', [reason('PUBLIC_EXPOSURE', 'Unrestricted public ingress is constitutionally prohibited.')]);
+  }
   if (type === 'secret.use' && !['sign', 'authenticate'].includes(p.requested_state.operation)) return result('DENY', [reason('SECRET_EXTRACTION', 'Raw secret extraction is not an authorised action.')]);
   if (type === 'policy.change') {
     try { validatePolicy(p.requested_state.policy); } catch { return result('DENY', [reason('INVALID_CONSTITUTION', 'Proposed policy violates the schema or root governance floor.')]); }

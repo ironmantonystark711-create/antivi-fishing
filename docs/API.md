@@ -117,3 +117,12 @@ Real hardware-required policies still fail closed: lower-assurance software
 transport never advertises OS-resistant plaintext, trusted physical input or a
 secure hardware indicator. Hardware integration and independent device review
 remain separate acceptance work, not inferred from encryption tests.
+
+### Firewall range canonicalization
+
+Protected firewall proposals reject malformed masks, whitespace aliases,
+IPv4-mapped IPv6 ambiguity, non-network host bits, zone identifiers and
+non-canonical numeric prefixes. All-address IPv4 and IPv6 networks are denied by
+semantic prefix length, including expanded IPv6 spellings. CIDR validation also
+runs inside deterministic policy evaluation, so an imported capsule cannot bypass
+schema validation through a differently spelled unrestricted range.

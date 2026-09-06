@@ -1,3 +1,4 @@
+import { isIP } from 'node:net';
 import { digest, canonical } from './canonical.mjs';
 import { requireThat, invalid } from './errors.mjs';
 
@@ -13,6 +14,26 @@ export function oneOf(value, values, name) { requireThat(values.includes(value),
 export function uniqueStrings(value, name, max = 64) {
   requireThat(Array.isArray(value) && value.length <= max && new Set(value).size === value.length, 'INV-400-SCHEMA', `Invalid ${name}`);
   value.forEach(v => text(v, name, 128)); return value;
+}
+export function validateNetworkRange(value) {
+  requireThat(typeof value === 'string' && value === value.trim() && value.length <= 64, 'INV-400-SCHEMA', 'Exact network CIDR required');
+  const pieces = value.split('/'); requireThat(pieces.length === 2 && /^(?:0|[1-9][0-9]*)$/.test(pieces[1]), 'INV-400-SCHEMA', 'Canonical numeric CIDR prefix required');
+  const [address, prefixText] = pieces, family = isIP(address), prefix = Number(prefixText);
+  requireThat(family !== 0 && address === address.toLowerCase() && !address.includes('%'), 'INV-400-SCHEMA', 'Canonical IPv4 or IPv6 address required');
+  const bits = family === 4 ? 32 : 128; integer(prefix, 'CIDR prefix', 0, bits);
+  let valueBits;
+  if (family === 4) valueBits = address.split('.').reduce((n, part) => (n << 8n) | BigInt(part), 0n);
+  else {
+    // IPv4-mapped forms are deliberately unsupported: firewall integrations
+    // must not disagree about the address family being authorised.
+    requireThat(!address.includes('.'), 'INV-400-SCHEMA', 'IPv4-mapped IPv6 ranges are unsupported');
+    const halves = address.split('::'), left = halves[0] ? halves[0].split(':') : [], right = halves[1] ? halves[1].split(':') : [];
+    const groups = halves.length === 1 ? left : [...left, ...Array(8-left.length-right.length).fill('0'), ...right];
+    valueBits = groups.reduce((n, group) => (n << 16n) | BigInt(`0x${group}`), 0n);
+  }
+  const hostMask = (1n << BigInt(bits-prefix)) - 1n;
+  requireThat((valueBits & hostMask) === 0n, 'INV-400-SCHEMA', 'CIDR must specify a network boundary, not masked host bits');
+  return { family, prefix };
 }
 export const SUPPORTED_CURRENCIES = ['EUR', 'USD', 'GBP', 'CHF', 'CAD', 'AUD', 'NZD', 'SGD'];
 const types = {
@@ -45,7 +66,7 @@ export function validateRequested(type, requested) {
     if (rule === 'object') requireThat(v && typeof v === 'object' && !Array.isArray(v), 'INV-400-SCHEMA', `${key} must be an object`);
   }
   if (type === 'data.export') requireThat(requested.columns.length && requested.row_ids.length && requested.max_rows >= requested.row_ids.length, 'INV-400-SCHEMA', 'Export requires explicit nonempty fields and rows within ceiling');
-  if (type === 'cloud.firewall.change') { integer(requested.port, 'port', 1, 65535); oneOf(requested.protocol, ['tcp', 'udp'], 'protocol'); }
+  if (type === 'cloud.firewall.change') { validateNetworkRange(requested.source_cidr); integer(requested.port, 'port', 1, 65535); oneOf(requested.protocol, ['tcp', 'udp'], 'protocol'); }
 }
 export function validateProposal(input) {
   fields(input, ['schema_id', 'schema_digest', 'actor', 'action', 'current_state', 'requested_state', 'destination', 'quantity', 'exclusions', 'evidence_refs', 'policy_version', 'nonce', 'created_at', 'expires_at', 'rollback_or_compensation', 'privacy_classification']);
