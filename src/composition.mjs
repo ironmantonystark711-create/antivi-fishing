@@ -33,9 +33,10 @@ export class Compositions {
     return this.f.transaction(p, now => this.f.store.idempotent(p.tenant_id, 'composition', key, digest(input), () => {
       const children = this.describe(p.tenant_id, input.tree);
       integer(input.expires_at, 'batch expiry', now + 1, Math.min(now + 300000, ...children.map(c => c.action.expires_at)));
+      requireThat(children.every(c => c.action.action.type !== 'policy.change') && new Set(children.map(c => c.action.action.target_resource)).size === children.length, 'INV-400-COMPOSITION', 'Atomic batch requires distinct target resources; policy activation is a separate governance transaction');
       const totals = {};
       for (const child of children) { this.f.ensureMutable(this.f.store.must(p.tenant_id, 'capsule', child.capsule_id)); const unit = child.action.requested_state.currency ?? 'units'; totals[unit] = (totals[unit] ?? 0) + child.action.quantity; integer(totals[unit], 'aggregate quantity', 1); }
-      const payload = { format: 'IF-COMPOSITION-1', composition_id: randomUUID(), tenant_id: p.tenant_id, tree: clone(input.tree), children, aggregate: totals, semantics: 'all-children-exact-sequential-stop-on-uncertainty', issued_at: now, expires_at: input.expires_at };
+      const payload = { format: 'IF-COMPOSITION-1', composition_id: randomUUID(), tenant_id: p.tenant_id, tree: clone(input.tree), children, aggregate: totals, semantics: 'all-children-exact-atomic-target-transaction', issued_at: now, expires_at: input.expires_at };
       const envelope = signed(payload, this.f.keys(p.tenant_id).execution, 'composition');
       this.f.store.insert(p.tenant_id, 'composition', payload.composition_id, { envelope, started: false }, now);
       this.f.store.audit(p.tenant_id, 'COMPOSITION_CREATED', p.subject_id, payload.composition_id, { composition_digest: digest(envelope), child_count: children.length }, now); return envelope;
@@ -76,19 +77,50 @@ export class Compositions {
     const child = x.children.find(a => a.capsule_id === approval.payload.capsule_id);
     requireThat(child && digest({ ...child, expires_at: Math.min(child.expires_at, x.expires_at) }) === digest(approval.payload), 'INV-409-BATCH', 'Batch child signature mismatch', 409); return approval.payload;
   }
-  execute(p, input) {
+  execute(p, input, { fault = null } = {}) {
     this.f.authorize(p, ['operator', 'policy_admin']); fields(input, ['composition_id', 'certificates']);
-    const c = this.current(p.tenant_id, input.composition_id);
-    requireThat(Array.isArray(input.certificates) && input.certificates.length === c.children.length, 'INV-412-EVIDENCE', 'Missing child certificate', 412);
-    for (let i = 0; i < c.children.length; i++) {
-      const cert = verifySigned(input.certificates[i], this.f.executionPublic(p.tenant_id), 'action-certificate');
-      requireThat(cert.capsule_id === c.children[i].capsule_id && cert.capsule_digest === c.children[i].capsule_digest, 'INV-403-SCOPE', 'Composed authority cannot exceed children', 403);
-      this.f.execute(p, input.certificates[i], { dryRun: true });
-    }
-    this.f.transaction(p, now => { const r = this.f.store.must(p.tenant_id, 'composition', c.composition_id); requireThat(!r.started, 'INV-409-REPLAY', 'Composition already started; reconcile children', 409); r.started = true; this.f.store.put(p.tenant_id, 'composition', c.composition_id, r, now); });
-    const outcomes = [];
-    for (const cert of input.certificates) { try { const out = this.f.execute(p, cert); outcomes.push(out); if (out.payload.status !== 'VERIFIED') break; } catch (e) { outcomes.push({ certificate_id: cert.payload.certificate_id, status: 'NOT_DISPATCHED', reason: e.code ?? 'INV-599-UNCERTAIN' }); break; } }
-    const status = outcomes.length === c.children.length && outcomes.every(o => o.payload?.status === 'VERIFIED') ? 'VERIFIED' : 'INCOMPLETE_RECONCILE_CHILDREN';
-    return this.f.transaction(p, now => { const out = { composition_id: c.composition_id, status, outcomes, atomic: false }; this.f.store.put(p.tenant_id, 'composition-outcome', c.composition_id, out, now); this.f.store.audit(p.tenant_id, 'COMPOSITION_OUTCOME', p.subject_id, c.composition_id, { status, outcome_digest: digest(out) }, now); return out; });
+    const reservation = this.f.transaction(p, now => {
+      const c = this.current(p.tenant_id, input.composition_id);
+      requireThat(Array.isArray(input.certificates) && input.certificates.length === c.children.length, 'INV-412-EVIDENCE', 'Missing child certificate', 412);
+      const record = this.f.store.must(p.tenant_id, 'composition', c.composition_id);
+      requireThat(!record.started, 'INV-409-REPLAY', 'Composition already started; reconcile children', 409);
+      requireThat(c.semantics === 'all-children-exact-atomic-target-transaction', 'INV-409-BATCH', 'Legacy sequential batches must be re-proposed', 409);
+      const children = [];
+      for (let i = 0; i < c.children.length; i++) {
+        const cert = verifySigned(input.certificates[i], this.f.executionPublic(p.tenant_id), 'action-certificate');
+        requireThat(cert.capsule_id === c.children[i].capsule_id && cert.capsule_digest === c.children[i].capsule_digest, 'INV-403-SCOPE', 'Composed authority cannot exceed children', 403);
+        children.push(this.f.execute(p, input.certificates[i], { reserveOnly: true, withinTransaction: true }));
+      }
+      // Shadow mode never consumes authority or mutates the target.
+      if (children.some(x => x.dry_run)) return { dry_run: true, no_mutation: true, composition_id: c.composition_id };
+      record.started = true; this.f.store.put(p.tenant_id, 'composition', c.composition_id, record, now);
+      this.f.store.audit(p.tenant_id, 'ATOMIC_BATCH_RESERVED', p.subject_id, c.composition_id, { children: children.map(x => x.cert.certificate_id) }, now);
+      return { c, children, now };
+    });
+    if (reservation.dry_run) return reservation;
+    const { c, children, now } = reservation;
+    if (fault === 'process-crash') throw new Error('Simulated process death after atomic batch reservation');
+    let raw = null, failureReason = 'ATOMIC_TARGET_UNCONFIRMED';
+    try { raw = this.f.target.executeBatch(children.map(x => ({ capsule: x.capsule, transaction_id: x.cert.certificate_id })), now, fault); }
+    catch (error) { failureReason = error.code === 'INV-409-STATE' ? 'ATOMIC_TARGET_STATE_REJECTED' : 'ATOMIC_TARGET_UNCONFIRMED'; }
+    const outcomes = children.map((x, i) => this.f.finish(p, x.cert, raw?.[i] ?? null, raw ? 'VERIFIED' : 'UNCERTAIN', raw ? 'ATOMIC_TARGET_RECONCILED' : failureReason));
+    return this.saveOutcome(p, c, outcomes);
+  }
+  saveOutcome(p, c, outcomes) {
+    return this.f.transaction(p, now => {
+      const status = outcomes.every(o => o.payload.status === 'VERIFIED') ? 'VERIFIED' : 'INCOMPLETE_RECONCILE_CHILDREN';
+      const out = { composition_id: c.composition_id, status, outcomes, atomic: true };
+      this.f.store.put(p.tenant_id, 'composition-outcome', c.composition_id, out, now);
+      this.f.store.audit(p.tenant_id, 'COMPOSITION_OUTCOME', p.subject_id, c.composition_id, { status, outcome_digest: digest(out) }, now); return out;
+    });
+  }
+  reconcile(p, id) {
+    this.f.authorize(p, ['operator', 'policy_admin', 'security']);
+    // Reconciliation must remain possible after composition or approval expiry.
+    const r = this.f.store.must(p.tenant_id, 'composition', identifier(id));
+    requireThat(r.started, 'INV-409-STATE', 'Batch has not executed', 409);
+    const c = r.envelope.payload;
+    const outcomes = c.children.map(child => this.f.reconcile(p, this.f.store.must(p.tenant_id, 'capsule', child.capsule_id).certificate_id));
+    return this.saveOutcome(p, c, outcomes);
   }
 }

@@ -188,10 +188,10 @@ export class Fabric {
       this.store.audit(t, 'CERTIFICATE_ISSUED', p.subject_id, id, { certificate_id: payload.certificate_id, certificate_digest: digest(envelope) }, now); return envelope;
     });
   }
-  execute(p, envelope, { dryRun = false, fault = null } = {}) {
+  execute(p, envelope, { dryRun = false, fault = null, reserveOnly = false, withinTransaction = false } = {}) {
     this.authorize(p, ['operator', 'policy_admin']);
     // Reservation commits before target dispatch. An ambiguous result is never re-dispatched.
-    const reservation = this.transaction(p, now => {
+    const reserve = now => {
       const t = p.tenant_id, cert = verifySigned(envelope, this.executionPublic(t), 'action-certificate');
       requireThat(cert.tenant_id === t && cert.target_gate_id === this.config.gate_id, 'INV-403-SCOPE', 'Certificate scope mismatch', 403);
       requireThat(!this.revoked(t, 'key', envelope.protected.key_id) && !this.revoked(t, 'certificate', cert.certificate_id) && cert.issued_at <= now && cert.expires_at > now, 'INV-401-CERTIFICATE', 'Certificate expired or revoked', 401);
@@ -211,7 +211,9 @@ export class Fabric {
       record.status = 'EXECUTING'; this.store.put(t, 'certificate', cert.certificate_id, stored, now); this.store.put(t, 'capsule', cert.capsule_id, record, now);
       this.store.audit(t, 'EXECUTION_RESERVED', p.subject_id, cert.certificate_id, { capsule_digest: cert.capsule_digest }, now);
       return { cert, capsule: record.capsule, now };
-    });
+    };
+    const reservation = withinTransaction ? reserve(this.clock()) : this.transaction(p, reserve);
+    if (reserveOnly) return reservation;
     if (reservation.dry_run) return reservation;
     const { cert, capsule, now } = reservation;
     if (fault === 'process-crash') throw new Error('Simulated process death after durable reservation');

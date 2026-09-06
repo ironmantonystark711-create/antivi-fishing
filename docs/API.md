@@ -50,3 +50,14 @@ It returns ordered transitions with half-open `valid_from`/`valid_until`
 intervals. Enforcement intervals stop at evidence expiry even when a later
 request discovers expiry. Assessor revocation also withdraws enforcement.
 Manifests enumerate every declared path, never a silently truncated first page.
+
+### Atomic composition execution
+
+New compositions use `all-children-exact-atomic-target-transaction`. The gate
+reserves every child certificate in one durable transaction, then commits all
+simulator target changes in one target transaction. A failure before commit
+leaves no target child mutated; a lost response marks all outcomes uncertain.
+`GET /gate/v1/compositions/{id}/outcome` reconciles after restart or expiry and
+never dispatches again. Shared-resource children and policy activation inside a
+batch are rejected because their state/transaction boundaries differ. Existing
+sequential-format compositions must be re-proposed rather than silently upgraded.

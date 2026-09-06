@@ -27,11 +27,11 @@ export class SimulatedTarget {
     const row = this.db.prepare('SELECT value FROM transactions WHERE tenant=? AND id=?').get(tenant, id);
     return row ? decrypt(row.value, this.key(tenant), `${tenant}/transaction/${id}`) : null;
   }
-  execute(capsule, transactionId, now, fault = null) {
+  execute(capsule, transactionId, now, fault = null, inBatch = false) {
     const tenant = capsule.tenant_id, id = capsule.action.target_resource;
     const prior = this.outcome(tenant, transactionId); if (prior) return prior;
     if (fault === 'before-dispatch') throw new Error('Simulated transport timeout before dispatch');
-    this.db.exec('BEGIN IMMEDIATE');
+    if (!inBatch) this.db.exec('BEGIN IMMEDIATE');
     let outcome;
     try {
       const state = this.state(tenant, id);
@@ -53,12 +53,26 @@ export class SimulatedTarget {
       if (type !== 'data.export') this.db.prepare('INSERT INTO resources VALUES(?,?,?,?) ON CONFLICT(tenant,id) DO UPDATE SET version=excluded.version,value=excluded.value').run(tenant, id, state.version + 1, encrypt(next, this.key(tenant), `${tenant}/resource/${id}`));
       outcome = { target_transaction_id: transactionId, capsule_digest: digest(capsule), authorised_requested_digest: digest(requested), observed_state_digest: digest(next), observed_state: next, output, status: 'VERIFIED', execution_time: now, simulation: true };
       this.db.prepare('INSERT INTO transactions VALUES(?,?,?)').run(tenant, transactionId, encrypt(outcome, this.key(tenant), `${tenant}/transaction/${transactionId}`));
-      this.db.exec('COMMIT');
-    } catch (e) { this.db.exec('ROLLBACK'); throw e; }
+      if (!inBatch) this.db.exec('COMMIT');
+    } catch (e) { if (!inBatch) this.db.exec('ROLLBACK'); throw e; }
     if (fault === 'after-commit') throw new Error('Simulated response lost after durable commit');
     if (fault === 'malformed-response') return { status: 'VERIFIED' };
     if (fault === 'altered-response') return { ...outcome, authorised_requested_digest: '0'.repeat(64) };
     return outcome;
+  }
+  executeBatch(items, now, fault = null) {
+    requireThat(Array.isArray(items) && items.length > 0 && items.length <= 32, 'INV-400-COMPOSITION', 'Bounded exact batch required');
+    requireThat(new Set(items.map(x => x.capsule.tenant_id)).size === 1 && new Set(items.map(x => x.capsule.action.target_resource)).size === items.length, 'INV-400-COMPOSITION', 'Atomic children require one tenant and distinct resource state bindings');
+    this.db.exec('BEGIN IMMEDIATE');
+    let outcomes;
+    try {
+      requireThat(items.every(x => !this.outcome(x.capsule.tenant_id, x.transaction_id)), 'INV-409-REPLAY', 'An atomic child already executed', 409);
+      outcomes = items.map((x, i) => this.execute(x.capsule, x.transaction_id, now, fault === `child-${i}` ? 'before-commit' : null, true));
+      if (fault === 'before-commit') throw new Error('Simulated atomic transaction failure');
+      this.db.exec('COMMIT');
+    } catch (error) { this.db.exec('ROLLBACK'); throw error; }
+    if (fault === 'after-commit') throw new Error('Simulated atomic response lost');
+    return outcomes;
   }
   readDataset(tenant, id, columns, rowIds, ceiling) {
     const dataset = this.state(tenant, id).material_fields;

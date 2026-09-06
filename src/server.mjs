@@ -102,6 +102,7 @@ export function createServer(fabric, { port = 8080, host = '127.0.0.1', origin =
       if (path === '/v1/compositions' && req.method === 'GET') { fabric.authorize(p, ['operator', 'approver', 'custodian', 'policy_admin', 'security']); return send(200, fabric.store.list(p.tenant_id, 'composition', 100).map(r => r.envelope)); }
       if ((m = /^\/v1\/compositions\/([A-Za-z0-9-]+)\/challenge$/.exec(path)) && req.method === 'GET') return send(200, fabric.compositions.challenge(p, m[1]));
       if (path === '/v1/batch-approvals' && req.method === 'POST') return send(201, fabric.compositions.approve(p, await body(req)));
+      if ((m = /^\/gate\/v1\/compositions\/([A-Za-z0-9-]+)\/outcome$/.exec(path)) && req.method === 'GET') return send(200, fabric.compositions.reconcile(p, m[1]));
       if (path === '/gate/v1/compositions/execute' && req.method === 'POST') return send(200, fabric.compositions.execute(p, await body(req)));
       if (path === '/v1/emergencies/simulate' && req.method === 'POST') return send(200, fabric.emergencies.simulate(p, await body(req)));
       if (path === '/v1/emergencies/activate' && req.method === 'POST') return send(201, fabric.emergencies.activate(p, await body(req)));
