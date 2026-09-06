@@ -51,3 +51,24 @@ configuration file over newer gate state. A crash between configuration-file
 replacement and state acceptance fails closed and the signed file is rechecked
 on restart. Rollback of the entire host *and* its database requires an external
 witness/hardware monotonic anchor; local storage cannot attest its own rollback.
+
+### Local network decision gate and performance paths
+
+`LocalNetworkGate` validates a customer-quorum signed runtime snapshot before
+accepting capabilities. It continues enforcing imported capabilities without the
+control plane until their/configuration expiry. Runtime-control messages are
+verified against constructor-pinned keys and bound to tenant, gate, sequence and
+expiry; callers cannot substitute their own verification keys. Quarantine permits
+only an independently authorised, registered remediation destination named by the
+signed configuration. Bounded cache/control growth fails closed rather than
+silently evicting authority or consuming unbounded memory. This is an in-process
+service-dispatch gate, not a claim of OS/kernel packet filtering.
+
+`node scripts/benchmark.mjs` measures deterministic core, durable Commit Gate,
+durable runtime/audit, and cached local decision paths separately. The exact SRS
+cached-decision p99 ≤1 ms target is applied to the cached decision path, not the
+SQLite/signature/audit path. Both measurements remain visible. Commit evaluation
+p95 ≤250 ms, p99 ≤750 ms and throughput ≥100/s apply to the integrated evaluation.
+Virtual policy time advances to respect unchanged signed budgets and TTLs; these
+are local microbenchmarks, not proof of external latency or production capacity.
+The command exits nonzero if any applicable measured SRS target fails.

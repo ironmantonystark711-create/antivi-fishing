@@ -1,10 +1,10 @@
 {
-  "baseline_sha": "6213aa37474ea81540ef87e563bbc59efea8d94a",
+  "baseline_sha": "10e9ce998df91dfada013c27dbcce360293e89c2",
   "source_sha256": "64dd0b013feb8455906342cb6df1ca8fde6a0717a35b91b3e4c968e59320b3a1",
   "total_requirements": 211,
   "VERIFIED": 10,
-  "PARTIAL": 107,
-  "NOT_IMPLEMENTED": 94,
+  "PARTIAL": 108,
+  "NOT_IMPLEMENTED": 93,
   "BLOCKED_EXTERNAL": 0,
   "failing_tests": [],
   "baseline_tests": {
@@ -14,8 +14,8 @@
     "evidence": "reports/baseline-tests.tap"
   },
   "current_verification": {
-    "source_revision": "6213aa37474ea81540ef87e563bbc59efea8d94a",
-    "passed": 118,
+    "source_revision": "10e9ce998df91dfada013c27dbcce360293e89c2",
+    "passed": 120,
     "failed": 0,
     "skipped": 0,
     "pass": true
@@ -55,7 +55,7 @@
         {
           "command": "python3 scripts/record-verification.py",
           "result_file": "reports/evidence/current-tests.xml",
-          "result_sha256": "1866eb060bf768431bd931e7ad1295b272b2e68c90634843424cfdc6b91b0a60",
+          "result_sha256": "11edbfbce326afa843869bb0444a4389c34b0e25c7ef3aa22015dd10498affe8",
           "passing_test_names": [
             "COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle",
             "COV-001 COV-002 COV-008 COV-010: every declared path has a mandatory assigned plan and manual claims fail closed"
@@ -94,7 +94,7 @@
         {
           "command": "python3 scripts/record-verification.py",
           "result_file": "reports/evidence/current-tests.xml",
-          "result_sha256": "1866eb060bf768431bd931e7ad1295b272b2e68c90634843424cfdc6b91b0a60",
+          "result_sha256": "11edbfbce326afa843869bb0444a4389c34b0e25c7ef3aa22015dd10498affe8",
           "passing_test_names": [
             "COV-001 COV-002 COV-008 COV-010: every declared path has a mandatory assigned plan and manual claims fail closed"
           ],
@@ -241,7 +241,7 @@
         {
           "command": "python3 scripts/record-verification.py",
           "result_file": "reports/evidence/current-tests.xml",
-          "result_sha256": "1866eb060bf768431bd931e7ad1295b272b2e68c90634843424cfdc6b91b0a60",
+          "result_sha256": "11edbfbce326afa843869bb0444a4389c34b0e25c7ef3aa22015dd10498affe8",
           "passing_test_names": [
             "COV-001 COV-002 COV-008 COV-010: every declared path has a mandatory assigned plan and manual claims fail closed"
           ],
@@ -279,7 +279,7 @@
         {
           "command": "python3 scripts/record-verification.py",
           "result_file": "reports/evidence/current-tests.xml",
-          "result_sha256": "1866eb060bf768431bd931e7ad1295b272b2e68c90634843424cfdc6b91b0a60",
+          "result_sha256": "11edbfbce326afa843869bb0444a4389c34b0e25c7ef3aa22015dd10498affe8",
           "passing_test_names": [
             "COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle",
             "COV-003 COV-005 COV-006 COV-007 COV-009: scope-bound signed evidence, expiry intervals and tenant history isolation"
@@ -535,7 +535,7 @@
         {
           "command": "python3 scripts/record-verification.py",
           "result_file": "reports/evidence/current-tests.xml",
-          "result_sha256": "1866eb060bf768431bd931e7ad1295b272b2e68c90634843424cfdc6b91b0a60",
+          "result_sha256": "11edbfbce326afa843869bb0444a4389c34b0e25c7ef3aa22015dd10498affe8",
           "passing_test_names": [
             "ACT-012 COM-005 UX-006: atomic batch commits every exact child and rejects replay, missing or reversed authority",
             "COM-005 COM-012 ACT-012: atomic child-1 preserves all-or-none state and durable replay protection",
@@ -869,7 +869,7 @@
         {
           "command": "python3 scripts/record-verification.py",
           "result_file": "reports/evidence/current-tests.xml",
-          "result_sha256": "1866eb060bf768431bd931e7ad1295b272b2e68c90634843424cfdc6b91b0a60",
+          "result_sha256": "11edbfbce326afa843869bb0444a4389c34b0e25c7ef3aa22015dd10498affe8",
           "passing_test_names": [
             "POL-008 POL-010: signed development, shadow and canary stages bind exact policy and cannot be skipped or self-asserted",
             "POL-008 POL-009 POL-014: activation and rollback advance versions and never restore revoked authorities",
@@ -915,7 +915,7 @@
         {
           "command": "python3 scripts/record-verification.py",
           "result_file": "reports/evidence/current-tests.xml",
-          "result_sha256": "1866eb060bf768431bd931e7ad1295b272b2e68c90634843424cfdc6b91b0a60",
+          "result_sha256": "11edbfbce326afa843869bb0444a4389c34b0e25c7ef3aa22015dd10498affe8",
           "passing_test_names": [
             "COM-014 POL-009: 3-of-5 customer software quorum protects exact policy activation",
             "POL-008 POL-009 POL-014: activation and rollback advance versions and never restore revoked authorities"
@@ -1040,7 +1040,7 @@
         {
           "command": "python3 scripts/record-verification.py",
           "result_file": "reports/evidence/current-tests.xml",
-          "result_sha256": "1866eb060bf768431bd931e7ad1295b272b2e68c90634843424cfdc6b91b0a60",
+          "result_sha256": "11edbfbce326afa843869bb0444a4389c34b0e25c7ef3aa22015dd10498affe8",
           "passing_test_names": [
             "POL-013 POL-014: emergency requires simulation and quorum, restricts exact scope, expires without reviving revocations",
             "POL-008 POL-009 POL-014: activation and rollback advance versions and never restore revoked authorities"
@@ -1452,6 +1452,10 @@
           "declaration": "test('NET-004 NET-005 NET-006 NET-010 RUN-004 RUN-008 RUN-009: rate, quarantine, revocation, exhaustion and containment counters', t => {"
         },
         {
+          "file": "tests/network-perception.test.mjs",
+          "declaration": "test('RUN-010 NET-007 RUN-004: local gate rejects unsigned startup, signed-control replay, wrong tenant and stale control', t => {"
+        },
+        {
           "file": "tests/runtime-audit.test.mjs",
           "declaration": "test('RUN-004 IDN-008: device quarantine rejects issued capability immediately', t => { const h = fixture(t), cap = h.f.runtime.issue(h.p(), runtimeInput()); h.f.revoke(h.p('security'), { kind: 'device', id: 'operator-device', reason: 'Synthetic compromised device' }); assert.throws(() => h.f.runtime.consume(h.p(), runtimeRequest(cap)), hasCode('INV-403-QUARANTINE')); });"
         }
@@ -1512,6 +1516,10 @@
         {
           "file": "tests/network-perception.test.mjs",
           "declaration": "test('NET-004 NET-005 NET-006 NET-010 RUN-004 RUN-008 RUN-009: rate, quarantine, revocation, exhaustion and containment counters', t => {"
+        },
+        {
+          "file": "tests/network-perception.test.mjs",
+          "declaration": "test('NFR-PERF-005 RUN-008 RUN-009: cache churn does not evict active authority and adversarial control growth fails closed', t => {"
         }
       ],
       "verification_evidence": [],
@@ -1529,6 +1537,10 @@
         {
           "file": "tests/network-perception.test.mjs",
           "declaration": "test('NET-004 NET-005 NET-006 NET-010 RUN-004 RUN-008 RUN-009: rate, quarantine, revocation, exhaustion and containment counters', t => {"
+        },
+        {
+          "file": "tests/network-perception.test.mjs",
+          "declaration": "test('NFR-PERF-005 RUN-008 RUN-009: cache churn does not evict active authority and adversarial control growth fails closed', t => {"
         }
       ],
       "verification_evidence": [],
@@ -1553,6 +1565,10 @@
           "declaration": "test('RUN-010: signed startup, tampering withdrawal, quorum reload and downgrade rejection', t => {"
         },
         {
+          "file": "tests/network-perception.test.mjs",
+          "declaration": "test('RUN-010 NET-007 RUN-004: local gate rejects unsigned startup, signed-control replay, wrong tenant and stale control', t => {"
+        },
+        {
           "file": "tests/runtime-integrity.test.mjs",
           "declaration": "test('RUN-010: restart cannot roll back signed configuration or rebind an accepted version', t => {"
         },
@@ -1569,7 +1585,7 @@
         {
           "command": "python3 scripts/record-verification.py",
           "result_file": "reports/evidence/current-tests.xml",
-          "result_sha256": "1866eb060bf768431bd931e7ad1295b272b2e68c90634843424cfdc6b91b0a60",
+          "result_sha256": "11edbfbce326afa843869bb0444a4389c34b0e25c7ef3aa22015dd10498affe8",
           "passing_test_names": [
             "RUN-010: restart cannot roll back signed configuration or rebind an accepted version",
             "RUN-010 RUN-003: expiry, revoked custodian, duplicate signer and stale process withdraw local authority",
@@ -2056,6 +2072,10 @@
         {
           "file": "tests/network-perception.test.mjs",
           "declaration": "test('NET-001 NET-002 NET-003 NET-007 NET-009 RUN-001: local process dispatch requires exact tenant/device/service capability, even offline', t => {"
+        },
+        {
+          "file": "tests/network-perception.test.mjs",
+          "declaration": "test('RUN-010 NET-007 RUN-004: local gate rejects unsigned startup, signed-control replay, wrong tenant and stale control', t => {"
         }
       ],
       "verification_evidence": [],
@@ -2354,7 +2374,7 @@
         {
           "command": "python3 scripts/record-verification.py",
           "result_file": "reports/evidence/current-tests.xml",
-          "result_sha256": "1866eb060bf768431bd931e7ad1295b272b2e68c90634843424cfdc6b91b0a60",
+          "result_sha256": "11edbfbce326afa843869bb0444a4389c34b0e25c7ef3aa22015dd10498affe8",
           "passing_test_names": [
             "KEY-005 COM-002: key algorithm, suite, signature encoding and verification cutoff cannot be confused",
             "KEY-005 KEY-010 NFR-MNT-002: independent verifiers accept mixed-suite audit history and reject cross-suite tampering",
@@ -3269,9 +3289,14 @@
       "minimum_acceptance": "Soak and exhaustion test.",
       "source_line": 446,
       "implementation": [],
-      "tests": [],
+      "tests": [
+        {
+          "file": "tests/network-perception.test.mjs",
+          "declaration": "test('NFR-PERF-005 RUN-008 RUN-009: cache churn does not evict active authority and adversarial control growth fails closed', t => {"
+        }
+      ],
       "verification_evidence": [],
-      "status": "NOT_IMPLEMENTED",
+      "status": "PARTIAL",
       "blocker_reason": null,
       "remaining_work": "Inspect complete semantics and execute positive/negative acceptance evidence; candidate test names are not proof."
     },

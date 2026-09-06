@@ -20,6 +20,7 @@ jobs:
         with:
           node-version: '24.16.0'
       - run: python3 scripts/record-verification.py
+      - run: node scripts/benchmark.mjs
       - run: |
           node scripts/simulate.mjs
           node scripts/verify-export.mjs reports/sample-audit.json reports/sample-pinned-trust.json

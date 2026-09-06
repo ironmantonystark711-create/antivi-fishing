@@ -8,7 +8,7 @@ import { signed } from '../src/crypto.mjs';
 import { canonical } from '../src/canonical.mjs';
 function network(h) {
  const cap = h.f.runtime.issue(h.p(), runtimeInput({ action: 'service.connect', resource: 'erp-service', destination: 'erp-service', columns: [], row_ids: [] }));
- const gate = new LocalNetworkGate({ tenant: 'acme', gate: h.f.config.gate_id, publicKeys: h.f.executionPublic('acme'), clock: h.now, maxEntries: 2, policyDigest: cap.payload.policy_digest, snapshot: h.setup.config.tenants.acme.runtime_snapshot.config });
+ const gate = new LocalNetworkGate({ tenant: 'acme', gate: h.f.config.gate_id, publicKeys: h.f.executionPublic('acme'), clock: h.now, maxEntries: 2, policyDigest: cap.payload.policy_digest, snapshot: h.setup.config.tenants.acme.runtime_snapshot, configurationIdentities: h.f.identities('acme') });
  let delivered = 0; gate.register('erp-service', p => { delivered++; return { received: p }; }); gate.importCapability(cap);
  const request = { capability_id: cap.payload.capability_id, tenant_id: 'acme', subject_id: 'operator', device_id: 'operator-device', destination: 'erp-service', protocol: 'https', port: 443, request_id: 'request-1' };
  return { gate, cap, request, delivered: () => delivered };
@@ -39,4 +39,20 @@ test('PER-001 PER-003 PER-006 PER-007 PER-009 PER-010: software transport contra
  const p = result.payload, unwrapped = privateDecrypt({ key: display.privateKey, oaepHash: 'sha256' }, Buffer.from(p.encrypted_key, 'base64url')), decipher = createDecipheriv('aes-256-gcm', unwrapped, Buffer.from(p.iv, 'base64url')); decipher.setAAD(Buffer.from(canonical(p.aad))); decipher.setAuthTag(Buffer.from(p.tag, 'base64url'));
  const plaintext = JSON.parse(Buffer.concat([decipher.update(Buffer.from(p.ciphertext, 'base64url')), decipher.final()])); assert.deepEqual(plaintext, { amount: 'CONFIDENTIAL-TEST-100' });
  assert.throws(() => broker.deliver(session.payload.session_id, h.p('operator', 'globex'), {}, 'review')); h.advance(1001); assert.throws(() => broker.deliver(session.payload.session_id, h.p(), {}, 'review'));
+});
+test('RUN-010 NET-007 RUN-004: local gate rejects unsigned startup, signed-control replay, wrong tenant and stale control', t => {
+ const h = fixture(t), n = network(h), c = { tenant_id: 'acme', gate_id: h.f.config.gate_id, sequence: 1, issued_at: h.now(), expires_at: h.now() + 1000, action: 'revoke', id: n.cap.payload.capability_id };
+ assert.throws(() => new LocalNetworkGate({ tenant: 'acme', gate: h.f.config.gate_id, publicKeys: h.f.executionPublic('acme'), clock: h.now, maxEntries: 2, policyDigest: n.cap.payload.policy_digest, snapshot: { config: h.setup.config.tenants.acme.runtime_snapshot.config, signatures: [] }, configurationIdentities: h.f.identities('acme') }));
+ for (const change of [{ tenant_id: 'globex' }, { gate_id: 'other' }, { expires_at: h.now() }]) assert.throws(() => n.gate.applyControl(signed({ ...c, ...change }, h.f.keys('acme').execution, 'runtime-control')));
+ const e = signed(c, h.f.keys('acme').execution, 'runtime-control'); assert.equal(n.gate.applyControl(e).applied, true); assert.throws(() => n.gate.applyControl(e));
+ assert.equal(n.gate.send(n.request, {}).code, 'INV-401-CAPABILITY');
+});
+test('NFR-PERF-005 RUN-008 RUN-009: cache churn does not evict active authority and adversarial control growth fails closed', t => {
+ const h = fixture(t), n = network(h);
+ const cap2 = h.f.runtime.issue(h.p(), runtimeInput({ action: 'service.connect', resource: 'erp-service', destination: 'erp-service', columns: [], row_ids: [] })); n.gate.importCapability(cap2);
+ const cap3 = h.f.runtime.issue(h.p(), runtimeInput({ action: 'service.connect', resource: 'erp-service', destination: 'erp-service', columns: [], row_ids: [] }));
+ for (let i = 0; i < 1000; i++) { assert.throws(() => n.gate.importCapability(cap3)); assert.equal(n.gate.decide({ ...n.request, tenant_id: 'wrong', request_id: `churn-${i}` }).decision, 'DENY'); }
+ assert.equal(n.gate.send(n.request, {}).decision, 'ALLOW'); assert.equal(n.gate.report().cached_capabilities, 2);
+ for (let i = 0; i < 4100; i++) n.gate.revoke(`adversarial-${i}`);
+ assert.ok(n.gate.report().events.length <= 256); assert.equal(n.gate.send({ ...n.request, request_id: 'after-exhaustion' }, {}).code, 'INV-503-CONFIG');
 });

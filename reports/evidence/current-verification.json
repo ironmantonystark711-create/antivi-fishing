@@ -1,5 +1,5 @@
 {
-  "source_revision": "6213aa37474ea81540ef87e563bbc59efea8d94a",
+  "source_revision": "10e9ce998df91dfada013c27dbcce360293e89c2",
   "source_hashes": {
     "src/advisory.mjs": "0c32f6a215b88bd982937355bb4366ab65028789f4bd35fab4929bc3c9146b32",
     "src/audit-views.mjs": "f9acd573a8eead6087ef0eb4c601cd04d9c4a446810ed80946bc7fda665ef63a",
@@ -14,7 +14,7 @@
     "src/fabric.mjs": "1d12f93e073fa5c2968081a71686ab32f06efe2cff9ea723f9438ffba4893dd6",
     "src/key-governance.mjs": "383b83e59886954e24a829c852c612c40d1284e13b3a2e03b00b0436f80d1253",
     "src/lifecycle.mjs": "cef68fb3b571ef627964ed12f45b3b5e77c6e47dc68fdfdd941b70d0fa192eaa",
-    "src/network.mjs": "c62de33b1d237b0a3f0c7906242bd90a95a8de877677422d9ce6bb5d2834ea25",
+    "src/network.mjs": "2fd43f1921304550ce194302ac1f7c6945e655a9a5353561e0bbe1bb123b9584",
     "src/output.mjs": "b5cd60b714e9654627992d827958c52c7d45904e6db7312f91934108847010ca",
     "src/perception.mjs": "1f543fd7f078c4e962952a8958ad55088276ed60ebbf7a7ba0b6226a55102b0e",
     "src/policy-lifecycle.mjs": "9ed57b0036e9b89124c7beb37d74380cd40fe224ea1aadff7870cef0a517a254",
@@ -39,12 +39,12 @@
     "tests/helpers.mjs": "741a01305aed56bbeea05679a75333f7bfd8def595043e0c46ce53e8de37d2a3",
     "tests/http-concurrency-ui.test.mjs": "ebc21347a612d813870258db6c7defac6a861805acb35f15d25e1da6446e1c88",
     "tests/lifecycle.test.mjs": "d032ec54bc0b21224baf22b2b947fbf4d14476867be3f1bb55078df92abec81e",
-    "tests/network-perception.test.mjs": "d312aafb96b302955bdd2ed2710d0b4395a94a7314775df0fa21a095556a880e",
+    "tests/network-perception.test.mjs": "81509ea94406ba8125fd8cdabbe49f6faf7dbfa765f9aa38618c88612c5029ba",
     "tests/policy-staging.test.mjs": "72c0dc996d8e40ab797fc24598bdc1fb4b13b4039a5ede5eb5b9aca12990db2b",
     "tests/race-worker.mjs": "fec3148b854cb107b7f1dd1002743d1847c9fc14129de6c17bdbce13c22e03ef",
     "tests/runtime-audit.test.mjs": "920094272c82e2de2a11b9942de32e22261f5d1f93a4d74236a70e84177aa23a",
     "tests/runtime-integrity.test.mjs": "b66a92e0fce2fd53a3b717cc0e5d49e2734597c7445d3fba7d7ae491552fb499",
-    "scripts/benchmark.mjs": "cb1b51797a543d22f45c4e30012d2d89ae94653d230db59864a98d79ce46b652",
+    "scripts/benchmark.mjs": "10c8c40d4cac9a4cee7a2b94349b87f3af705d627153a75132832fa9478a6a29",
     "scripts/browser-check.mjs": "fd39e1d5cead8ce00a23f403ceb2466c602424043ff151b52c9ea651c63abc09",
     "scripts/canonical-vectors.py": "bf9b7e46ec4f206c18a0140fb318a923c4b736d1284d9f082023977bbb22a340",
     "scripts/check.mjs": "a394a08c1681e1dfb64edd1efa658a235a93fa4e83142fe09414c479c6fee5c4",
@@ -90,7 +90,7 @@
       ],
       "exit_code": 0,
       "result_file": "reports/evidence/current-tests.xml",
-      "sha256": "1866eb060bf768431bd931e7ad1295b272b2e68c90634843424cfdc6b91b0a60"
+      "sha256": "11edbfbce326afa843869bb0444a4389c34b0e25c7ef3aa22015dd10498affe8"
     },
     {
       "command": [
@@ -103,7 +103,7 @@
       "sha256": "4b6d1b4757f0770b7cbe90b5d1c5560be4fc2911b56383c6c248c79121c56208"
     }
   ],
-  "passed": 118,
+  "passed": 120,
   "failed": 0,
   "failing_tests": [],
   "skipped": 0,

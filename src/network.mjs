@@ -1,3 +1,4 @@
+import { verifyRuntimeConfiguration } from './runtime-config.mjs';
 import { verifySigned } from './crypto.mjs';
 import { digest, clone } from './canonical.mjs';
 import { requireThat } from './errors.mjs';
@@ -5,14 +6,15 @@ import { requireThat } from './errors.mjs';
 // A deterministic process-level network simulator, not a kernel packet filter.
 // Only explicitly registered service handlers can receive a request. No sockets, DNS or arbitrary URLs.
 export class LocalNetworkGate {
-  #capabilities = new Map(); #routes = new Map(); #revoked = new Set(); #quarantined = new Set(); #usage = new Map(); #config;
-  constructor({ tenant, gate, publicKeys, clock = Date.now, maxEntries = 256, policyDigest, snapshot }) {
+  #capabilities = new Map(); #routes = new Map(); #revoked = new Set(); #quarantined = new Set(); #usage = new Map(); #config; #configurationIdentities; #controlSequence = 0;
+  constructor({ tenant, gate, publicKeys, clock = Date.now, maxEntries = 256, policyDigest, snapshot, configurationIdentities, controlKeys }) {
     requireThat(Number.isInteger(maxEntries) && maxEntries > 0 && maxEntries <= 4096, 'INV-400-SCHEMA', 'Invalid network cache bound');
-    this.tenant = tenant; this.gate = gate; this.keys = publicKeys; this.clock = clock; this.maxEntries = maxEntries; this.policyDigest = policyDigest; this.#config = clone(snapshot); this.counters = {}; this.events = [];
+    this.tenant = tenant; this.gate = gate; this.keys = publicKeys; this.clock = clock; this.maxEntries = maxEntries; this.policyDigest = policyDigest; this.controlKeys = clone(controlKeys ?? publicKeys); this.#configurationIdentities = clone(configurationIdentities); this.#config = clone(verifyRuntimeConfiguration(snapshot, this.#configurationIdentities, tenant, gate, clock())); this.counters = {}; this.events = []; this.lastDecisionAt = clock();
   }
   register(service, handler) { requireThat(/^[a-z][a-z0-9-]{0,63}$/.test(service) && typeof handler === 'function' && !this.#routes.has(service), 'INV-400-SCHEMA', 'Exact unique local service required'); this.#routes.set(service, handler); }
   importCapability(envelope) {
     const cap = verifySigned(envelope, this.keys, 'capability'), now = this.clock();
+    requireThat(this.#config && this.#config.expires_at > now && cap.issued_at <= now && cap.expires_at <= this.#config.expires_at && Number.isSafeInteger(cap.max_cost) && cap.max_cost > 0, 'INV-401-CAPABILITY', 'Network capability lifetime or volume invalid', 401);
     requireThat(cap.tenant_id === this.tenant && cap.gate_id === this.gate && cap.action === 'service.connect' && cap.destination === cap.resource && cap.runtime_policy.services.includes(cap.resource) && cap.expires_at > now && cap.policy_digest === this.policyDigest, 'INV-403-SCOPE', 'Network capability scope denied', 403);
     for (const [id, c] of this.#capabilities) if (c.expires_at <= now) this.#capabilities.delete(id);
     requireThat(this.#capabilities.size < this.maxEntries || this.#capabilities.has(cap.capability_id), 'INV-429-CACHE', 'Network decision cache full; no critical entries evicted', 429);
@@ -20,15 +22,28 @@ export class LocalNetworkGate {
     requireThat(!present || digest(present) === digest(cap), 'INV-409-STATE', 'Capability identity cannot be rebound', 409);
     this.#capabilities.set(cap.capability_id, clone(cap)); return cap.capability_id;
   }
-  revoke(id) { this.#revoked.add(id); this.events.push({ type: 'REVOKED', capability_id: id, time: this.clock() }); }
-  quarantine(device, reason = 'HEALTH_LOST') { this.#quarantined.add(device); this.events.push({ type: 'QUARANTINE', device_id: device, reason, time: this.clock() }); }
+  revoke(id) { if (this.#revoked.size >= 4096 && !this.#revoked.has(id)) { this.withdraw(); return; } this.#revoked.add(id); this.recordEvent({ type: 'REVOKED', capability_id: id, time: this.clock() }); }
+  quarantine(device, reason = 'HEALTH_LOST') { if (this.#quarantined.size >= 4096 && !this.#quarantined.has(device)) { this.withdraw(); return; } this.#quarantined.add(device); this.recordEvent({ type: 'QUARANTINE', device_id: device, reason, time: this.clock() }); }
+  recordEvent(event) { if (this.events.length >= 256) this.events.shift(); this.events.push(event); }
+  applyControl(envelope) {
+    const x = verifySigned(envelope, this.controlKeys, 'runtime-control');
+    requireThat(x.tenant_id === this.tenant && x.gate_id === this.gate && Number.isSafeInteger(x.sequence) && x.sequence > this.#controlSequence && x.issued_at <= this.clock() && x.expires_at > this.clock(), 'INV-403-SCOPE', 'Runtime control scope, sequence or freshness invalid', 403);
+    requireThat(['revoke', 'quarantine', 'withdraw'].includes(x.action) && typeof x.id === 'string' && x.id.length <= 128, 'INV-400-SCHEMA', 'Unsupported runtime control');
+    this.#controlSequence = x.sequence;
+    if (x.action === 'revoke') this.revoke(x.id);
+    if (x.action === 'quarantine') this.quarantine(x.id, 'SIGNED_CUSTOMER_CONTAINMENT');
+    if (x.action === 'withdraw') this.withdraw();
+    return { applied: true, sequence: x.sequence };
+  }
   withdraw() { this.#config = null; }
   decide(request) {
     const now = this.clock(), cap = this.#capabilities.get(request.capability_id);
     const reject = code => { this.counters[code] = (this.counters[code] ?? 0) + 1; return { decision: 'DENY', code, simulation: true }; };
+    if (now < this.lastDecisionAt) { this.withdraw(); return reject('INV-503-TIME'); }
+    this.lastDecisionAt = now;
     if (!this.#config || this.#config.expires_at <= now) return reject('INV-503-CONFIG');
     if (!cap || cap.tenant_id !== request.tenant_id || cap.subject_id !== request.subject_id || cap.device_id !== request.device_id || cap.destination !== request.destination || request.protocol !== 'https' || request.port !== 443 || !this.#routes.has(request.destination)) return reject('INV-403-SCOPE');
-    if (this.#quarantined.has(request.device_id)) return reject('INV-403-QUARANTINE');
+    if (this.#quarantined.has(request.device_id) && !this.#config.remediation_services.includes(request.destination)) return reject('INV-403-QUARANTINE');
     if (this.#revoked.has(cap.capability_id) || cap.expires_at <= now || cap.issued_at > now || cap.policy_digest !== this.policyDigest) return reject('INV-401-CAPABILITY');
     if (typeof request.request_id !== 'string' || !/^[A-Za-z0-9_-]{1,128}$/.test(request.request_id)) return reject('INV-400-SCHEMA');
     const id = `${request.subject_id}:${request.device_id}`;
