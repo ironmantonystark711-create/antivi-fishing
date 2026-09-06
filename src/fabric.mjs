@@ -6,12 +6,15 @@ import { RuntimeIntegrity } from './runtime-config.mjs';
 import { Compositions } from './composition.mjs';
 import { EmergencyPolicies } from './emergency.mjs';
 import { VersionLifecycle } from './lifecycle.mjs';
+import { IdentityLifecycle } from './identity-lifecycle.mjs';
+import { KeyLifecycle } from './key-lifecycle.mjs';
+import { Operations } from './operations.mjs';
 import { auditView } from './audit-views.mjs';
 import { AdvisoryPlane } from './advisory.mjs';
 import { digest, clone, canonical } from './canonical.mjs';
 import { signed, verifySigned } from './crypto.mjs';
 import { fields, text, identifier, integer, oneOf, uniqueStrings, validateProposal } from './schema.mjs';
-import { evaluatePolicy, validatePolicy, policyDiff } from './policy.mjs';
+import { evaluatePolicy, validatePolicy, policyContentDigest, policyDiff, PolicyPromotions } from './policy.mjs';
 import { declarePath, coverageManifest, CoverageLifecycle } from './coverage.mjs';
 import { requireThat, InvariantError } from './errors.mjs';
 import { join } from 'node:path';
@@ -23,7 +26,7 @@ export class Fabric {
     const encryption = {}, audit = {};
     for (const [tenant, t] of Object.entries(config.tenants)) { encryption[tenant] = t.encryption_key; audit[tenant] = t.keys.audit; }
     this.store = new Store(join(directory, 'fabric.db'), encryption, audit);
-    this.target = new SimulatedTarget(join(directory, 'target.db'), encryption); this.runtime = new RuntimeGate(this); this.runtimeIntegrity = new RuntimeIntegrity(this); this.compositions = new Compositions(this); this.emergencies = new EmergencyPolicies(this); this.coverageLifecycle = new CoverageLifecycle(this); this.versions = new VersionLifecycle(this); this.advisory = new AdvisoryPlane(this);
+    this.target = new SimulatedTarget(join(directory, 'target.db'), encryption); this.identityLifecycle = new IdentityLifecycle(this); this.keyLifecycle = new KeyLifecycle(this); this.runtime = new RuntimeGate(this); this.runtimeIntegrity = new RuntimeIntegrity(this); this.compositions = new Compositions(this); this.emergencies = new EmergencyPolicies(this); this.coverageLifecycle = new CoverageLifecycle(this); this.versions = new VersionLifecycle(this); this.promotions = new PolicyPromotions(this); this.operations = new Operations(this); this.advisory = new AdvisoryPlane(this);
     try { for (const [tenant, t] of Object.entries(config.tenants)) {
       this.runtimeIntegrity.check(tenant);
       validatePolicy(t.genesis_policy);
@@ -40,15 +43,17 @@ export class Fabric {
           this.store.put(tenant, 'policy', 'active', t.genesis_policy, this.clock());
           this.store.audit(tenant, 'POLICY_GENESIS', 'customer-bootstrap', t.genesis_policy.policy_id, { policy_digest: digest(t.genesis_policy), software_quorum: roots.size }, this.clock());
         }
+        const active = this.store.must(tenant, 'policy', 'active'), historyId = `${active.policy_id}:${active.version}`;
+        if (!this.store.get(tenant, 'policy-history', historyId)) this.store.insert(tenant, 'policy-history', historyId, { policy: clone(active), policy_digest: digest(active), content_digest: policyContentDigest(active), version: active.version, activated_at: this.clock(), activated_by: 'customer-bootstrap', source_certificate_id: null, rollback_of_version: null }, this.clock());
       });
     } } catch (error) { this.close(); throw error; }
   }
   close() { this.target.close(); this.store.close(); }
   tenant(t) { const row = this.config.tenants[t]; requireThat(row, 'INV-404-NOT-FOUND', 'Resource not found', 404); return row; }
   keys(t) { return this.tenant(t).keys; }
-  executionPublic(t) { const key = this.keys(t).execution; return { [key.key_id]: { public_key: key.public_key } }; }
+  executionPublic(t) { return this.keyLifecycle.publicMaterial(t, 'execution'); }
   identity(p) {
-    const identity = Object.values(this.tenant(p.tenant_id).identities).find(x => x.subject_id === p.subject_id);
+    const identity = this.identityLifecycle.effective(p.tenant_id, p.subject_id);
     requireThat(identity && !identity.revoked, 'INV-401-AUTH', 'Authentication required', 401); return identity;
   }
   authorize(p, roles) {
@@ -70,11 +75,10 @@ export class Fabric {
   }
   revoked(tenant, kind, id) { return Boolean(this.store.get(tenant, 'revocation', `${kind}:${id}`)); }
   policy(t) { return this.store.must(t, 'policy', 'active'); }
-  identities(t) { return Object.fromEntries(Object.entries(this.tenant(t).identities).map(([id, v]) => [id, { ...v, revoked: v.revoked || this.revoked(t, 'key', id) || this.revoked(t, 'subject', v.subject_id) }])); }
+  identities(t) { return this.identityLifecycle.all(t); }
   assertHealthy(t, subject, device, now) {
     requireThat(!this.revoked(t, 'subject', subject) && !this.revoked(t, 'device', device), 'INV-403-QUARANTINE', 'Subject or device quarantined', 403);
-    const identity = Object.values(this.tenant(t).identities).find(x => x.subject_id === subject);
-    requireThat(identity && identity.device_id === device && identity.health_expires_at > now, 'INV-403-HEALTH', 'Configured device health evidence expired or mismatched', 403);
+    return this.identityLifecycle.assertAssured(t, subject, device, now);
   }
   getCapsule(p, id) { this.authorize(p, ['operator', 'approver', 'custodian', 'security', 'policy_admin']); return this.store.must(p.tenant_id, 'capsule', identifier(id)); }
   propose(p, input, idempotencyKey) {
@@ -158,9 +162,14 @@ export class Fabric {
     const graph = this.graph(t, record), identities = this.identities(t);
     if (this.emergencies.restriction(t, record.capsule, now)) return { decision: 'DENY', reasons: [{ code: 'EMERGENCY_RESTRICTION', message: 'A scoped customer emergency policy prohibits this action.' }], explanation: 'Emergency restriction; no bypass.', policy_version: policy.version, policy_digest: digest(policy), owner: record.capsule.actor.subject_id, expires_at: record.capsule.expires_at, evaluated_at: now };
     if (record.capsule.action.type === 'policy.change') {
-      const candidateDigest = digest(record.capsule.requested_state.policy);
+      const candidate = record.capsule.requested_state.policy;
+      try { validatePolicy(candidate); } catch { return { decision: 'DENY', reasons: [{ code: 'POLICY_INVALID', message: 'The proposed policy is invalid.' }], explanation: 'The proposed policy is invalid.', owner: record.capsule.actor.subject_id, expires_at: record.capsule.expires_at, evaluated_at: now, policy_version: policy.version, policy_digest: digest(policy) }; }
+      if (candidate.not_before > now) return { decision: 'DEFER', reasons: [{ code: 'POLICY_NOT_ACTIVE', message: 'The staged policy activation time has not been reached.' }], explanation: 'The staged policy activation time has not been reached.', owner: record.capsule.actor.subject_id, expires_at: record.capsule.expires_at, evaluated_at: now, policy_version: policy.version, policy_digest: digest(policy) };
+      if (candidate.expires_at <= now) return { decision: 'DENY', reasons: [{ code: 'POLICY_EXPIRED', message: 'The staged policy has expired.' }], explanation: 'The staged policy has expired.', owner: record.capsule.actor.subject_id, expires_at: record.capsule.expires_at, evaluated_at: now, policy_version: policy.version, policy_digest: digest(policy) };
+      const candidateDigest = digest(candidate);
       const reviewed = this.store.list(t, 'simulation', 500).some(s => s.candidate_digest === candidateDigest && s.baseline_digest === digest(this.policy(t)));
       if (!reviewed) return { decision: 'ESCROW', reasons: [{ code: 'SIMULATION_REQUIRED', message: 'Simulate the exact candidate policy against the active baseline before activation.' }], explanation: 'Exact policy simulation is required.', owner: record.capsule.actor.subject_id, expires_at: record.capsule.expires_at, evaluated_at: now, policy_version: policy.version, policy_digest: digest(policy) };
+      try { this.promotions.current(t, candidateDigest, 'production', now); } catch { return { decision: 'ESCROW', reasons: [{ code: 'PROMOTION_REQUIRED', message: 'A current, signed production promotion is required before activation.' }], explanation: 'A current, signed production promotion is required before activation.', owner: record.capsule.actor.subject_id, expires_at: record.capsule.expires_at, evaluated_at: now, policy_version: policy.version, policy_digest: digest(policy) }; }
     }
     const approvals = record.approvals.filter(a => a.payload.policy_digest === digest(policy) && a.payload.evidence_graph_digest === graph.digest).map(a => {
       try { return a.batch_envelope ? this.compositions.resolve(t, a) : verifySigned(a, identities, 'action-approval'); } catch { return null; }
@@ -284,8 +293,14 @@ export class Fabric {
       if (status === 'VERIFIED' && !valid) { status = 'UNCERTAIN'; reason = 'TARGET_RESPONSE_INVALID'; }
       if (valid && r.capsule.action.type === 'policy.change') {
         const next = r.capsule.requested_state.policy;
-        requireThat(next.version === this.policy(t).version + 1, 'INV-409-STATE', 'Policy activation sequence changed', 409);
+        validatePolicy(next);
+        requireThat(next.tenant_id === t && next.policy_id === this.policy(t).policy_id && next.version === this.policy(t).version + 1 && next.not_before <= raw.execution_time && next.expires_at > raw.execution_time, 'INV-409-STATE', 'Policy activation sequence or validity changed', 409);
+        const prior = this.policy(t), priorHistory = this.store.list(t, 'policy-history', 10000).find(entry => entry.content_digest === policyContentDigest(next) && entry.version !== prior.version);
+        const promotion = this.promotions.current(t, digest(next), 'production', raw.execution_time);
         this.store.put(t, 'policy', 'active', next, now);
+        const history = { policy: clone(next), policy_digest: digest(next), content_digest: policyContentDigest(next), version: next.version, activated_at: now, activated_by: p.subject_id, source_certificate_id: cert.certificate_id, promotion_digest: digest(promotion), reviewed_commit: promotion.reviewed_commit, rollback_of_version: priorHistory?.version ?? null };
+        this.store.insert(t, 'policy-history', `${next.policy_id}:${next.version}`, history, now);
+        this.store.audit(t, priorHistory ? 'POLICY_ROLLED_BACK' : 'POLICY_ACTIVATED', p.subject_id, next.policy_id, { policy_digest: digest(next), source_certificate_id: cert.certificate_id, rollback_of_version: history.rollback_of_version }, now);
       }
       const payload = { certificate_id: cert.certificate_id, capsule_digest: cert.capsule_digest, target_transaction_id: cert.certificate_id, observed_state_digest: valid ? raw.observed_state_digest : null, status, reason, execution_time: valid ? raw.execution_time : now, reconciliation_evidence: valid ? digest(raw) : null, simulation: true, output: valid ? raw.output : null };
       const envelope = signed(payload, this.keys(t).audit, 'outcome');
@@ -313,7 +328,7 @@ export class Fabric {
   }
   revoke(p, input) {
     this.authorize(p, ['security']); fields(input, ['kind', 'id', 'reason']); text(input.reason, 'revocation reason'); identifier(input.id);
-    requireThat(['certificate', 'evidence', 'issuer', 'key', 'subject', 'device', 'capability'].includes(input.kind), 'INV-400-SCHEMA', 'Unsupported revocation type');
+    requireThat(['certificate', 'evidence', 'issuer', 'key', 'subject', 'device', 'capability', 'component', 'jit'].includes(input.kind), 'INV-400-SCHEMA', 'Unsupported revocation type');
     return this.transaction(p, now => {
       const payload = { ...clone(input), tenant_id: p.tenant_id, revoked_at: now, actor: p.subject_id, propagation: 'local-synchronous', remote_propagation: 'NOT_IMPLEMENTED' };
       this.store.put(p.tenant_id, 'revocation', `${input.kind}:${input.id}`, payload, now);
@@ -325,12 +340,14 @@ export class Fabric {
     this.authorize(p, ['policy_admin', 'security']); validatePolicy(candidate); requireThat(candidate.tenant_id === p.tenant_id, 'INV-403-SCOPE', 'Policy scope mismatch', 403);
     return this.transaction(p, now => {
       const active = this.policy(p.tenant_id), records = this.store.list(p.tenant_id, 'capsule', 500);
-      requireThat(candidate.policy_id === active.policy_id && candidate.version === active.version + 1 && candidate.expires_at > now, 'INV-409-STATE', 'Candidate must be the next unexpired version of the active policy', 409);
+      requireThat(candidate.policy_id === active.policy_id && [active.version, active.version + 1].includes(candidate.version) && candidate.expires_at > now, 'INV-409-STATE', 'Candidate must be the active or next unexpired policy version', 409);
       const results = records.map(r => ({ capsule_id: r.capsule.capsule_id, observed_status: r.status, projected: this.evaluation(p.tenant_id, { ...r, capsule: { ...r.capsule, policy_version: candidate.version } }, now, candidate).decision }));
       const result = { simulation_id: randomUUID(), candidate_digest: digest(candidate), baseline_digest: digest(active), activation: false, approvals_invalidated_by_policy_change: true, time_basis: now, diff: policyDiff(active, candidate), results, counts: Object.fromEntries(['ALLOW', 'SHIELD', 'ESCROW', 'DEFER', 'DENY'].map(d => [d, results.filter(r => r.projected === d).length])), truncated: records.length === 500 };
       this.store.insert(p.tenant_id, 'simulation', result.simulation_id, result, now); this.store.audit(p.tenant_id, 'POLICY_SIMULATED', p.subject_id, result.simulation_id, { candidate_digest: digest(candidate), result_digest: digest(result) }, now); return result;
     });
   }
+  policyPromotionChallenge(p, input) { return this.promotions.challenge(p, input); }
+  promotePolicy(p, input) { return this.promotions.promote(p, input); }
   auditView(p, role, purpose) { return auditView(this, p, role, purpose); }
   coverage(p) { this.authorize(p, ['operator', 'approver', 'custodian', 'security', 'auditor', 'policy_admin']); this.coverageLifecycle.refresh(p); return coverageManifest(p.tenant_id, this.store.list(p.tenant_id, 'coverage'), this.clock(), this.keys(p.tenant_id).audit); }
   declareCoverage(p, input) {
@@ -341,7 +358,7 @@ export class Fabric {
   }
   exportAudit(p, purpose) {
     this.authorize(p, ['auditor', 'security']); text(purpose, 'audit export purpose', 256);
-    return this.transaction(p, now => { this.store.audit(p.tenant_id, 'AUDIT_ACCESSED', p.subject_id, 'tenant-log', { purpose_digest: digest(purpose) }, now); return this.store.auditExport(p.tenant_id, now); });
+    return this.transaction(p, now => { this.store.audit(p.tenant_id, 'AUDIT_ACCESSED', p.subject_id, 'tenant-log', { purpose_digest: digest(purpose) }, now); const bundle = this.store.auditExport(p.tenant_id, now); bundle.public_keys = this.keyLifecycle.publicMaterial(p.tenant_id, 'audit'); return bundle; });
   }
   retention(p, input) {
     this.authorize(p, ['security']); fields(input, ['evidence_id', 'legal_hold']); identifier(input.evidence_id); requireThat(typeof input.legal_hold === 'boolean', 'INV-400-SCHEMA', 'Legal hold must be boolean');

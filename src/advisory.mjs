@@ -44,9 +44,13 @@ export class AdvisoryPlane {
   }
 }
 export function compareEvaluations(baseline, candidate) {
-  fields(candidate, ['suite', 'provider', 'model', 'version', 'results']);
-  requireThat(candidate.suite === ADVISORY_EVALUATION_VERSION && baseline.suite === candidate.suite && Array.isArray(candidate.results), 'INV-400-AI-EVAL', 'Unknown evaluation version');
+  for (const evaluation of [baseline, candidate]) {
+    fields(evaluation, ['suite', 'provider', 'model', 'version', 'results']); text(evaluation.provider, 'evaluation provider', 128); text(evaluation.model, 'evaluation model', 128); text(evaluation.version, 'evaluation model version', 64);
+    requireThat(evaluation.suite === ADVISORY_EVALUATION_VERSION && Array.isArray(evaluation.results), 'INV-400-AI-EVAL', 'Unknown evaluation version');
+    for (const result of evaluation.results) { fields(result, ['name', 'pass']); text(result.name, 'evaluation test name', 128); requireThat(typeof result.pass === 'boolean', 'INV-400-AI-EVAL', 'Evaluation result must be boolean'); }
+  }
   const required = ['injection', 'provenance', 'structured-output', 'ambiguous-fields', 'tenant-isolation'];
-  const pass = required.every(name => candidate.results.some(x => x.name === name && x.pass === true)) && baseline.results.filter(x => x.pass).every(x => candidate.results.some(y => y.name === x.name && y.pass === true)) && new Set(candidate.results.map(x => x.name)).size === candidate.results.length;
-  return { suite: candidate.suite, promotion: pass ? 'ALLOW' : 'DENY', baseline_digest: digest(baseline), candidate_digest: digest(candidate), actual_provider_validation: candidate.provider === 'local' };
+  const configured = candidate.provider === 'local' && candidate.model === 'deterministic-extractor' && candidate.version === '1';
+  const pass = configured && required.every(name => candidate.results.some(x => x.name === name && x.pass === true)) && baseline.results.filter(x => x.pass).every(x => candidate.results.some(y => y.name === x.name && y.pass === true)) && new Set(candidate.results.map(x => x.name)).size === candidate.results.length;
+  return { suite: candidate.suite, promotion: pass ? 'ALLOW' : 'DENY', baseline_digest: digest(baseline), candidate_digest: digest(candidate), actual_provider_validation: configured };
 }

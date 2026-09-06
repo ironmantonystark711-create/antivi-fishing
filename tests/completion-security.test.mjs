@@ -78,11 +78,12 @@ test('POL-013 POL-014: emergency requires simulation and quorum, restricts exact
 });
 test('AUD-010: role projections reject cross-role/tenant access and never expose full source envelopes', t => {
   const h = fixture(t); h.ready();
-  for (const [subject, role] of [['operator', 'finance'], ['security', 'security'], ['privacy-reviewer', 'privacy'], ['auditor', 'technical']]) {
+  for (const [subject, role] of [['finance-reviewer', 'finance'], ['security-reviewer', 'security'], ['privacy-reviewer', 'privacy'], ['technical-reviewer', 'technical']]) {
     const out = h.f.auditView(h.p(subject), role, 'Authorised review'); assert.ok(out.payload.entries.length); assert.equal(out.payload.full_chain, false);
     for (const e of out.payload.entries) { assert.equal(e.envelope, undefined); if (role !== 'security') assert.equal(e.actor, undefined); if (role !== 'finance') assert.equal(e.reference, undefined); }
     assert.doesNotMatch(JSON.stringify(out), /TESTBANK/);
   }
+  assert.throws(() => h.f.auditView(h.p('operator'), 'finance', 'Unassigned finance review'), hasCode('INV-403-ROLE'));
   assert.throws(() => h.f.auditView(h.p('privacy-reviewer'), 'security', 'Forbidden'), hasCode('INV-403-ROLE'));
   assert.throws(() => h.f.exportAudit(h.p('privacy-reviewer'), 'Forbidden full export'), hasCode('INV-403-ROLE'));
   assert.equal(h.f.auditView(h.p('privacy-reviewer', 'globex'), 'privacy', 'Own tenant').payload.tenant_id, 'globex');

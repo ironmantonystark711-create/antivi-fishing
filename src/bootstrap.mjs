@@ -26,8 +26,8 @@ export function createConfiguration(tenantNames = ['acme'], now = Date.now()) {
       const key = generateKey(); issuerKeys[tenant][name] = key;
       issuers[key.key_id] = { public_key: key.public_key, suite: key.suite, failure_domain: `${tenant}-${name}`, channel, kinds: ['ownership', 'dataset_authority', 'identity_proof', 'recovery_authority', 'build_provenance', 'test_result', 'workload_attestation', 'governance_review'] };
     }
-    const execution = generateKey(), audit = generateKey(), support = generateKey();
-    config.tenants[tenant] = { runtime_snapshot: signRuntimeConfiguration(runtimeConfiguration(tenant, config.gate_id, now), Object.values(custodianKeys[tenant]).slice(0, 3)), encryption_key: randomBytes(32).toString('base64url'), keys: { execution, audit, support }, key_governance: { root_threshold: 3, root_custodians: Object.keys(custodianKeys[tenant]), recovery_delay_ms: 60000 }, identities, issuers, auth, genesis_policy: policy, genesis_signatures: Object.values(custodianKeys[tenant]).slice(0, 3).map(k => signed(policy, k, 'root-policy')) };
+    const policyKey = generateKey(), execution = generateKey(), audit = generateKey(), support = generateKey();
+    config.tenants[tenant] = { runtime_snapshot: signRuntimeConfiguration(runtimeConfiguration(tenant, config.gate_id, now), Object.values(custodianKeys[tenant]).slice(0, 3)), encryption_key: randomBytes(32).toString('base64url'), keys: { policy: policyKey, execution, audit, support }, key_governance: { root_threshold: 3, root_custodians: Object.keys(custodianKeys[tenant]), recovery_delay_ms: 60000, trusted_component_firmware: ['simulated-1'], randomness_source: 'node:crypto CSPRNG; optional quantum entropy is not asserted' }, identities, issuers, auth, genesis_policy: policy, genesis_signatures: Object.values(custodianKeys[tenant]).slice(0, 3).map(k => signed(policy, k, 'root-policy')) };
   }
   return { config, credentials, custodianKeys, issuerKeys };
 }

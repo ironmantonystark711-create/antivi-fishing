@@ -15,8 +15,8 @@ export class EmergencyPolicies {
     integer(x.issued_at, 'emergency issue time', now - 300000, now); integer(x.expires_at, 'emergency expiry', now + 1, x.issued_at + 3600000); integer(x.max_quantity, 'emergency quantity', 1, 1e12); return x;
   }
   simulate(p, x) {
-    this.f.authorize(p, ['policy_admin', 'security']); this.validate(p.tenant_id, x, this.f.clock());
-    return this.f.transaction(p, now => { const out = { simulation_id: randomUUID(), emergency_digest: digest(x), baseline_digest: digest(this.f.policy(p.tenant_id)), affected: this.f.store.list(p.tenant_id, 'capsule').filter(r => x.actions.includes(r.capsule.action.type) && x.resources.includes(r.capsule.action.target_resource)).map(r => ({ capsule_id: r.capsule.capsule_id, restricted: x.deny || r.capsule.quantity > x.max_quantity })), activation: false }; this.f.store.insert(p.tenant_id, 'emergency-simulation', out.emergency_digest, out, now); return out; });
+    this.f.authorize(p, ['policy_admin', 'security']);
+    return this.f.transaction(p, now => { this.validate(p.tenant_id, x, now); const out = { simulation_id: randomUUID(), emergency_digest: digest(x), baseline_digest: digest(this.f.policy(p.tenant_id)), affected: this.f.store.list(p.tenant_id, 'capsule').filter(r => x.actions.includes(r.capsule.action.type) && x.resources.includes(r.capsule.action.target_resource)).map(r => ({ capsule_id: r.capsule.capsule_id, restricted: x.deny || r.capsule.quantity > x.max_quantity })), activation: false }; this.f.store.insert(p.tenant_id, 'emergency-simulation', out.emergency_digest, out, now); return out; });
   }
   activate(p, input) {
     this.f.authorize(p, ['policy_admin']); fields(input, ['policy', 'signatures']);
@@ -32,5 +32,5 @@ export class EmergencyPolicies {
     });
   }
   restriction(t, capsule, now) { return this.f.store.list(t, 'emergency', 10000).find(r => r.status === 'ACTIVE' && r.policy.expires_at > now && r.policy.actions.includes(capsule.action.type) && r.policy.resources.includes(capsule.action.target_resource) && (r.policy.deny || capsule.quantity > r.policy.max_quantity)); }
-  sweep(p) { this.f.authorize(p, ['security', 'policy_admin']); return this.f.transaction(p, now => { let expired = 0; for (const r of this.f.store.list(p.tenant_id, 'emergency', 10000)) if (r.status === 'ACTIVE' && r.policy.expires_at <= now) { r.status = 'EXPIRED'; this.f.store.put(p.tenant_id, 'emergency', r.policy.emergency_id, r, now); this.f.store.audit(p.tenant_id, 'EMERGENCY_EXPIRED', 'expiry-monitor', r.policy.emergency_id, { restored: 'BASE_POLICY_ONLY', revocations_preserved: true }, now); expired++; } return { expired }; }); }
+  sweep(p) { this.f.authorize(p, ['security', 'policy_admin']); return this.f.transaction(p, now => { let expired = 0; for (const r of this.f.store.list(p.tenant_id, 'emergency', 10000)) if (r.status === 'ACTIVE' && r.policy.expires_at <= now) { r.status = 'EXPIRED'; this.f.store.put(p.tenant_id, 'emergency', r.policy.emergency_id, r, now); this.f.store.audit(p.tenant_id, 'EMERGENCY_EXPIRED', 'expiry-monitor', r.policy.emergency_id, { restored: 'BASE_POLICY_ONLY', revocations_preserved: true }, now); this.f.store.insert(p.tenant_id, 'notification', `emergency-expired:${r.policy.emergency_id}`, { type: 'EMERGENCY_EXPIRED', owner: 'security', reference: r.policy.emergency_id, created_at: now, acknowledged: false }, now); expired++; } return { expired }; }); }
 }

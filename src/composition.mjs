@@ -36,6 +36,7 @@ export class Compositions {
       const totals = {}, mutableResources = new Set();
       for (const child of children) {
         this.f.ensureMutable(this.f.store.must(p.tenant_id, 'capsule', child.capsule_id));
+        requireThat(child.action.action.type !== 'policy.change', 'INV-403-SCOPE', 'Root policy activation cannot be combined with another action', 403);
         const unit = child.action.requested_state.currency ?? 'units'; totals[unit] = (totals[unit] ?? 0) + child.action.quantity; integer(totals[unit], 'aggregate quantity', 1);
         if (child.action.action.type !== 'data.export') {
           const resource = child.action.action.target_resource;
@@ -89,10 +90,10 @@ export class Compositions {
     requireThat(Array.isArray(input.certificates) && input.certificates.length === c.children.length, 'INV-412-EVIDENCE', 'Missing child certificate', 412);
     for (let i = 0; i < c.children.length; i++) {
       const cert = verifySigned(input.certificates[i], this.f.executionPublic(p.tenant_id), 'action-certificate');
-      requireThat(cert.capsule_id === c.children[i].capsule_id && cert.capsule_digest === c.children[i].capsule_digest, 'INV-403-SCOPE', 'Composed authority cannot exceed children', 403);
+      requireThat(cert.capsule_id === c.children[i].capsule_id && cert.capsule_digest === c.children[i].capsule_digest && c.children[i].action.action.type !== 'policy.change', 'INV-403-SCOPE', 'Composed authority cannot exceed children', 403);
     }
-    this.f.transaction(p, now => { const r = this.f.store.must(p.tenant_id, 'composition', c.composition_id); requireThat(!r.started, 'INV-409-REPLAY', 'Composition already started; reconcile children', 409); r.started = true; this.f.store.put(p.tenant_id, 'composition', c.composition_id, r, now); });
     const reservation = this.f.reserveBatch(p, input.certificates), outcomes = [];
+    this.f.transaction(p, now => { const r = this.f.store.must(p.tenant_id, 'composition', c.composition_id); requireThat(!r.started, 'INV-409-REPLAY', 'Composition already started; reconcile children', 409); r.started = true; this.f.store.put(p.tenant_id, 'composition', c.composition_id, r, now); });
     let status = 'VERIFIED';
     try {
       const raw = this.f.target.executeBatch(reservation.reservations.map(({ capsule, cert }) => ({ capsule, transaction_id: cert.certificate_id })), reservation.now);
@@ -100,7 +101,7 @@ export class Compositions {
       if (outcomes.some(out => out.payload.status !== 'VERIFIED')) status = 'INCOMPLETE_RECONCILE_CHILDREN';
     } catch (error) {
       status = 'INCOMPLETE_RECONCILE_CHILDREN';
-      for (const { cert } of reservation.reservations) outcomes.push({ certificate_id: cert.certificate_id, status: 'UNCERTAIN_RECONCILE_REQUIRED', reason: error.code ?? 'TARGET_BATCH_UNCONFIRMED' });
+      for (const { cert } of reservation.reservations) outcomes.push(this.f.finish(p, cert, null, 'UNCERTAIN', error.code ?? 'TARGET_BATCH_UNCONFIRMED'));
     }
     return this.f.transaction(p, now => { const out = { composition_id: c.composition_id, status, outcomes, atomic: true }; this.f.store.put(p.tenant_id, 'composition-outcome', c.composition_id, out, now); this.f.store.audit(p.tenant_id, 'COMPOSITION_OUTCOME', p.subject_id, c.composition_id, { status, outcome_digest: digest(out) }, now); return out; });
   }
