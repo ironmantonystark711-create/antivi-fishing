@@ -47,6 +47,7 @@ export function evaluatePolicy({ capsule, policy, evidence = [], approvals = [],
   const reason = (code, message) => ({ code, message });
   if (!rule) return result('DENY', [reason('UNSUPPORTED_ACTION', 'Action type is not authorised.')]);
   if (quarantined) return result('DENY', [reason('QUARANTINED', 'The subject or device is quarantined.')]);
+  if (policy.not_before > now) return result('DEFER', [reason('POLICY_NOT_ACTIVE', 'The candidate policy activation time has not been reached.')]);
   if (p.expires_at <= now || policy.expires_at <= now) return result('DENY', [reason('EXPIRED', 'Action or policy has expired.')]);
   if (p.policy_version !== policy.version) return result('DENY', [reason('POLICY_CHANGED', 'Re-propose under the active policy version.')]);
   if (p.quantity > rule.max_quantity) return result('DENY', [reason('QUANTITY_LIMIT', 'Requested quantity exceeds policy.')]);

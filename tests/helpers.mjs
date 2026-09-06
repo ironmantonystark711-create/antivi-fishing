@@ -25,7 +25,8 @@ export function fixture(t, tenants = ['acme', 'globex']) {
     return f.propose(principal, input, randomUUID());
   }
   function evidence(record, { issuer = 'bank', kind = 'ownership', advisory = false, claim = 'supports', dependencies = [], confidence = 100, tenant = record.capsule.tenant_id, expiry = time + 600000 } = {}) {
-    const payload = { evidence_id: randomUUID(), tenant_id: tenant, capsule_digest: record.capsule_digest, kind, content_digest: digest({ source: 'synthetic-only', claim }), acquired_at: time, expires_at: expiry, confidence, advisory, claim, dependencies, provenance: 'Synthetic test issuer; no external authority assertion', retention_until: expiry + 60000 };
+    const sourceType = issuer === 'email' ? 'communication' : advisory ? 'ai_extraction' : 'direct';
+    const payload = { evidence_id: randomUUID(), tenant_id: tenant, capsule_digest: record.capsule_digest, kind, content_digest: digest({ source: 'synthetic-only', claim }), acquired_at: time, expires_at: expiry, confidence, advisory, claim, dependencies, provenance: { connector_id: `synthetic-${issuer}`, source_type: sourceType, source_reference_digest: digest({ issuer, claim }), transformations: advisory ? ['ai-extraction'] : [] }, verification_method: 'issuer-signature', acquisition_purpose: 'Synthetic verification', retention_until: expiry + 60000 };
     const key = setup.issuerKeys[tenant][issuer], envelope = signed(payload, key, 'evidence');
     f.attachEvidence(p('operator', tenant), record.capsule.capsule_id, envelope); return envelope;
   }

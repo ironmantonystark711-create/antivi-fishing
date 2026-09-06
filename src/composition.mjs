@@ -33,9 +33,16 @@ export class Compositions {
     return this.f.transaction(p, now => this.f.store.idempotent(p.tenant_id, 'composition', key, digest(input), () => {
       const children = this.describe(p.tenant_id, input.tree);
       integer(input.expires_at, 'batch expiry', now + 1, Math.min(now + 300000, ...children.map(c => c.action.expires_at)));
-      const totals = {};
-      for (const child of children) { this.f.ensureMutable(this.f.store.must(p.tenant_id, 'capsule', child.capsule_id)); const unit = child.action.requested_state.currency ?? 'units'; totals[unit] = (totals[unit] ?? 0) + child.action.quantity; integer(totals[unit], 'aggregate quantity', 1); }
-      const payload = { format: 'IF-COMPOSITION-1', composition_id: randomUUID(), tenant_id: p.tenant_id, tree: clone(input.tree), children, aggregate: totals, semantics: 'all-children-exact-sequential-stop-on-uncertainty', issued_at: now, expires_at: input.expires_at };
+      const totals = {}, mutableResources = new Set();
+      for (const child of children) {
+        this.f.ensureMutable(this.f.store.must(p.tenant_id, 'capsule', child.capsule_id));
+        const unit = child.action.requested_state.currency ?? 'units'; totals[unit] = (totals[unit] ?? 0) + child.action.quantity; integer(totals[unit], 'aggregate quantity', 1);
+        if (child.action.action.type !== 'data.export') {
+          const resource = child.action.action.target_resource;
+          requireThat(!mutableResources.has(resource), 'INV-409-BATCH', 'A batch cannot contain dependent mutations of one resource', 409); mutableResources.add(resource);
+        }
+      }
+      const payload = { format: 'IF-COMPOSITION-1', composition_id: randomUUID(), tenant_id: p.tenant_id, tree: clone(input.tree), children, aggregate: totals, semantics: 'all-children-exact-atomic', issued_at: now, expires_at: input.expires_at };
       const envelope = signed(payload, this.f.keys(p.tenant_id).execution, 'composition');
       this.f.store.insert(p.tenant_id, 'composition', payload.composition_id, { envelope, started: false }, now);
       this.f.store.audit(p.tenant_id, 'COMPOSITION_CREATED', p.subject_id, payload.composition_id, { composition_digest: digest(envelope), child_count: children.length }, now); return envelope;
@@ -83,12 +90,18 @@ export class Compositions {
     for (let i = 0; i < c.children.length; i++) {
       const cert = verifySigned(input.certificates[i], this.f.executionPublic(p.tenant_id), 'action-certificate');
       requireThat(cert.capsule_id === c.children[i].capsule_id && cert.capsule_digest === c.children[i].capsule_digest, 'INV-403-SCOPE', 'Composed authority cannot exceed children', 403);
-      this.f.execute(p, input.certificates[i], { dryRun: true });
     }
     this.f.transaction(p, now => { const r = this.f.store.must(p.tenant_id, 'composition', c.composition_id); requireThat(!r.started, 'INV-409-REPLAY', 'Composition already started; reconcile children', 409); r.started = true; this.f.store.put(p.tenant_id, 'composition', c.composition_id, r, now); });
-    const outcomes = [];
-    for (const cert of input.certificates) { try { const out = this.f.execute(p, cert); outcomes.push(out); if (out.payload.status !== 'VERIFIED') break; } catch (e) { outcomes.push({ certificate_id: cert.payload.certificate_id, status: 'NOT_DISPATCHED', reason: e.code ?? 'INV-599-UNCERTAIN' }); break; } }
-    const status = outcomes.length === c.children.length && outcomes.every(o => o.payload?.status === 'VERIFIED') ? 'VERIFIED' : 'INCOMPLETE_RECONCILE_CHILDREN';
-    return this.f.transaction(p, now => { const out = { composition_id: c.composition_id, status, outcomes, atomic: false }; this.f.store.put(p.tenant_id, 'composition-outcome', c.composition_id, out, now); this.f.store.audit(p.tenant_id, 'COMPOSITION_OUTCOME', p.subject_id, c.composition_id, { status, outcome_digest: digest(out) }, now); return out; });
+    const reservation = this.f.reserveBatch(p, input.certificates), outcomes = [];
+    let status = 'VERIFIED';
+    try {
+      const raw = this.f.target.executeBatch(reservation.reservations.map(({ capsule, cert }) => ({ capsule, transaction_id: cert.certificate_id })), reservation.now);
+      for (let i = 0; i < reservation.reservations.length; i++) outcomes.push(this.f.finish(p, reservation.reservations[i].cert, raw[i], 'VERIFIED', 'ATOMIC_BATCH_RECONCILED'));
+      if (outcomes.some(out => out.payload.status !== 'VERIFIED')) status = 'INCOMPLETE_RECONCILE_CHILDREN';
+    } catch (error) {
+      status = 'INCOMPLETE_RECONCILE_CHILDREN';
+      for (const { cert } of reservation.reservations) outcomes.push({ certificate_id: cert.certificate_id, status: 'UNCERTAIN_RECONCILE_REQUIRED', reason: error.code ?? 'TARGET_BATCH_UNCONFIRMED' });
+    }
+    return this.f.transaction(p, now => { const out = { composition_id: c.composition_id, status, outcomes, atomic: true }; this.f.store.put(p.tenant_id, 'composition-outcome', c.composition_id, out, now); this.f.store.audit(p.tenant_id, 'COMPOSITION_OUTCOME', p.subject_id, c.composition_id, { status, outcome_digest: digest(out) }, now); return out; });
   }
 }

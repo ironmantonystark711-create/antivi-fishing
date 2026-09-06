@@ -80,10 +80,10 @@ export class Store {
     this.statement('INSERT INTO audit VALUES(?,?,?,?,?)').run(tenant, entry.sequence, entry.previous, hash, canonical(envelope));
     return { hash, envelope };
   }
-  auditExport(tenant) {
+  auditExport(tenant, now) {
     const rows = this.statement('SELECT hash,envelope FROM audit WHERE tenant=? ORDER BY seq').all(tenant).map(r => ({ hash: r.hash, envelope: JSON.parse(r.envelope) }));
     const key = this.auditKeys[tenant], public_keys = { [key.key_id]: { public_key: key.public_key } };
-    const checkpoint = signed({ tenant_id: tenant, size: rows.length, head: rows.at(-1)?.hash ?? '0'.repeat(64) }, key, 'checkpoint');
+    const checkpoint = signed({ tenant_id: tenant, size: rows.length, head: rows.at(-1)?.hash ?? '0'.repeat(64), issued_at: now }, key, 'checkpoint');
     return { format: 'IF-AUDIT-1', public_keys, checkpoint, entries: rows };
   }
   idempotent(tenant, scope, key, requestHash, fn) {
@@ -99,15 +99,18 @@ export class Store {
   }
 }
 export function verifyAudit(bundle, pinnedKeys, priorCheckpoint = null) {
-  requireThat(bundle.format === 'IF-AUDIT-1' && Array.isArray(bundle.entries), 'INV-400-AUDIT', 'Unsupported audit format');
+  requireThat(bundle && Object.keys(bundle).sort().join() === 'checkpoint,entries,format,public_keys' && bundle.format === 'IF-AUDIT-1' && Array.isArray(bundle.entries) && bundle.entries.length <= 100000, 'INV-400-AUDIT', 'Unsupported audit format');
+  requireThat(pinnedKeys && typeof pinnedKeys === 'object' && !Array.isArray(pinnedKeys), 'INV-401-SIGNATURE', 'Pinned audit trust is required', 401);
   const checkpoint = verifySigned(bundle.checkpoint, pinnedKeys, 'checkpoint');
+  requireThat(Object.keys(checkpoint).sort().join() === 'head,issued_at,size,tenant_id' && /^[a-f0-9]{64}$/.test(checkpoint.head) && Number.isSafeInteger(checkpoint.issued_at) && checkpoint.issued_at > 0 && Number.isSafeInteger(checkpoint.size) && checkpoint.size >= 0, 'INV-400-AUDIT', 'Invalid checkpoint');
   let previous = '0'.repeat(64), sequence = 0, time = 0;
   for (const item of bundle.entries) {
+    requireThat(item && Object.keys(item).sort().join() === 'envelope,hash' && typeof item.hash === 'string' && /^[a-f0-9]{64}$/.test(item.hash), 'INV-400-AUDIT', 'Invalid audit entry');
     const entry = verifySigned(item.envelope, pinnedKeys, 'audit');
     requireThat(entry.tenant_id === checkpoint.tenant_id && entry.sequence === ++sequence && entry.previous === previous && entry.time >= time && digest(entry) === item.hash, 'INV-409-AUDIT', 'Audit continuity failure', 409);
     previous = item.hash; time = entry.time;
     if (priorCheckpoint && sequence === priorCheckpoint.size) requireThat(previous === priorCheckpoint.head, 'INV-409-FORK', 'Witness checkpoint disagrees', 409);
   }
-  requireThat(checkpoint.size === sequence && checkpoint.head === previous && (!priorCheckpoint || (checkpoint.tenant_id === priorCheckpoint.tenant_id && sequence >= priorCheckpoint.size)), 'INV-409-AUDIT', 'Missing or inconsistent checkpoint', 409);
+  requireThat(checkpoint.size === sequence && checkpoint.head === previous && (!priorCheckpoint || (checkpoint.tenant_id === priorCheckpoint.tenant_id && sequence >= priorCheckpoint.size && checkpoint.issued_at >= priorCheckpoint.issued_at)), 'INV-409-AUDIT', 'Missing or inconsistent checkpoint', 409);
   return { valid: true, entries: sequence, head: previous, tenant_id: checkpoint.tenant_id };
 }

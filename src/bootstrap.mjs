@@ -13,20 +13,21 @@ export function createConfiguration(tenantNames = ['acme'], now = Date.now()) {
   for (const tenant of tenantNames) {
     requireThat(/^[a-z][a-z0-9-]{1,31}$/.test(tenant), 'INV-400-SCHEMA', 'Tenant must use lowercase alphanumeric characters');
     const policy = defaultPolicy(tenant), identities = {}, auth = {}, identityPrivate = {};
-    const roles = [['operator', ['operator']], ['security', ['security']], ['auditor', ['auditor']], ['privacy-reviewer', ['audit_privacy']], ['finance-reviewer', ['audit_finance']], ['technical-reviewer', ['audit_technical']], ['security-reviewer', ['audit_security']], ['policy-admin', ['policy_admin']], ...Array.from({ length: 5 }, (_, i) => [`custodian-${i + 1}`, ['approver', 'custodian']])];
+    const roles = [['operator', ['operator'], 'workforce'], ['security', ['security'], 'workforce'], ['auditor', ['auditor'], 'workforce'], ['privacy-reviewer', ['audit_privacy'], 'workforce'], ['finance-reviewer', ['audit_finance'], 'workforce'], ['technical-reviewer', ['audit_technical'], 'workforce'], ['security-reviewer', ['audit_security'], 'workforce'], ['policy-admin', ['policy_admin'], 'workforce'], ['workload-agent', ['workload'], 'workload'], ['device-agent', ['operator'], 'device'], ['counterparty-agent', ['operator'], 'counterparty'], ...Array.from({ length: 5 }, (_, i) => [`custodian-${i + 1}`, ['approver', 'custodian'], 'workforce'])];
     credentials[tenant] = {}; custodianKeys[tenant] = {}; issuerKeys[tenant] = {};
-    for (const [subject, role] of roles) {
+    for (const [subject, role, identityClass] of roles) {
       const key = generateKey(), token = randomBytes(32).toString('base64url');
-      identities[key.key_id] = { public_key: key.public_key, subject_id: subject, identity_class: 'workforce', roles: role, device_id: `${subject}-device`, failure_domain: `${tenant}-${subject}`, hardware_backed: false, health_expires_at: now + 86400000, grants: { resources: ['dataset-1', 'erp-service'], actions: ['data.read', 'service.connect'], destinations: ['customer-vault', 'erp-service'], columns: ['id', 'name', 'region'], row_ids: ['row-1', 'row-2', 'row-3'] } };
+      identities[key.key_id] = { public_key: key.public_key, suite: key.suite, subject_id: subject, identity_class: identityClass, roles: role, device_id: `${subject}-device`, failure_domain: `${tenant}-${subject}`, hardware_backed: false, health_expires_at: now + 86400000, proofing_level: 2, authenticator: { id: `${subject}-authenticator`, phishing_resistant: true, enrolled_at: now }, component: { id: `${subject}-component`, firmware: 'simulated-1', trusted: true }, grants: { resources: ['dataset-1', 'erp-service'], actions: ['data.read', 'service.connect'], destinations: ['customer-vault', 'erp-service'], columns: ['id', 'name', 'region'], row_ids: ['row-1', 'row-2', 'row-3'] } };
       auth[hashBytes(token)] = { subject_id: subject, expires_at: now + 86400000 }; credentials[tenant][subject] = token; identityPrivate[subject] = key;
       if (role.includes('custodian')) custodianKeys[tenant][subject] = key;
     }
     const issuers = {};
     for (const [name, channel] of [['bank', 'authoritative'], ['registry', 'authoritative'], ['governance', 'authoritative'], ['email', 'communication']]) {
       const key = generateKey(); issuerKeys[tenant][name] = key;
-      issuers[key.key_id] = { public_key: key.public_key, failure_domain: `${tenant}-${name}`, channel, kinds: ['ownership', 'dataset_authority', 'identity_proof', 'recovery_authority', 'build_provenance', 'test_result', 'workload_attestation', 'governance_review'] };
+      issuers[key.key_id] = { public_key: key.public_key, suite: key.suite, failure_domain: `${tenant}-${name}`, channel, kinds: ['ownership', 'dataset_authority', 'identity_proof', 'recovery_authority', 'build_provenance', 'test_result', 'workload_attestation', 'governance_review'] };
     }
-    config.tenants[tenant] = { runtime_snapshot: signRuntimeConfiguration(runtimeConfiguration(tenant, config.gate_id, now), Object.values(custodianKeys[tenant]).slice(0, 3)), encryption_key: randomBytes(32).toString('base64url'), keys: { execution: generateKey(), audit: generateKey() }, identities, issuers, auth, genesis_policy: policy, genesis_signatures: Object.values(custodianKeys[tenant]).slice(0, 3).map(k => signed(policy, k, 'root-policy')) };
+    const execution = generateKey(), audit = generateKey(), support = generateKey();
+    config.tenants[tenant] = { runtime_snapshot: signRuntimeConfiguration(runtimeConfiguration(tenant, config.gate_id, now), Object.values(custodianKeys[tenant]).slice(0, 3)), encryption_key: randomBytes(32).toString('base64url'), keys: { execution, audit, support }, key_governance: { root_threshold: 3, root_custodians: Object.keys(custodianKeys[tenant]), recovery_delay_ms: 60000 }, identities, issuers, auth, genesis_policy: policy, genesis_signatures: Object.values(custodianKeys[tenant]).slice(0, 3).map(k => signed(policy, k, 'root-policy')) };
   }
   return { config, credentials, custodianKeys, issuerKeys };
 }

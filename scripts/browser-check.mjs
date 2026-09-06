@@ -36,7 +36,7 @@ try {
  await page.getByRole('button', { name: 'Evaluate exact action' }).click(); await page.waitForFunction(() => document.getElementById('detail-status').textContent === 'ESCROW'); check('non-allow-cannot-mint', await page.locator('#mint').isDisabled());
  const record = fabric.getCapsule({ tenant_id: 'acme', subject_id: 'operator' }, id);
  for (const issuer of ['bank', 'registry']) {
-   const now = Date.now(), payload = { evidence_id: crypto.randomUUID(), tenant_id: 'acme', capsule_digest: record.capsule_digest, kind: 'ownership', content_digest: digest({ synthetic: true, issuer }), acquired_at: now, expires_at: now + 300000, confidence: 100, advisory: false, claim: 'supports', dependencies: [], provenance: 'Synthetic browser-test issuer', retention_until: now + 600000 };
+   const now = Date.now(), payload = { evidence_id: crypto.randomUUID(), tenant_id: 'acme', capsule_digest: record.capsule_digest, kind: 'ownership', content_digest: digest({ synthetic: true, issuer }), acquired_at: now, expires_at: now + 300000, confidence: 100, advisory: false, claim: 'supports', dependencies: [], provenance: { connector_id: `browser-${issuer}`, source_type: 'direct', source_reference_digest: digest({ issuer }), transformations: [] }, verification_method: 'issuer-signature', acquisition_purpose: 'Browser workflow verification', retention_until: now + 600000 };
    await page.getByLabel('Signed evidence envelope', { exact: true }).fill(JSON.stringify(signed(payload, setup.issuerKeys.acme[issuer], 'evidence'))); await page.getByRole('button', { name: 'Attach signed evidence' }).click(); await page.waitForFunction(() => document.getElementById('evidence-json').value === '');
  }
  for (const subject of ['custodian-1', 'custodian-2']) {
