@@ -88,6 +88,8 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   if (process.argv.includes('--run-tests')) {
     const before = sourceFingerprint(), args = ['--test', '--test-reporter=tap', '--test-concurrency=1', ...readdirSync(join(root, 'tests')).filter(f => f.endsWith('.test.mjs')).sort().map(f => `tests/${f}`)];
     const run = spawnSync(process.execPath, args, { cwd: root, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });
+    process.stdout.write(run.stdout ?? '');
+    process.stderr.write(run.stderr ?? '');
     mkdirSync(join(root, 'reports'), { recursive: true }); writeFileSync(join(root, 'reports/completion-tests.tap'), run.stdout ?? '');
     const result = { ...parseTap(run.stdout ?? ''), source_revision: gitHead(), source_fingerprint: before, command: `node ${args.join(' ')}`, exit_code: run.status, stderr: run.stderr, environment: { node: process.version, platform: process.platform, arch: process.arch }, finished_at: new Date().toISOString(), source_unchanged: before === sourceFingerprint() };
     if (!result.source_unchanged) result.exit_code = 1;
