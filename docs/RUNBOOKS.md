@@ -72,3 +72,20 @@ p95 ≤250 ms, p99 ≤750 ms and throughput ≥100/s apply to the integrated eva
 Virtual policy time advances to respect unchanged signed budgets and TTLs; these
 are local microbenchmarks, not proof of external latency or production capacity.
 The command exits nonzero if any applicable measured SRS target fails.
+
+### Incident ownership, acknowledgement and closure
+
+High-severity durable notifications must be acknowledged within five minutes.
+The service checks escalation every 30 seconds and assigns overdue work to
+`customer-security-lead`, once per alert. Delivery here is a local durable queue;
+it does not claim that an external pager was configured or a person responded.
+`POST /v1/notifications/{id}/acknowledge` is owner/security-scoped and replay-safe.
+`POST /v1/notifications/escalate` permits an immediate authorised monitor pass.
+
+`POST /v1/incidents` records detection; `POST /v1/incidents/transition` advances
+DETECTED → CONTAINED → RECOVERED → ROOT_CAUSE → CLOSED, requiring expected-state
+matching and evidence digests. Closure additionally requires completed corrective
+action, accountable owner, implementation time and verification-evidence digest.
+Details are encrypted at rest; audit logs retain event digests, not raw notes.
+`GET /v1/incidents/{id}` permits tenant security/auditor review. Tenant changes,
+skipped/replayed transitions and premature closure are rejected.

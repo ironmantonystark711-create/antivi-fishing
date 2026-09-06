@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { Operations } from './operations.mjs';
 import { PolicyLifecycle } from './policy-lifecycle.mjs';
 import { KeyGovernance } from './key-governance.mjs';
 import { Store } from './store.mjs';
@@ -29,7 +30,7 @@ export class Fabric {
       for (const purpose of ['execution', 'audit']) { const active = this.store.get(tenant, 'active-key', purpose); if (active) t.keys[purpose] = active; }
       this.store.auditKeys[tenant] = t.keys.audit;
     }
-    this.keyGovernance = new KeyGovernance(this); this.policyLifecycle = new PolicyLifecycle(this);
+    this.operations = new Operations(this); this.keyGovernance = new KeyGovernance(this); this.policyLifecycle = new PolicyLifecycle(this);
     this.target = new SimulatedTarget(join(directory, 'target.db'), encryption); this.runtime = new RuntimeGate(this); this.runtimeIntegrity = new RuntimeIntegrity(this); this.compositions = new Compositions(this); this.emergencies = new EmergencyPolicies(this); this.coverageLifecycle = new CoverageLifecycle(this); this.versions = new VersionLifecycle(this); this.advisory = new AdvisoryPlane(this);
     try { for (const [tenant, t] of Object.entries(config.tenants)) {
       this.runtimeIntegrity.check(tenant);

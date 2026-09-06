@@ -62,7 +62,7 @@ export function createServer(fabric, { port = 8080, host = '127.0.0.1', origin =
       const url = new URL(req.url, origin), path = url.pathname;
       rateLimit(`ip:${req.socket.remoteAddress}`, 600);
       if (path === '/healthz' && req.method === 'GET') return send(200, { status: 'ok', profile: 'engineering', production_ready: false });
-      if (path === '/readyz' && req.method === 'GET') { fabric.store.db.prepare('SELECT 1').get(); return send(200, { status: 'ready', profile: 'engineering', real_targets: false }); }
+      if (path === '/readyz' && req.method === 'GET') { fabric.store.db.prepare('SELECT 1').get(); for (const tenant of Object.keys(fabric.config.tenants)) fabric.runtimeIntegrity.check(tenant); return send(200, { status: 'ready', profile: 'engineering', real_targets: false }); }
       const assets = { '/': ['index.html', 'text/html; charset=utf-8'], '/workspace': ['workspace.html', 'text/html; charset=utf-8'], '/mark.svg': ['mark.svg', 'image/svg+xml'], '/app.js': ['app.js', 'text/javascript; charset=utf-8'], '/style.css': ['style.css', 'text/css; charset=utf-8'] };
       if (req.method === 'GET' && assets[path]) { const [file, type] = assets[path]; return send(200, readFileSync(join(web, file)), type); }
       if (path === '/session' && req.method === 'POST') {
@@ -119,6 +119,11 @@ export function createServer(fabric, { port = 8080, host = '127.0.0.1', origin =
       if (path === '/v1/advisory/capabilities' && req.method === 'POST') return send(201, fabric.advisory.issue(p, await body(req)));
       if (path === '/v1/advisory/extract' && req.method === 'POST') return send(200, fabric.advisory.extract(p, await body(req)));
       if (path === '/v1/audit-views' && req.method === 'POST') { const input = await body(req); fields(input, ['role', 'purpose']); return send(200, fabric.auditView(p, input.role, input.purpose)); }
+      if ((m = /^\/v1\/notifications\/([A-Za-z0-9-]+)\/acknowledge$/.exec(path)) && req.method === 'POST') { fields(await body(req), []); return send(200, fabric.operations.acknowledge(p, m[1])); }
+      if (path === '/v1/notifications/escalate' && req.method === 'POST') { fields(await body(req), []); return send(200, fabric.operations.escalate(p)); }
+      if (path === '/v1/incidents' && req.method === 'POST') return send(201, fabric.operations.createIncident(p, await body(req)));
+      if (path === '/v1/incidents/transition' && req.method === 'POST') return send(200, fabric.operations.transition(p, await body(req)));
+      if ((m = /^\/v1\/incidents\/([A-Za-z0-9-]+)$/.exec(path)) && req.method === 'GET') return send(200, fabric.operations.incident(p, m[1]));
       if (path === '/v1/notifications' && req.method === 'GET') { fabric.authorize(p, ['security', 'policy_admin']); return send(200, fabric.store.list(p.tenant_id, 'notification')); }
       if (path === '/v1/certificates' && req.method === 'POST') { const input = await body(req); fields(input, ['capsule_id']); identifier(input.capsule_id); return send(201, fabric.certificate(p, input.capsule_id)); }
       if ((m = /^\/v1\/certificates\/([A-Za-z0-9-]+)$/.exec(path)) && req.method === 'GET') { fabric.authorize(p, ['operator', 'policy_admin', 'security']); return send(200, fabric.store.must(p.tenant_id, 'certificate', m[1]).envelope); }
@@ -150,6 +155,9 @@ export function createServer(fabric, { port = 8080, host = '127.0.0.1', origin =
       if (!known) process.stderr.write(JSON.stringify({ level: 'error', request_id: requestId, code: 'INV-500-INTERNAL' }) + '\n');
     }
   });
+  let escalationTimer;
+  server.on('listening', () => { escalationTimer = setInterval(() => { try { fabric.operations.monitor(); } catch (error) { process.stderr.write(JSON.stringify({ level: 'error', code: 'ALERT_MONITOR_FAILED', error_code: error instanceof InvariantError ? error.code : 'INV-500-INTERNAL' }) + '\n'); } }, 30000); escalationTimer.unref(); });
+  server.on('close', () => clearInterval(escalationTimer));
   server.requestTimeout = 15000; server.headersTimeout = 10000; server.keepAliveTimeout = 5000; server.maxRequestsPerSocket = 100;
   return { server, sessions, metrics, listen: () => new Promise(resolve => server.listen(port, host, resolve)), close: () => new Promise((resolve, reject) => { server.closeAllConnections(); server.close(e => e ? reject(e) : resolve()); }) };
 }
