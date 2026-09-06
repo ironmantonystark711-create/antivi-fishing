@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { PolicyLifecycle } from './policy-lifecycle.mjs';
 import { KeyGovernance } from './key-governance.mjs';
 import { Store } from './store.mjs';
 import { SimulatedTarget } from './target.mjs';
@@ -28,7 +29,7 @@ export class Fabric {
       for (const purpose of ['execution', 'audit']) { const active = this.store.get(tenant, 'active-key', purpose); if (active) t.keys[purpose] = active; }
       this.store.auditKeys[tenant] = t.keys.audit;
     }
-    this.keyGovernance = new KeyGovernance(this);
+    this.keyGovernance = new KeyGovernance(this); this.policyLifecycle = new PolicyLifecycle(this);
     this.target = new SimulatedTarget(join(directory, 'target.db'), encryption); this.runtime = new RuntimeGate(this); this.runtimeIntegrity = new RuntimeIntegrity(this); this.compositions = new Compositions(this); this.emergencies = new EmergencyPolicies(this); this.coverageLifecycle = new CoverageLifecycle(this); this.versions = new VersionLifecycle(this); this.advisory = new AdvisoryPlane(this);
     try { for (const [tenant, t] of Object.entries(config.tenants)) {
       this.runtimeIntegrity.check(tenant);
@@ -167,6 +168,7 @@ export class Fabric {
       const reviewed = this.store.list(t, 'simulation', 500).some(s => s.candidate_digest === candidateDigest && s.baseline_digest === digest(this.policy(t)));
       if (!reviewed) return { decision: 'ESCROW', reasons: [{ code: 'SIMULATION_REQUIRED', message: 'Simulate the exact candidate policy against the active baseline before activation.' }], explanation: 'Exact policy simulation is required.', owner: record.capsule.actor.subject_id, expires_at: record.capsule.expires_at, evaluated_at: now, policy_version: policy.version, policy_digest: digest(policy) };
     }
+    if (record.capsule.action.type === 'policy.change' && !this.policyLifecycle.ready(t, record.capsule.requested_state.policy, now)) return { decision: 'ESCROW', reasons: [{ code: 'STAGED_REVIEW_REQUIRED', message: 'Exact development, shadow and canary evidence is required before activation.' }], explanation: 'Complete customer-reviewed policy staging.', owner: record.capsule.actor.subject_id, expires_at: record.capsule.expires_at, evaluated_at: now, policy_version: policy.version, policy_digest: digest(policy) };
     const approvals = record.approvals.filter(a => a.payload.policy_digest === digest(policy) && a.payload.evidence_graph_digest === graph.digest).map(a => {
       try { return a.batch_envelope ? this.compositions.resolve(t, a) : verifySigned(a, identities, 'action-approval'); } catch { return null; }
     }).filter(Boolean);
@@ -265,6 +267,7 @@ export class Fabric {
       if (valid && r.capsule.action.type === 'policy.change') {
         const next = r.capsule.requested_state.policy;
         requireThat(next.version === this.policy(t).version + 1, 'INV-409-STATE', 'Policy activation sequence changed', 409);
+        this.policyLifecycle.archive(t, this.policy(t), next, cert, now);
         this.store.put(t, 'policy', 'active', next, now);
       }
       const payload = { certificate_id: cert.certificate_id, capsule_digest: cert.capsule_digest, target_transaction_id: cert.certificate_id, observed_state_digest: valid ? raw.observed_state_digest : null, status, reason, execution_time: valid ? raw.execution_time : now, reconciliation_evidence: valid ? digest(raw) : null, simulation: true, output: valid ? raw.output : null };

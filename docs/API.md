@@ -79,3 +79,19 @@ customer-approved new public key. A retired signing suite cannot be restored;
 historical verification remains enabled. Node and independent WebCrypto audit
 verifiers support both Ed25519 and P-256. These are software key custody APIs,
 not a claim of HSM/MPC custody or post-quantum protection.
+
+### Policy staging and rollback
+
+After exact simulation, `POST /v1/policies/stage` accepts `candidate`, `stage`
+(`DEVELOPMENT`, then `SHADOW`, then `CANARY`) and a customer-assessor envelope
+signed for `policy-stage`. Evidence binds tenant, candidate/baseline digests,
+reviewed source commit, passing test-result digest, stage and validity window.
+All three stages must remain valid and non-revoked at certificate issuance and
+execution. Staging is not activation: the normal delayed, exact-action
+three-custodian policy-change flow remains mandatory.
+
+`POST /v1/policies/rollback-candidate` with `version` returns prior policy content
+as a **new, forward-version proposal**. It does not restore old signatures,
+capabilities, revoked identities, devices or keys. It must complete simulation,
+staging and exact customer approvals again. `/v1/policies/simulate` remains
+non-mutating and can compare candidates without promoting them.

@@ -11,14 +11,14 @@
       {
         "command": "python3 scripts/record-verification.py",
         "result_file": "reports/evidence/current-tests.xml",
-        "result_sha256": "f64a88c7178693e69c46c83b34d3970e3458f3862ea9929b2bb9de55baaf5feb",
+        "result_sha256": "1866eb060bf768431bd931e7ad1295b272b2e68c90634843424cfdc6b91b0a60",
         "passing_test_names": [
           "COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle",
           "COV-001 COV-002 COV-008 COV-010: every declared path has a mandatory assigned plan and manual claims fail closed"
         ],
         "source_hashes": {
           "src/coverage.mjs": "dd8e29586a813a58303a601bde04da7415b0df522bed9464c64f0482ef5fcd7b",
-          "src/fabric.mjs": "7999a57727fbf4daf3ff25706e264d4f290a347cc65bb722f91e18ca667483ee",
+          "src/fabric.mjs": "1d12f93e073fa5c2968081a71686ab32f06efe2cff9ea723f9438ffba4893dd6",
           "tests/coverage-lifecycle.test.mjs": "69e2d4bf9087b354231442822ca05bd7a2ae75394e8e17d663b141e5bd2c3a6d"
         }
       }
@@ -36,13 +36,13 @@
       {
         "command": "python3 scripts/record-verification.py",
         "result_file": "reports/evidence/current-tests.xml",
-        "result_sha256": "f64a88c7178693e69c46c83b34d3970e3458f3862ea9929b2bb9de55baaf5feb",
+        "result_sha256": "1866eb060bf768431bd931e7ad1295b272b2e68c90634843424cfdc6b91b0a60",
         "passing_test_names": [
           "COV-001 COV-002 COV-008 COV-010: every declared path has a mandatory assigned plan and manual claims fail closed"
         ],
         "source_hashes": {
           "src/coverage.mjs": "dd8e29586a813a58303a601bde04da7415b0df522bed9464c64f0482ef5fcd7b",
-          "src/fabric.mjs": "7999a57727fbf4daf3ff25706e264d4f290a347cc65bb722f91e18ca667483ee",
+          "src/fabric.mjs": "1d12f93e073fa5c2968081a71686ab32f06efe2cff9ea723f9438ffba4893dd6",
           "tests/coverage-lifecycle.test.mjs": "69e2d4bf9087b354231442822ca05bd7a2ae75394e8e17d663b141e5bd2c3a6d"
         }
       }
@@ -60,13 +60,13 @@
       {
         "command": "python3 scripts/record-verification.py",
         "result_file": "reports/evidence/current-tests.xml",
-        "result_sha256": "f64a88c7178693e69c46c83b34d3970e3458f3862ea9929b2bb9de55baaf5feb",
+        "result_sha256": "1866eb060bf768431bd931e7ad1295b272b2e68c90634843424cfdc6b91b0a60",
         "passing_test_names": [
           "COV-001 COV-002 COV-008 COV-010: every declared path has a mandatory assigned plan and manual claims fail closed"
         ],
         "source_hashes": {
           "src/coverage.mjs": "dd8e29586a813a58303a601bde04da7415b0df522bed9464c64f0482ef5fcd7b",
-          "src/fabric.mjs": "7999a57727fbf4daf3ff25706e264d4f290a347cc65bb722f91e18ca667483ee",
+          "src/fabric.mjs": "1d12f93e073fa5c2968081a71686ab32f06efe2cff9ea723f9438ffba4893dd6",
           "tests/coverage-lifecycle.test.mjs": "69e2d4bf9087b354231442822ca05bd7a2ae75394e8e17d663b141e5bd2c3a6d"
         }
       }
@@ -84,14 +84,14 @@
       {
         "command": "python3 scripts/record-verification.py",
         "result_file": "reports/evidence/current-tests.xml",
-        "result_sha256": "f64a88c7178693e69c46c83b34d3970e3458f3862ea9929b2bb9de55baaf5feb",
+        "result_sha256": "1866eb060bf768431bd931e7ad1295b272b2e68c90634843424cfdc6b91b0a60",
         "passing_test_names": [
           "COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle",
           "COV-003 COV-005 COV-006 COV-007 COV-009: scope-bound signed evidence, expiry intervals and tenant history isolation"
         ],
         "source_hashes": {
           "src/coverage.mjs": "dd8e29586a813a58303a601bde04da7415b0df522bed9464c64f0482ef5fcd7b",
-          "src/fabric.mjs": "7999a57727fbf4daf3ff25706e264d4f290a347cc65bb722f91e18ca667483ee",
+          "src/fabric.mjs": "1d12f93e073fa5c2968081a71686ab32f06efe2cff9ea723f9438ffba4893dd6",
           "tests/coverage-lifecycle.test.mjs": "69e2d4bf9087b354231442822ca05bd7a2ae75394e8e17d663b141e5bd2c3a6d"
         }
       }
@@ -111,7 +111,7 @@
       {
         "command": "python3 scripts/record-verification.py",
         "result_file": "reports/evidence/current-tests.xml",
-        "result_sha256": "f64a88c7178693e69c46c83b34d3970e3458f3862ea9929b2bb9de55baaf5feb",
+        "result_sha256": "1866eb060bf768431bd931e7ad1295b272b2e68c90634843424cfdc6b91b0a60",
         "passing_test_names": [
           "RUN-010: restart cannot roll back signed configuration or rebind an accepted version",
           "RUN-010 RUN-003: expiry, revoked custodian, duplicate signer and stale process withdraw local authority",
@@ -140,7 +140,7 @@
       {
         "command": "python3 scripts/record-verification.py",
         "result_file": "reports/evidence/current-tests.xml",
-        "result_sha256": "f64a88c7178693e69c46c83b34d3970e3458f3862ea9929b2bb9de55baaf5feb",
+        "result_sha256": "1866eb060bf768431bd931e7ad1295b272b2e68c90634843424cfdc6b91b0a60",
         "passing_test_names": [
           "ACT-012 COM-005 UX-006: atomic batch commits every exact child and rejects replay, missing or reversed authority",
           "COM-005 COM-012 ACT-012: atomic child-1 preserves all-or-none state and durable replay protection",
@@ -153,7 +153,7 @@
         ],
         "source_hashes": {
           "src/composition.mjs": "5194c16969a4429d12ed9b9899b22bb54df6df12f9ce395cd8d3f0107070406c",
-          "src/fabric.mjs": "7999a57727fbf4daf3ff25706e264d4f290a347cc65bb722f91e18ca667483ee",
+          "src/fabric.mjs": "1d12f93e073fa5c2968081a71686ab32f06efe2cff9ea723f9438ffba4893dd6",
           "src/target.mjs": "8fa29c7938b45d78eed615424967ecccdc91fe9386cae5a3eaa817e117ad4826",
           "tests/atomic-batch.test.mjs": "4c037a0513fdd0376e4494daa5f1e6f23fdc78368d076f64bd5b3b7596de67e9",
           "tests/completion-security.test.mjs": "0439d65482591c45546e77d06d085e332f9ea321c1f1fd1529e6782532c5bc4e"
@@ -177,7 +177,7 @@
       {
         "command": "python3 scripts/record-verification.py",
         "result_file": "reports/evidence/current-tests.xml",
-        "result_sha256": "f64a88c7178693e69c46c83b34d3970e3458f3862ea9929b2bb9de55baaf5feb",
+        "result_sha256": "1866eb060bf768431bd931e7ad1295b272b2e68c90634843424cfdc6b91b0a60",
         "passing_test_names": [
           "KEY-005 COM-002: key algorithm, suite, signature encoding and verification cutoff cannot be confused",
           "KEY-005 KEY-010 NFR-MNT-002: independent verifiers accept mixed-suite audit history and reject cross-suite tampering",
@@ -189,9 +189,103 @@
           "src/suites.mjs": "5f7876250d914e475d4f449e2676a971c404622fa063aeba321040a19ab2206e",
           "src/key-governance.mjs": "383b83e59886954e24a829c852c612c40d1284e13b3a2e03b00b0436f80d1253",
           "src/store.mjs": "dedd6be74eb6925b59991b298dfb2e3dcb1f628474f32cb7da4bb036fe101bc2",
-          "src/fabric.mjs": "7999a57727fbf4daf3ff25706e264d4f290a347cc65bb722f91e18ca667483ee",
+          "src/fabric.mjs": "1d12f93e073fa5c2968081a71686ab32f06efe2cff9ea723f9438ffba4893dd6",
           "scripts/verify-export-webcrypto.mjs": "7d7f288acf549be71e6cfb437d1da3eb041c148dc240e03855e833d613ac185b",
           "tests/crypto-agility.test.mjs": "533b96eeac2f81fd0da5c3bd51bfc0d53d7b701bf6f65a92cad0b078309e1d7d"
+        }
+      }
+    ]
+  },
+  "POL-008": {
+    "implementation": [
+      "src/policy-lifecycle.mjs",
+      "src/policy.mjs",
+      "src/fabric.mjs",
+      "src/emergency.mjs"
+    ],
+    "status": "VERIFIED",
+    "blocker_reason": null,
+    "remaining_work": null,
+    "verification_evidence": [
+      {
+        "command": "python3 scripts/record-verification.py",
+        "result_file": "reports/evidence/current-tests.xml",
+        "result_sha256": "1866eb060bf768431bd931e7ad1295b272b2e68c90634843424cfdc6b91b0a60",
+        "passing_test_names": [
+          "POL-008 POL-010: signed development, shadow and canary stages bind exact policy and cannot be skipped or self-asserted",
+          "POL-008 POL-009 POL-014: activation and rollback advance versions and never restore revoked authorities",
+          "POL-008: staging without simulation, stale baseline or expired evidence cannot activate"
+        ],
+        "source_hashes": {
+          "src/policy-lifecycle.mjs": "9ed57b0036e9b89124c7beb37d74380cd40fe224ea1aadff7870cef0a517a254",
+          "src/policy.mjs": "645e292f57b8e8d77ca8f6a8ba4f473ae314c74388cfb6bdeed60eb448bb9c2c",
+          "src/fabric.mjs": "1d12f93e073fa5c2968081a71686ab32f06efe2cff9ea723f9438ffba4893dd6",
+          "src/emergency.mjs": "f359ad36d7066413e0fe09743287fa6c610e21386389d5262e3c80f7b3939789",
+          "tests/policy-staging.test.mjs": "72c0dc996d8e40ab797fc24598bdc1fb4b13b4039a5ede5eb5b9aca12990db2b",
+          "tests/lifecycle.test.mjs": "d032ec54bc0b21224baf22b2b947fbf4d14476867be3f1bb55078df92abec81e",
+          "tests/completion-security.test.mjs": "0439d65482591c45546e77d06d085e332f9ea321c1f1fd1529e6782532c5bc4e"
+        }
+      }
+    ]
+  },
+  "POL-009": {
+    "implementation": [
+      "src/policy-lifecycle.mjs",
+      "src/policy.mjs",
+      "src/fabric.mjs",
+      "src/emergency.mjs"
+    ],
+    "status": "VERIFIED",
+    "blocker_reason": null,
+    "remaining_work": null,
+    "verification_evidence": [
+      {
+        "command": "python3 scripts/record-verification.py",
+        "result_file": "reports/evidence/current-tests.xml",
+        "result_sha256": "1866eb060bf768431bd931e7ad1295b272b2e68c90634843424cfdc6b91b0a60",
+        "passing_test_names": [
+          "COM-014 POL-009: 3-of-5 customer software quorum protects exact policy activation",
+          "POL-008 POL-009 POL-014: activation and rollback advance versions and never restore revoked authorities"
+        ],
+        "source_hashes": {
+          "src/policy-lifecycle.mjs": "9ed57b0036e9b89124c7beb37d74380cd40fe224ea1aadff7870cef0a517a254",
+          "src/policy.mjs": "645e292f57b8e8d77ca8f6a8ba4f473ae314c74388cfb6bdeed60eb448bb9c2c",
+          "src/fabric.mjs": "1d12f93e073fa5c2968081a71686ab32f06efe2cff9ea723f9438ffba4893dd6",
+          "src/emergency.mjs": "f359ad36d7066413e0fe09743287fa6c610e21386389d5262e3c80f7b3939789",
+          "tests/policy-staging.test.mjs": "72c0dc996d8e40ab797fc24598bdc1fb4b13b4039a5ede5eb5b9aca12990db2b",
+          "tests/lifecycle.test.mjs": "d032ec54bc0b21224baf22b2b947fbf4d14476867be3f1bb55078df92abec81e",
+          "tests/completion-security.test.mjs": "0439d65482591c45546e77d06d085e332f9ea321c1f1fd1529e6782532c5bc4e"
+        }
+      }
+    ]
+  },
+  "POL-014": {
+    "implementation": [
+      "src/policy-lifecycle.mjs",
+      "src/policy.mjs",
+      "src/fabric.mjs",
+      "src/emergency.mjs"
+    ],
+    "status": "VERIFIED",
+    "blocker_reason": null,
+    "remaining_work": null,
+    "verification_evidence": [
+      {
+        "command": "python3 scripts/record-verification.py",
+        "result_file": "reports/evidence/current-tests.xml",
+        "result_sha256": "1866eb060bf768431bd931e7ad1295b272b2e68c90634843424cfdc6b91b0a60",
+        "passing_test_names": [
+          "POL-013 POL-014: emergency requires simulation and quorum, restricts exact scope, expires without reviving revocations",
+          "POL-008 POL-009 POL-014: activation and rollback advance versions and never restore revoked authorities"
+        ],
+        "source_hashes": {
+          "src/policy-lifecycle.mjs": "9ed57b0036e9b89124c7beb37d74380cd40fe224ea1aadff7870cef0a517a254",
+          "src/policy.mjs": "645e292f57b8e8d77ca8f6a8ba4f473ae314c74388cfb6bdeed60eb448bb9c2c",
+          "src/fabric.mjs": "1d12f93e073fa5c2968081a71686ab32f06efe2cff9ea723f9438ffba4893dd6",
+          "src/emergency.mjs": "f359ad36d7066413e0fe09743287fa6c610e21386389d5262e3c80f7b3939789",
+          "tests/policy-staging.test.mjs": "72c0dc996d8e40ab797fc24598bdc1fb4b13b4039a5ede5eb5b9aca12990db2b",
+          "tests/lifecycle.test.mjs": "d032ec54bc0b21224baf22b2b947fbf4d14476867be3f1bb55078df92abec81e",
+          "tests/completion-security.test.mjs": "0439d65482591c45546e77d06d085e332f9ea321c1f1fd1529e6782532c5bc4e"
         }
       }
     ]

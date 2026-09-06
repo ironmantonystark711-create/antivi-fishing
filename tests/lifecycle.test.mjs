@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { fixture, hasCode } from './helpers.mjs';
+import { fixture, hasCode, stagePolicy } from './helpers.mjs';
 import { clone, digest } from '../src/canonical.mjs';
 import { signed } from '../src/crypto.mjs';
 import { proposal } from '../src/schema.mjs';
@@ -76,7 +76,7 @@ test('ACT-010: material change or graph change invalidates exact approval', t =>
 test('COM-014 POL-009: 3-of-5 customer software quorum protects exact policy activation', t => {
   const h = fixture(t), next = clone(h.f.policy('acme')); next.version = 2; next.rules['finance.payment.first'].max_quantity = 500000;
   const r = h.proposed('policy.change', { policy: next }, { action: { type: 'policy.change', target_resource: 'policy-root', purpose: 'Tighten payment ceiling' } });
-  h.f.simulate(h.p('policy-admin'), next); h.advance(120001); h.evidence(r, { kind: 'governance_review' }); h.evidence(r, { issuer: 'registry', kind: 'governance_review' }); h.approve(r, 2);
+  stagePolicy(h, next); h.advance(120001); h.evidence(r, { kind: 'governance_review' }); h.evidence(r, { issuer: 'registry', kind: 'governance_review' }); h.approve(r, 2);
   assert.throws(() => h.f.certificate(h.p(), r.capsule.capsule_id), hasCode('INV-412-EVIDENCE'));
   const p = h.p('custodian-3'); h.f.approve(p, signed(h.f.approvalChallenge(p, r.capsule.capsule_id), h.setup.custodianKeys.acme['custodian-3'], 'action-approval'));
   const cert = h.f.certificate(h.p(), r.capsule.capsule_id); assert.equal(h.f.execute(h.p(), cert).payload.status, 'VERIFIED'); assert.equal(h.f.policy('acme').version, 2);

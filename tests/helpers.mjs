@@ -44,3 +44,11 @@ export function fixture(t, tenants = ['acme', 'globex']) {
 export const hasCode = code => e => e?.code === code;
 export function runtimeInput(overrides = {}) { return { device_id: 'operator-device', resource: 'dataset-1', destination: 'customer-vault', action: 'data.read', purpose: 'operations', columns: ['id', 'name'], row_ids: ['row-1'], classification: 'internal', jurisdiction: 'EU', max_cost: 1000, ttl_ms: 60000, ...overrides }; }
 export function runtimeRequest(capability, overrides = {}) { const c = capability.payload; return { capability, device_id: c.device_id, resource: c.resource, destination: c.destination, action: c.action, purpose: c.purpose, columns: c.columns, row_ids: c.row_ids, request_id: randomUUID(), protocol: 'https', port: 443, ...overrides }; }
+
+export function stagePolicy(h, candidate) {
+  h.f.simulate(h.p('policy-admin'), candidate);
+  for (const stage of ['DEVELOPMENT', 'SHADOW', 'CANARY']) {
+    const payload = { tenant_id: 'acme', candidate_digest: digest(candidate), baseline_digest: digest(h.f.policy('acme')), stage, review_commit: 'a'.repeat(40), test_result_digest: digest({ synthetic_regression: stage }), passed: true, tested_at: h.now(), expires_at: h.now() + 600000 };
+    h.f.policyLifecycle.stage(h.p('policy-admin'), { candidate, stage, evidence: signed(payload, h.setup.issuerKeys.acme.governance, 'policy-stage') });
+  }
+}
