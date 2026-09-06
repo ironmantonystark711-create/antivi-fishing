@@ -1,0 +1,550 @@
+{
+  "tests": [
+    {
+      "name": "AUD-010 UX-010: UI audit choices never widen role-specific server permissions",
+      "passed": true
+    },
+    {
+      "name": "ACT-001 ACT-003: stable field order and exact material binding",
+      "passed": true
+    },
+    {
+      "name": "ACT-007: ambiguous encodings and unknown types rejected",
+      "passed": true
+    },
+    {
+      "name": "ACT-003: strict parser rejects duplicate keys, trailing values and prototype keys",
+      "passed": true
+    },
+    {
+      "name": "ACT-003: 2000 deterministic canonical round trips with integer and Unicode vectors",
+      "passed": true
+    },
+    {
+      "name": "ACT-007: oversized nesting and bodies rejected",
+      "passed": true
+    },
+    {
+      "name": "COM-002 KEY-007: Ed25519 domain-separated signatures reject every altered field",
+      "passed": true
+    },
+    {
+      "name": "AUD-003: AES-GCM binds ciphertext to tenant, record id and key",
+      "passed": true
+    },
+    {
+      "name": "NFR-TST-001 TRACE-001: ledger enumerates the SRS, not historical completion arrays",
+      "passed": true
+    },
+    {
+      "name": "NFR-TST-001: missing, stale, failed and merely ID-named evidence never closes a requirement",
+      "passed": true
+    },
+    {
+      "name": "NFR-TST-001: execution parser preserves failures and rejects skipped tests as proof",
+      "passed": true
+    },
+    {
+      "name": "KEY-005 KEY-006: algorithm migration preserves historical signatures and binds suite",
+      "passed": true
+    },
+    {
+      "name": "RUN-010: signed startup, tampering withdrawal, quorum reload and downgrade rejection",
+      "passed": true
+    },
+    {
+      "name": "ACT-012: deterministic nested composition rejects cycles, duplicates, hidden and missing authority",
+      "passed": true
+    },
+    {
+      "name": "ACT-012 UX-006: exact batch signatures execute each child once and never manufacture child authority",
+      "passed": true
+    },
+    {
+      "name": "UX-006: hidden additions and changed child evidence invalidate every batch approval",
+      "passed": true
+    },
+    {
+      "name": "POL-013 POL-014: emergency requires simulation and quorum, restricts exact scope, expires without reviving revocations",
+      "passed": true
+    },
+    {
+      "name": "AUD-010: role projections reject cross-role/tenant access and never expose full source envelopes",
+      "passed": true
+    },
+    {
+      "name": "DAT-005 DAT-011: watermark is opt-in, attributed, deterministic and never mutates source data",
+      "passed": true
+    },
+    {
+      "name": "AIG-003 AIG-004 AIG-007: advisory extraction preserves spans/context and enforces narrow source, tenant and output authority",
+      "passed": true
+    },
+    {
+      "name": "AIG-010: versioned adversarial regression prevents provider promotion",
+      "passed": true
+    },
+    {
+      "name": "CON-006 NFR-MNT-005: lifecycle forbids EOL use and silent downgrade and preserves migration instructions",
+      "passed": true
+    },
+    {
+      "name": "COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle",
+      "passed": true
+    },
+    {
+      "name": "COV-003 COV-004 COV-005 COV-009: assessor revocation and expiry withdraw coverage and close its interval",
+      "passed": true
+    },
+    {
+      "name": "COV-003 COV-010 CON-006: bypass evidence is exact and connector downgrades fail closed",
+      "passed": true
+    },
+    {
+      "name": "AIG-010: only the configured local model can pass a complete versioned promotion report",
+      "passed": true
+    },
+    {
+      "name": "EVD-003 EVD-006 EVD-010 EVD-011: signed evidence requires purpose-limited provenance and safe AI classification",
+      "passed": true
+    },
+    {
+      "name": "EVD-007 EVD-008 EVD-009: stale, revoked, and conflicting evidence produce distinct fail-closed reasons",
+      "passed": true
+    },
+    {
+      "name": "DAT-011: output attribution validates source and policy without mutating protected rows",
+      "passed": true
+    },
+    {
+      "name": "AUD-005 AUD-008 AUD-010: exports need pinned trust and projections exclude unassigned roles",
+      "passed": true
+    },
+    {
+      "name": "DAT-012 AUD-006: customer retention instructions cap evidence retention and preserve legal holds",
+      "passed": true
+    },
+    {
+      "name": "COM-002: all independently signed certificate binding mutations still fail registered-authority equality",
+      "passed": true
+    },
+    {
+      "name": "RUN-004: runtime issuer-key revocation and active-policy change invalidate cached token",
+      "passed": true
+    },
+    {
+      "name": "DAT-001 COM-009: exact data export cannot return extra columns from downstream",
+      "passed": true
+    },
+    {
+      "name": "DAT-001: caller cannot mislabel dataset jurisdiction or sensitivity",
+      "passed": true
+    },
+    {
+      "name": "IDN-001 POL-011: an initiator cannot approve their own protected action even with an eligible signing key",
+      "passed": true
+    },
+    {
+      "name": "AIG-006: source prose cannot override typed policy fields",
+      "passed": true
+    },
+    {
+      "name": "KEY-010 NFR-MNT-002: independent verifiers reject signed-log tampering and duplicate JSON keys",
+      "passed": true
+    },
+    {
+      "name": "ACT-007 UX-002: unsupported or ambiguous currency scales fail rather than render a false amount",
+      "passed": true
+    },
+    {
+      "name": "POL-001 POL-002 POL-015: exact inputs and trusted test time produce identical decision and reasons",
+      "passed": true
+    },
+    {
+      "name": "CON-004 COM-012: missing data-output fields return UNCERTAIN rather than an exception after dispatch",
+      "passed": true
+    },
+    {
+      "name": "COM-005 ACT-012: an atomic batch failure leaves no target mutation and records every child as uncertain",
+      "passed": true
+    },
+    {
+      "name": "ACT-012 POL-009: policy activation cannot be hidden inside a batch",
+      "passed": true
+    },
+    {
+      "name": "POL-008 POL-010 POL-014: activation respects the staged window and preserves immutable rollback history and revocations",
+      "passed": true
+    },
+    {
+      "name": "POL-013: emergency simulation validates at its persisted transaction time and expiry notifies security",
+      "passed": true
+    },
+    {
+      "name": "POL-008: policy promotion rejects skipped stages, foreign signers, stale reports and tampered reviewed commits",
+      "passed": true
+    },
+    {
+      "name": "POL-008: stale simulations and newly revoked promotion custodians invalidate production promotion",
+      "passed": true
+    },
+    {
+      "name": "NFR-OPS-003 NFR-OPS-004: high-severity alerts enforce owner acknowledgement and incidents cannot skip recovery stages",
+      "passed": true
+    },
+    {
+      "name": "NFR-OPS-005: deployment must progress staging to canary to production and rollback retains current policy/key integrity",
+      "passed": true
+    },
+    {
+      "name": "HTTP: health, ready, console assets and hardened headers are served",
+      "passed": true
+    },
+    {
+      "name": "HTTP: missing/expired auth, cross origin, unknown host, traversal and cross-tenant objects denied",
+      "passed": true
+    },
+    {
+      "name": "HTTP: duplicate keys, wrong content-type and huge bodies reject safely",
+      "passed": true
+    },
+    {
+      "name": "HTTP: same-origin HttpOnly cookie session requires CSRF and logs out",
+      "passed": true
+    },
+    {
+      "name": "HTTP: full propose -> evidence -> independent signatures -> ALLOW -> certificate -> execute -> audit",
+      "passed": true
+    },
+    {
+      "name": "PER-007 PER-009: Secure Perception remains explicitly unavailable and fails closed",
+      "passed": true
+    },
+    {
+      "name": "COM-003 NFR-TST-002: eight independent gate workers race; exactly one certificate is consumed",
+      "passed": true
+    },
+    {
+      "name": "DAT-002: concurrent gates cannot overspend shared rolling budget",
+      "passed": true
+    },
+    {
+      "name": "NFR-SEC-004: bootstrap creates random credentials, private files and refuses overwrite",
+      "passed": true
+    },
+    {
+      "name": "UX-002 UX-003: UI state logic exposes no generic approval or executable non-ALLOW state",
+      "passed": true
+    },
+    {
+      "name": "UX-007: static interface labels all named inputs and uses no unsafe DOM injection sink",
+      "passed": true
+    },
+    {
+      "name": "IDN-004: JIT privilege is exact-scoped, durable, and expires",
+      "passed": true
+    },
+    {
+      "name": "IDN-005 IDN-006 IDN-010: recovery operations are separately recorded and reject weaker social recovery",
+      "passed": true
+    },
+    {
+      "name": "IDN-001 IDN-007 KEY-011: reset authenticator or revoked firmware fails protected capability issuance",
+      "passed": true
+    },
+    {
+      "name": "KEY-004 KEY-005 KEY-007 KEY-008 KEY-010 KEY-012: threshold key rotation preserves audit verification and prevents suite downgrade",
+      "passed": true
+    },
+    {
+      "name": "KEY-005 KEY-008: same-suite renewal and multiple rotation restart restore the newest public key",
+      "passed": true
+    },
+    {
+      "name": "KEY-001 KEY-002 KEY-003 KEY-009: recovery survives restart and requires three independent custodians plus delay",
+      "passed": true
+    },
+    {
+      "name": "COM-001 COM-009 COM-010: exact approved action executes and produces signed verified outcome",
+      "passed": true
+    },
+    {
+      "name": "ACT-008: tampered schema digest rejected",
+      "passed": true
+    },
+    {
+      "name": "ACT-011 COM-006: proposal idempotency returns exact first result; changed request rejected",
+      "passed": true
+    },
+    {
+      "name": "POL-003 POL-005: missing evidence/approvals cannot mint or execute",
+      "passed": true
+    },
+    {
+      "name": "POL-007: denied nonce cannot be revived or re-evaluated",
+      "passed": true
+    },
+    {
+      "name": "POL-006 COM-013: cooldown defers exact bank change",
+      "passed": true
+    },
+    {
+      "name": "COM-003: consumed certificate is never replayed",
+      "passed": true
+    },
+    {
+      "name": "COM-004 ACT-004: stale target state invalidates certificate",
+      "passed": true
+    },
+    {
+      "name": "COM-004: expired certificate fails closed",
+      "passed": true
+    },
+    {
+      "name": "COM-011: dry-run does not mutate or consume certificate",
+      "passed": true
+    },
+    {
+      "name": "COM-012: post-commit timeout becomes UNCERTAIN; reconciliation finds one durable mutation",
+      "passed": true
+    },
+    {
+      "name": "COM-005 COM-012: target failure before commit rolls back and stays uncertain without blind retry",
+      "passed": true
+    },
+    {
+      "name": "CON-004 COM-009: malformed-response cannot produce false success",
+      "passed": true
+    },
+    {
+      "name": "CON-004 COM-009: altered-response cannot produce false success",
+      "passed": true
+    },
+    {
+      "name": "COM-012: process crash reservation survives restart and prevents replay",
+      "passed": true
+    },
+    {
+      "name": "COM-013: cancellation closes issued authority",
+      "passed": true
+    },
+    {
+      "name": "NFR-SEC-005: cross-tenant read and execution rejected",
+      "passed": true
+    },
+    {
+      "name": "IDN-002: auditor login grants no mutation authority",
+      "passed": true
+    },
+    {
+      "name": "AUD-003 CON-003: stored sensitive fields never appear as plaintext in database/WAL",
+      "passed": true
+    },
+    {
+      "name": "AUD-004: persisted clock regression halts security mutation",
+      "passed": true
+    },
+    {
+      "name": "EVD-001 EVD-002: correlated issuer and derivative evidence cannot satisfy independence",
+      "passed": true
+    },
+    {
+      "name": "EVD-005 AIG-006: email/advisory evidence cannot confer authority",
+      "passed": true
+    },
+    {
+      "name": "EVD-009: conflicting evidence remains escrow despite sufficient positive sources",
+      "passed": true
+    },
+    {
+      "name": "EVD-008: evidence revocation invalidates pending certificate immediately",
+      "passed": true
+    },
+    {
+      "name": "EVD-003: tampered issuer signature and wrong tenant evidence are rejected",
+      "passed": true
+    },
+    {
+      "name": "IDN-001: software signature cannot satisfy hardware-required policy",
+      "passed": true
+    },
+    {
+      "name": "POL-011: duplicate signer cannot satisfy threshold",
+      "passed": true
+    },
+    {
+      "name": "ACT-010: material change or graph change invalidates exact approval",
+      "passed": true
+    },
+    {
+      "name": "COM-014 POL-009: 3-of-5 customer software quorum protects exact policy activation",
+      "passed": true
+    },
+    {
+      "name": "UC-02: exact first payment enforces beneficiary amount and cannot repeat",
+      "passed": true
+    },
+    {
+      "name": "COM-009: self-consistent but unauthorised observed state must not pass reconciliation",
+      "passed": true
+    },
+    {
+      "name": "POL-010: exact candidate simulation required before policy certificate",
+      "passed": true
+    },
+    {
+      "name": "NET-001 NET-002 NET-003 NET-007 NET-009 RUN-001: local process dispatch requires exact tenant/device/service capability, even offline",
+      "passed": true
+    },
+    {
+      "name": "NET-004 NET-005 NET-006 NET-010 RUN-004 RUN-008 RUN-009: rate, quarantine, revocation, exhaustion and containment counters",
+      "passed": true
+    },
+    {
+      "name": "PER-001 PER-003 PER-006 PER-007 PER-009 PER-010: software transport contract encrypts only allowed fields and never claims hardware assurance",
+      "passed": true
+    },
+    {
+      "name": "NFR-SEC-005 UX-010: preview permits only configured hosts and origin-bound secure sessions",
+      "passed": true
+    },
+    {
+      "name": "RUN-001 DAT-001: local scoped synthetic data read enforces rows and columns",
+      "passed": true
+    },
+    {
+      "name": "DAT-002 DAT-009: low-and-slow extraction accumulates across newly minted capabilities",
+      "passed": true
+    },
+    {
+      "name": "DAT-002: rolling budget recovers after bounded window expires",
+      "passed": true
+    },
+    {
+      "name": "DAT-003: server-controlled sensitivity weight increases information charge",
+      "passed": true
+    },
+    {
+      "name": "RUN-002 DAT-004: destination binding cannot be broadened",
+      "passed": true
+    },
+    {
+      "name": "RUN-002 DAT-004: device_id binding cannot be broadened",
+      "passed": true
+    },
+    {
+      "name": "RUN-002 DAT-004: resource binding cannot be broadened",
+      "passed": true
+    },
+    {
+      "name": "RUN-002 DAT-004: purpose binding cannot be broadened",
+      "passed": true
+    },
+    {
+      "name": "DAT-006: SQL-shaped columns and unrestricted row sets rejected",
+      "passed": true
+    },
+    {
+      "name": "RUN-007: cross-tenant capability cannot be consumed",
+      "passed": true
+    },
+    {
+      "name": "RUN-004 IDN-008: device quarantine rejects issued capability immediately",
+      "passed": true
+    },
+    {
+      "name": "RUN-003: stale configured device health prevents renewal",
+      "passed": true
+    },
+    {
+      "name": "RUN-002: runtime request replay does not spend twice or return data twice",
+      "passed": true
+    },
+    {
+      "name": "NET-003 NET-004: local service envelope rejects other port and excess request rate",
+      "passed": true
+    },
+    {
+      "name": "DAT-005 POL-004: restricted export requires explicit new SHIELD proposal",
+      "passed": true
+    },
+    {
+      "name": "AUD-001 AUD-005: export verifies with pinned root and rejects edit, reorder, removal and wrong root",
+      "passed": true
+    },
+    {
+      "name": "AUD-008: externally pinned prior checkpoint detects a fork and truncation",
+      "passed": true
+    },
+    {
+      "name": "AUD-001: append-only triggers reject SQL update and deletion",
+      "passed": true
+    },
+    {
+      "name": "AUD-007: audit export access is itself recorded",
+      "passed": true
+    },
+    {
+      "name": "DAT-012: expired evidence is held for active actions and legal hold; terminal evidence logically deleted",
+      "passed": true
+    },
+    {
+      "name": "COV-002 COV-007 COV-008: no manual declaration can claim ENFORCED or production guarantee",
+      "passed": true
+    },
+    {
+      "name": "POL-010 UX-008: policy simulation records diff without activating candidate",
+      "passed": true
+    },
+    {
+      "name": "POL-012: fewer than 3 customer bootstrap signers cannot start the service",
+      "passed": true
+    },
+    {
+      "name": "RUN-005 RUN-010: local network gate requires a signed per-action configuration and rejects rollback",
+      "passed": true
+    },
+    {
+      "name": "RUN-004 RUN-006 RUN-009: signed capability revocation is immediate, scoped and does not expose payloads",
+      "passed": true
+    },
+    {
+      "name": "RUN-008 RUN-009: malformed requests and failed local services fail closed without duplicate delivery",
+      "passed": true
+    },
+    {
+      "name": "RUN-004 RUN-008: signer revocation withdraws a local gate and cache saturation preserves existing authority",
+      "passed": true
+    },
+    {
+      "name": "RUN-010: runtime configuration rejection persists a version floor across a process restart",
+      "passed": true
+    },
+    {
+      "name": "RUN-010: duplicate-key on-disk runtime configuration withdraws the gate",
+      "passed": true
+    },
+    {
+      "name": "NFR-SEC-001 NFR-PERF-005: aborted and oversized clients cannot crash the HTTP gate",
+      "passed": true
+    }
+  ],
+  "total": 132,
+  "passed": 132,
+  "failed": 0,
+  "skipped": 0,
+  "cancelled": 0,
+  "todo": 0,
+  "source_revision": "ed7136c6853901e2643a3c24083593390d4f685e",
+  "source_fingerprint": "17f1ab2dd974be473e3e9fbbe2923468bd8fe1f079c4d2e4653a835acb03ea33",
+  "command": "node --test --test-reporter=tap --test-concurrency=1 tests/audit-ui.test.mjs tests/canonical.test.mjs tests/completion-evidence.test.mjs tests/completion-security.test.mjs tests/coverage-advisory-hardening.test.mjs tests/data-audit-hardening.test.mjs tests/extended-security.test.mjs tests/governance-hardening.test.mjs tests/http-concurrency-ui.test.mjs tests/key-identity-hardening.test.mjs tests/lifecycle.test.mjs tests/network-perception.test.mjs tests/preview-origin.test.mjs tests/runtime-audit.test.mjs tests/runtime-hardening.test.mjs tests/transport-abort.test.mjs",
+  "exit_code": 0,
+  "stderr": "",
+  "environment": {
+    "node": "v24.19.0",
+    "platform": "linux",
+    "arch": "x64"
+  },
+  "finished_at": "2026-09-06T05:06:07.654Z",
+  "source_unchanged": true
+}

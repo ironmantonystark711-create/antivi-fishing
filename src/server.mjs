@@ -8,8 +8,15 @@ import { fields, text, identifier, integer } from './schema.mjs';
 import { SCHEMAS } from './schema.mjs';
 import { requireThat, InvariantError } from './errors.mjs';
 
-export function createServer(fabric, { port = 8080, host = '127.0.0.1', origin = `http://127.0.0.1:${port}` } = {}) {
+export function createServer(fabric, { port = 8080, host = '127.0.0.1', origin = `http://127.0.0.1:${port}`, previewHostSuffixes = [] } = {}) {
   requireThat(['127.0.0.1', '::1'].includes(host), 'INV-503-RELEASE', 'Engineering HTTP service must bind to loopback', 503);
+  requireThat(previewHostSuffixes.every(s => /^\.[a-z0-9]+(?:[.-][a-z0-9]+)*$/.test(s)), 'INV-503-CONFIG', 'Invalid preview host suffix', 503);
+  function requestOrigin(req) {
+    if (req.headers.host === new URL(origin).host) return origin;
+    const name = req.headers.host ?? '';
+    requireThat(/^[a-z0-9]+(?:[.-][a-z0-9]+)*$/.test(name) && previewHostSuffixes.some(s => name.endsWith(s)), 'INV-400-HOST', 'Unrecognised host', 400);
+    return `https://${name}`;
+  }
   const web = fileURLToPath(new URL('../web/', import.meta.url));
   const sessions = new Map(), rate = new Map();
   const metrics = { requests: 0, errors: 0, unauthorised: 0 };
@@ -37,7 +44,8 @@ export function createServer(fabric, { port = 8080, host = '127.0.0.1', origin =
     if (authorization) { requireThat(/^Bearer [A-Za-z0-9_-]{43}$/.test(authorization), 'INV-401-AUTH', 'Authentication required', 401); return authenticateToken(authorization.slice(7)).principal; }
     const sid = /(?:^|;\s*)if_session=([A-Za-z0-9_-]{43})(?:;|$)/.exec(req.headers.cookie ?? '')?.[1], session = sid ? sessions.get(hashBytes(sid)) : null;
     requireThat(session && session.expires > Date.now(), 'INV-401-AUTH', 'Authentication required', 401);
-    if (req.method !== 'GET') requireThat(req.headers['x-csrf-token'] === session.csrf && req.headers.origin === origin, 'INV-403-CSRF', 'Request origin or CSRF token rejected', 403);
+    requireThat(session.origin === requestOrigin(req), 'INV-401-AUTH', 'Authentication required', 401);
+    if (req.method !== 'GET') requireThat(req.headers['x-csrf-token'] === session.csrf && req.headers.origin === requestOrigin(req), 'INV-403-CSRF', 'Request origin or CSRF token rejected', 403);
     fabric.authorize(session.principal, ['operator', 'approver', 'custodian', 'security', 'auditor', 'policy_admin', 'workload', 'audit_finance', 'audit_privacy', 'audit_technical', 'audit_security']); return session.principal;
   }
   async function body(req) {
@@ -50,6 +58,7 @@ export function createServer(fabric, { port = 8080, host = '127.0.0.1', origin =
   }
   const server = http.createServer({ maxHeaderSize: 16384 }, async (req, res) => {
     metrics.requests++; const requestId = randomBytes(12).toString('hex');
+    res.on('error', () => { metrics.errors++; res.destroy(); });
     res.setHeader('X-Request-Id', requestId); res.setHeader('X-Content-Type-Options', 'nosniff'); res.setHeader('Referrer-Policy', 'no-referrer');
     res.setHeader('X-Frame-Options', 'DENY'); res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
     res.setHeader('Content-Security-Policy', "default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self'; font-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'");
@@ -57,8 +66,8 @@ export function createServer(fabric, { port = 8080, host = '127.0.0.1', origin =
     const send = (status, data, type = 'application/json; charset=utf-8') => { res.writeHead(status, { 'Content-Type': type }); res.end(type.startsWith('application/json') ? canonical(data) : data); };
     try {
       requireThat(['GET', 'POST'].includes(req.method), 'INV-405-METHOD', 'Method not allowed', 405);
-      requireThat(req.headers.host === new URL(origin).host, 'INV-400-HOST', 'Unrecognised host', 400);
-      requireThat(!req.headers.origin || req.headers.origin === origin, 'INV-403-ORIGIN', 'Cross-origin requests are not allowed', 403);
+      const effectiveOrigin = requestOrigin(req);
+      requireThat(!req.headers.origin || req.headers.origin === effectiveOrigin, 'INV-403-ORIGIN', 'Cross-origin requests are not allowed', 403);
       const url = new URL(req.url, origin), path = url.pathname;
       rateLimit(`ip:${req.socket.remoteAddress}`, 600);
       if (path === '/healthz' && req.method === 'GET') return send(200, { status: 'ok', profile: 'engineering', production_ready: false });
@@ -67,13 +76,13 @@ export function createServer(fabric, { port = 8080, host = '127.0.0.1', origin =
       if (req.method === 'GET' && assets[path]) { const [file, type] = assets[path]; return send(200, readFileSync(join(web, file)), type); }
       if (path === '/session' && req.method === 'POST') {
         rateLimit(`login:${req.socket.remoteAddress}`, 20);
-        requireThat(req.headers.origin === origin, 'INV-403-ORIGIN', 'Session creation requires same origin', 403);
+        requireThat(req.headers.origin === effectiveOrigin, 'INV-403-ORIGIN', 'Session creation requires same origin', 403);
         const input = await body(req); fields(input, ['token']); const result = authenticateToken(input.token);
         for (const [key, session] of sessions) if (session.expires <= Date.now()) sessions.delete(key);
         requireThat(sessions.size < 1000, 'INV-503-CAPACITY', 'Session capacity reached', 503);
         const sid = randomBytes(32).toString('base64url'), csrf = randomBytes(32).toString('base64url');
-        sessions.set(hashBytes(sid), { principal: result.principal, csrf, expires: Math.min(Date.now() + 900000, result.expires) });
-        res.setHeader('Set-Cookie', `if_session=${sid}; HttpOnly; SameSite=Strict; Path=/; Max-Age=900${origin.startsWith('https:') ? '; Secure' : ''}`);
+        sessions.set(hashBytes(sid), { principal: result.principal, origin: effectiveOrigin, csrf, expires: Math.min(Date.now() + 900000, result.expires) });
+        res.setHeader('Set-Cookie', `if_session=${sid}; HttpOnly; SameSite=Strict; Path=/; Max-Age=900${effectiveOrigin.startsWith('https:') ? '; Secure' : ''}`);
         return send(200, { ...result.principal, csrf_token: csrf, expires_in: 900 });
       }
       const p = auth(req); rateLimit(`subject:${p.tenant_id}:${p.subject_id}`, 300);
@@ -115,6 +124,13 @@ export function createServer(fabric, { port = 8080, host = '127.0.0.1', origin =
       if (path === '/v1/advisory/extract' && req.method === 'POST') return send(200, fabric.advisory.extract(p, await body(req)));
       if (path === '/v1/audit-views' && req.method === 'POST') { const input = await body(req); fields(input, ['role', 'purpose']); return send(200, fabric.auditView(p, input.role, input.purpose)); }
       if (path === '/v1/notifications' && req.method === 'GET') { fabric.authorize(p, ['security', 'policy_admin']); return send(200, fabric.store.list(p.tenant_id, 'notification')); }
+      if (path === '/v1/alerts' && req.method === 'POST') return send(201, fabric.operations.alert(p, await body(req)));
+      if ((m = /^\/v1\/alerts\/([A-Za-z0-9_.:-]+)\/acknowledge$/.exec(path)) && req.method === 'POST') { fields(await body(req), []); return send(200, fabric.operations.acknowledge(p, m[1])); }
+      if (path === '/v1/alerts/sweep' && req.method === 'POST') { fields(await body(req), []); return send(200, fabric.operations.sweepAlerts(p)); }
+      if (path === '/v1/incidents' && req.method === 'POST') return send(201, fabric.operations.incident(p, await body(req)));
+      if (path === '/v1/incidents/transitions' && req.method === 'POST') return send(200, fabric.operations.transitionIncident(p, await body(req)));
+      if (path === '/v1/deployments/stage' && req.method === 'POST') return send(201, fabric.operations.stageDeployment(p, await body(req)));
+      if (path === '/v1/deployments/rollback' && req.method === 'POST') return send(200, fabric.operations.rollbackDeployment(p, await body(req)));
       if (path === '/v1/certificates' && req.method === 'POST') { const input = await body(req); fields(input, ['capsule_id']); identifier(input.capsule_id); return send(201, fabric.certificate(p, input.capsule_id)); }
       if ((m = /^\/v1\/certificates\/([A-Za-z0-9-]+)$/.exec(path)) && req.method === 'GET') { fabric.authorize(p, ['operator', 'policy_admin', 'security']); return send(200, fabric.store.must(p.tenant_id, 'certificate', m[1]).envelope); }
       if (path === '/gate/v1/execute' && req.method === 'POST') { const input = await body(req); fields(input, ['certificate', 'dry_run']); requireThat(typeof input.dry_run === 'boolean', 'INV-400-SCHEMA', 'dry_run must be boolean'); return send(200, fabric.execute(p, input.certificate, { dryRun: input.dry_run })); }
@@ -127,6 +143,8 @@ export function createServer(fabric, { port = 8080, host = '127.0.0.1', origin =
       if (path === '/v1/coverage' && req.method === 'POST') return send(201, fabric.declareCoverage(p, await body(req)));
       if (path === '/v1/connectors' && req.method === 'GET') return send(200, fabric.target.manifest());
       if (path === '/v1/policies/simulate' && req.method === 'POST') return send(200, fabric.simulate(p, await body(req)));
+      if (path === '/v1/policies/promotion-challenge' && req.method === 'POST') return send(200, fabric.policyPromotionChallenge(p, await body(req)));
+      if (path === '/v1/policies/promotions' && req.method === 'POST') return send(201, fabric.promotePolicy(p, await body(req)));
       if (path === '/v1/audit-exports' && req.method === 'POST') { const input = await body(req); fields(input, ['purpose']); return send(200, fabric.exportAudit(p, input.purpose)); }
       if (path === '/v1/retention/hold' && req.method === 'POST') return send(200, fabric.retention(p, await body(req)));
       if (path === '/v1/retention/sweep' && req.method === 'POST') { fields(await body(req), []); return send(200, fabric.retentionSweep(p)); }

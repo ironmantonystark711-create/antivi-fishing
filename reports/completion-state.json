@@ -1,8 +1,8 @@
 {
   "format": "IF-COMPLETION-1",
   "baseline_commit": "7d92076602d6c6485aa96bcb2a26bfac11afd861",
-  "source_revision": "7d92076602d6c6485aa96bcb2a26bfac11afd861",
-  "source_fingerprint": "b447520d6c676c192f200ba618de3c8dd2fd9472e195a5d061c19ee991668050",
+  "source_revision": "e4ff69bde2c430fbe2dce045d5a79ddcb72dbdc6",
+  "source_fingerprint": "17f1ab2dd974be473e3e9fbbe2923468bd8fe1f079c4d2e4653a835acb03ea33",
   "srs_sha256": "64dd0b013feb8455906342cb6df1ca8fde6a0717a35b91b3e4c968e59320b3a1",
   "total_requirements": 233,
   "numbered_requirements": 211,
@@ -13,54 +13,106 @@
     "BLOCKED_EXTERNAL": 0
   },
   "failing_tests": [],
-  "execution_current": false,
+  "execution_current": true,
   "ci_state": {
     "status": "NOT_VERIFIED",
     "reason": "No provider result recorded for this revision."
   },
   "performance_state": {
     "reference_environment": {
-      "node": "v24.16.0",
+      "node": "v24.19.0",
       "os": "linux",
       "architecture": "x64",
-      "cpu": "Intel(R) Xeon(R) Processor @ 2.60GHz",
+      "cpu": "unknown",
       "logical_cpus": 2,
-      "memory_bytes": 2088390656,
+      "memory_bytes": 17179869184,
       "isolated_environment": true
     },
+    "benchmark_command": "node scripts/benchmark.mjs",
     "core_deterministic_evaluation": {
       "samples": 2000,
-      "p50_ms": 0.12403799999998455,
-      "p95_ms": 0.2221479999999758,
-      "p99_ms": 0.30945599999995466,
-      "operations_per_second": 7035.96678570561
+      "errors": 0,
+      "p50_ms": 0.0786200000000008,
+      "p95_ms": 0.15262000000001308,
+      "p99_ms": 0.2615600000000029,
+      "operations_per_second": 10999.762047647504
     },
-    "integrated_evaluation_with_sqlite_audit": {
+    "protected_action_evaluation_with_sqlite_audit": {
       "samples": 500,
-      "p50_ms": 1.9291230000000041,
-      "p95_ms": 2.4237400000000093,
-      "p99_ms": 3.243109999999888,
-      "operations_per_second": 520.7845846413072
+      "errors": 0,
+      "p50_ms": 1.6765559999999482,
+      "p95_ms": 2.4897549999999455,
+      "p99_ms": 3.8419420000000173,
+      "operations_per_second": 550.3586557474864
     },
-    "local_software_runtime_with_signed_audit": {
+    "runtime_authorization_with_signed_audit": {
       "samples": 500,
-      "p50_ms": 0.7430240000001049,
-      "p95_ms": 1.2211429999999837,
-      "p99_ms": 1.833798999999999,
-      "operations_per_second": 1174.1286656734308
+      "errors": 0,
+      "p50_ms": 0.888287999999875,
+      "p95_ms": 1.2855270000000019,
+      "p99_ms": 1.6079059999999572,
+      "operations_per_second": 1048.1434309825188
     },
-    "target_network_latency": "not measured: no external target connector",
+    "cached_local_runtime_dataplane": {
+      "samples": 5000,
+      "errors": 0,
+      "p50_ms": 0.17709999999988213,
+      "p95_ms": 0.35613899999998466,
+      "p99_ms": 0.543529000000035,
+      "operations_per_second": 5329.200136450547
+    },
+    "external_connector_latency": {
+      "status": "NOT_CONFIGURED",
+      "samples": 0,
+      "reason": "No external connector is configured; core and local-runtime latency are reported separately."
+    },
     "targets": {
       "core_p95_at_most_250_ms": true,
       "core_p99_at_most_750_ms": true,
-      "integrated_100_evaluations_per_second": true,
-      "runtime_p99_at_most_1_ms": false
+      "protected_action_100_evaluations_per_second": true,
+      "cached_runtime_p99_at_most_1_ms": true
     },
     "production_capacity_claim": false,
-    "caveat": "Single-node microbenchmark, warm process, synthetic data and virtual policy clock advanced to respect budget/rate limits; not a production load, soak, packet or multi-zone benchmark."
+    "caveat": "Single-node warm-process benchmark using synthetic data and a virtual policy clock. It measures deterministic core, protected SQLite/audit, and cached local dataplane paths separately; it is not production load, soak, packet enforcement, multi-zone, or external connector evidence."
   },
   "browser_state": {
-    "status": "NOT_RUN"
+    "status": "PASS",
+    "checks": [
+      "landing-no-horizontal-overflow-1440",
+      "landing-no-horizontal-overflow-900",
+      "landing-no-horizontal-overflow-390",
+      "landing-anchor-navigation",
+      "login-invalid-token-error",
+      "token-cleared-after-login",
+      "no-browser-persistent-credentials",
+      "non-allow-cannot-mint",
+      "exact-challenge-download-custodian-1",
+      "exact-challenge-download-custodian-2",
+      "dry-run-does-not-mutate",
+      "real-browser-exact-workflow",
+      "verified-cannot-execute-twice",
+      "detail-no-horizontal-overflow-1440",
+      "detail-no-horizontal-overflow-900",
+      "detail-no-horizontal-overflow-390",
+      "coverage-honest-empty-state",
+      "browser-scoped-data-flow",
+      "operator-cannot-open-audit-export",
+      "finance-cannot-open-protected-actions",
+      "finance-only-authorized-projection",
+      "audit-projection-download",
+      "all-controls-have-labels",
+      "reduced-motion-honored",
+      "offline-error-visible",
+      "logout-clears-workspace",
+      "no-browser-javascript-errors",
+      "no-unexpected-network-failures"
+    ],
+    "javascript_errors": [],
+    "expected_offline_failures": [
+      "http://127.0.0.1:17788/v1/action-capsules?limit=25&offset=0"
+    ],
+    "visual_review": "Screenshots generated; human/model image inspection is separately required",
+    "production_ready": false
   },
   "complete": false,
   "next_action": "ARCH-001",
@@ -1011,7 +1063,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1027,7 +1079,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1043,7 +1095,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1059,7 +1111,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1075,7 +1127,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1091,7 +1143,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1107,7 +1159,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1123,7 +1175,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1139,7 +1191,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1155,7 +1207,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1171,7 +1223,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1193,11 +1245,13 @@
         "src/output.mjs",
         "src/advisory.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle"
+      ],
       "test_files": [
         "tests/completion-security.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1215,11 +1269,13 @@
         "src/canonical.mjs",
         "src/crypto.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "COV-002 COV-007 COV-008: no manual declaration can claim ENFORCED or production guarantee"
+      ],
       "test_files": [
         "tests/runtime-audit.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1241,11 +1297,16 @@
         "src/output.mjs",
         "src/advisory.mjs"
       ],
-      "tests": [],
-      "test_files": [
-        "tests/completion-security.test.mjs"
+      "tests": [
+        "COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle",
+        "COV-003 COV-004 COV-005 COV-009: assessor revocation and expiry withdraw coverage and close its interval",
+        "COV-003 COV-010 CON-006: bypass evidence is exact and connector downgrades fail closed"
       ],
-      "verification_evidence": null,
+      "test_files": [
+        "tests/completion-security.test.mjs",
+        "tests/coverage-advisory-hardening.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1267,11 +1328,15 @@
         "src/output.mjs",
         "src/advisory.mjs"
       ],
-      "tests": [],
-      "test_files": [
-        "tests/completion-security.test.mjs"
+      "tests": [
+        "COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle",
+        "COV-003 COV-004 COV-005 COV-009: assessor revocation and expiry withdraw coverage and close its interval"
       ],
-      "verification_evidence": null,
+      "test_files": [
+        "tests/completion-security.test.mjs",
+        "tests/coverage-advisory-hardening.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1293,11 +1358,15 @@
         "src/output.mjs",
         "src/advisory.mjs"
       ],
-      "tests": [],
-      "test_files": [
-        "tests/completion-security.test.mjs"
+      "tests": [
+        "COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle",
+        "COV-003 COV-004 COV-005 COV-009: assessor revocation and expiry withdraw coverage and close its interval"
       ],
-      "verification_evidence": null,
+      "test_files": [
+        "tests/completion-security.test.mjs",
+        "tests/coverage-advisory-hardening.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1319,11 +1388,13 @@
         "src/output.mjs",
         "src/advisory.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle"
+      ],
       "test_files": [
         "tests/completion-security.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1341,11 +1412,13 @@
         "src/canonical.mjs",
         "src/crypto.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "COV-002 COV-007 COV-008: no manual declaration can claim ENFORCED or production guarantee"
+      ],
       "test_files": [
         "tests/runtime-audit.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1363,11 +1436,13 @@
         "src/canonical.mjs",
         "src/crypto.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "COV-002 COV-007 COV-008: no manual declaration can claim ENFORCED or production guarantee"
+      ],
       "test_files": [
         "tests/runtime-audit.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1389,11 +1464,15 @@
         "src/output.mjs",
         "src/advisory.mjs"
       ],
-      "tests": [],
-      "test_files": [
-        "tests/completion-security.test.mjs"
+      "tests": [
+        "COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle",
+        "COV-003 COV-004 COV-005 COV-009: assessor revocation and expiry withdraw coverage and close its interval"
       ],
-      "verification_evidence": null,
+      "test_files": [
+        "tests/completion-security.test.mjs",
+        "tests/coverage-advisory-hardening.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1415,11 +1494,15 @@
         "src/output.mjs",
         "src/advisory.mjs"
       ],
-      "tests": [],
-      "test_files": [
-        "tests/completion-security.test.mjs"
+      "tests": [
+        "COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle",
+        "COV-003 COV-010 CON-006: bypass evidence is exact and connector downgrades fail closed"
       ],
-      "verification_evidence": null,
+      "test_files": [
+        "tests/completion-security.test.mjs",
+        "tests/coverage-advisory-hardening.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1436,12 +1519,14 @@
         "src/canonical.mjs",
         "src/crypto.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "ACT-001 ACT-003: stable field order and exact material binding"
+      ],
       "test_files": [
         "tests/canonical.test.mjs",
         "tests/completion-evidence.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1457,7 +1542,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1474,11 +1559,15 @@
         "src/canonical.mjs",
         "src/crypto.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "ACT-001 ACT-003: stable field order and exact material binding",
+        "ACT-003: strict parser rejects duplicate keys, trailing values and prototype keys",
+        "ACT-003: 2000 deterministic canonical round trips with integer and Unicode vectors"
+      ],
       "test_files": [
         "tests/canonical.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1497,11 +1586,13 @@
         "src/schema.mjs",
         "src/fabric.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "COM-004 ACT-004: stale target state invalidates certificate"
+      ],
       "test_files": [
         "tests/lifecycle.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1517,7 +1608,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1533,7 +1624,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1550,12 +1641,16 @@
         "src/canonical.mjs",
         "src/crypto.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "ACT-007: ambiguous encodings and unknown types rejected",
+        "ACT-007: oversized nesting and bodies rejected",
+        "ACT-007 UX-002: unsupported or ambiguous currency scales fail rather than render a false amount"
+      ],
       "test_files": [
         "tests/canonical.test.mjs",
         "tests/extended-security.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1574,11 +1669,13 @@
         "src/schema.mjs",
         "src/fabric.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "ACT-008: tampered schema digest rejected"
+      ],
       "test_files": [
         "tests/lifecycle.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1594,7 +1691,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1613,11 +1710,13 @@
         "src/schema.mjs",
         "src/fabric.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "ACT-010: material change or graph change invalidates exact approval"
+      ],
       "test_files": [
         "tests/lifecycle.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1636,11 +1735,13 @@
         "src/schema.mjs",
         "src/fabric.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "ACT-011 COM-006: proposal idempotency returns exact first result; changed request rejected"
+      ],
       "test_files": [
         "tests/lifecycle.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1662,11 +1763,17 @@
         "src/output.mjs",
         "src/advisory.mjs"
       ],
-      "tests": [],
-      "test_files": [
-        "tests/completion-security.test.mjs"
+      "tests": [
+        "ACT-012: deterministic nested composition rejects cycles, duplicates, hidden and missing authority",
+        "ACT-012 UX-006: exact batch signatures execute each child once and never manufacture child authority",
+        "COM-005 ACT-012: an atomic batch failure leaves no target mutation and records every child as uncertain",
+        "ACT-012 POL-009: policy activation cannot be hidden inside a batch"
       ],
-      "verification_evidence": null,
+      "test_files": [
+        "tests/completion-security.test.mjs",
+        "tests/governance-hardening.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1685,11 +1792,13 @@
         "src/schema.mjs",
         "src/fabric.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "EVD-001 EVD-002: correlated issuer and derivative evidence cannot satisfy independence"
+      ],
       "test_files": [
         "tests/lifecycle.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1708,11 +1817,13 @@
         "src/schema.mjs",
         "src/fabric.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "EVD-001 EVD-002: correlated issuer and derivative evidence cannot satisfy independence"
+      ],
       "test_files": [
         "tests/lifecycle.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1728,14 +1839,20 @@
       "implementation": [
         "src/canonical.mjs",
         "src/crypto.mjs",
+        "src/output.mjs",
+        "src/store.mjs",
         "src/schema.mjs",
         "src/fabric.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "EVD-003 EVD-006 EVD-010 EVD-011: signed evidence requires purpose-limited provenance and safe AI classification",
+        "EVD-003: tampered issuer signature and wrong tenant evidence are rejected"
+      ],
       "test_files": [
+        "tests/data-audit-hardening.test.mjs",
         "tests/lifecycle.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1751,7 +1868,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1770,11 +1887,13 @@
         "src/schema.mjs",
         "src/fabric.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "EVD-005 AIG-006: email/advisory evidence cannot confer authority"
+      ],
       "test_files": [
         "tests/lifecycle.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1787,10 +1906,19 @@
       "status": "PARTIAL",
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
-      "implementation": [],
-      "tests": [],
-      "test_files": [],
-      "verification_evidence": null,
+      "implementation": [
+        "src/canonical.mjs",
+        "src/crypto.mjs",
+        "src/output.mjs",
+        "src/store.mjs"
+      ],
+      "tests": [
+        "EVD-003 EVD-006 EVD-010 EVD-011: signed evidence requires purpose-limited provenance and safe AI classification"
+      ],
+      "test_files": [
+        "tests/data-audit-hardening.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1803,10 +1931,19 @@
       "status": "PARTIAL",
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
-      "implementation": [],
-      "tests": [],
-      "test_files": [],
-      "verification_evidence": null,
+      "implementation": [
+        "src/canonical.mjs",
+        "src/crypto.mjs",
+        "src/output.mjs",
+        "src/store.mjs"
+      ],
+      "tests": [
+        "EVD-007 EVD-008 EVD-009: stale, revoked, and conflicting evidence produce distinct fail-closed reasons"
+      ],
+      "test_files": [
+        "tests/data-audit-hardening.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1822,14 +1959,20 @@
       "implementation": [
         "src/canonical.mjs",
         "src/crypto.mjs",
+        "src/output.mjs",
+        "src/store.mjs",
         "src/schema.mjs",
         "src/fabric.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "EVD-007 EVD-008 EVD-009: stale, revoked, and conflicting evidence produce distinct fail-closed reasons",
+        "EVD-008: evidence revocation invalidates pending certificate immediately"
+      ],
       "test_files": [
+        "tests/data-audit-hardening.test.mjs",
         "tests/lifecycle.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1845,14 +1988,20 @@
       "implementation": [
         "src/canonical.mjs",
         "src/crypto.mjs",
+        "src/output.mjs",
+        "src/store.mjs",
         "src/schema.mjs",
         "src/fabric.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "EVD-007 EVD-008 EVD-009: stale, revoked, and conflicting evidence produce distinct fail-closed reasons",
+        "EVD-009: conflicting evidence remains escrow despite sufficient positive sources"
+      ],
       "test_files": [
+        "tests/data-audit-hardening.test.mjs",
         "tests/lifecycle.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1865,10 +2014,19 @@
       "status": "PARTIAL",
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
-      "implementation": [],
-      "tests": [],
-      "test_files": [],
-      "verification_evidence": null,
+      "implementation": [
+        "src/canonical.mjs",
+        "src/crypto.mjs",
+        "src/output.mjs",
+        "src/store.mjs"
+      ],
+      "tests": [
+        "EVD-003 EVD-006 EVD-010 EVD-011: signed evidence requires purpose-limited provenance and safe AI classification"
+      ],
+      "test_files": [
+        "tests/data-audit-hardening.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1881,10 +2039,19 @@
       "status": "PARTIAL",
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
-      "implementation": [],
-      "tests": [],
-      "test_files": [],
-      "verification_evidence": null,
+      "implementation": [
+        "src/canonical.mjs",
+        "src/crypto.mjs",
+        "src/output.mjs",
+        "src/store.mjs"
+      ],
+      "tests": [
+        "EVD-003 EVD-006 EVD-010 EVD-011: signed evidence requires purpose-limited provenance and safe AI classification"
+      ],
+      "test_files": [
+        "tests/data-audit-hardening.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1901,11 +2068,13 @@
         "src/canonical.mjs",
         "src/crypto.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "POL-001 POL-002 POL-015: exact inputs and trusted test time produce identical decision and reasons"
+      ],
       "test_files": [
         "tests/extended-security.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1922,11 +2091,13 @@
         "src/canonical.mjs",
         "src/crypto.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "POL-001 POL-002 POL-015: exact inputs and trusted test time produce identical decision and reasons"
+      ],
       "test_files": [
         "tests/extended-security.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1945,11 +2116,13 @@
         "src/schema.mjs",
         "src/fabric.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "POL-003 POL-005: missing evidence/approvals cannot mint or execute"
+      ],
       "test_files": [
         "tests/lifecycle.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1967,11 +2140,13 @@
         "src/canonical.mjs",
         "src/crypto.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "DAT-005 POL-004: restricted export requires explicit new SHIELD proposal"
+      ],
       "test_files": [
         "tests/runtime-audit.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -1990,11 +2165,13 @@
         "src/schema.mjs",
         "src/fabric.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "POL-003 POL-005: missing evidence/approvals cannot mint or execute"
+      ],
       "test_files": [
         "tests/lifecycle.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2013,11 +2190,13 @@
         "src/schema.mjs",
         "src/fabric.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "POL-006 COM-013: cooldown defers exact bank change"
+      ],
       "test_files": [
         "tests/lifecycle.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2036,11 +2215,13 @@
         "src/schema.mjs",
         "src/fabric.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "POL-007: denied nonce cannot be revived or re-evaluated"
+      ],
       "test_files": [
         "tests/lifecycle.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2053,10 +2234,19 @@
       "status": "PARTIAL",
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
-      "implementation": [],
-      "tests": [],
-      "test_files": [],
-      "verification_evidence": null,
+      "implementation": [
+        "src/crypto.mjs",
+        "src/canonical.mjs"
+      ],
+      "tests": [
+        "POL-008 POL-010 POL-014: activation respects the staged window and preserves immutable rollback history and revocations",
+        "POL-008: policy promotion rejects skipped stages, foreign signers, stale reports and tampered reviewed commits",
+        "POL-008: stale simulations and newly revoked promotion custodians invalidate production promotion"
+      ],
+      "test_files": [
+        "tests/governance-hardening.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2070,16 +2260,20 @@
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
       "implementation": [
-        "src/canonical.mjs",
         "src/crypto.mjs",
+        "src/canonical.mjs",
         "src/schema.mjs",
         "src/fabric.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "ACT-012 POL-009: policy activation cannot be hidden inside a batch",
+        "COM-014 POL-009: 3-of-5 customer software quorum protects exact policy activation"
+      ],
       "test_files": [
+        "tests/governance-hardening.test.mjs",
         "tests/lifecycle.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2093,18 +2287,23 @@
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
       "implementation": [
-        "src/canonical.mjs",
         "src/crypto.mjs",
+        "src/canonical.mjs",
         "src/schema.mjs",
         "src/fabric.mjs",
         "src/store.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "POL-008 POL-010 POL-014: activation respects the staged window and preserves immutable rollback history and revocations",
+        "POL-010: exact candidate simulation required before policy certificate",
+        "POL-010 UX-008: policy simulation records diff without activating candidate"
+      ],
       "test_files": [
+        "tests/governance-hardening.test.mjs",
         "tests/lifecycle.test.mjs",
         "tests/runtime-audit.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2123,12 +2322,15 @@
         "src/schema.mjs",
         "src/fabric.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "IDN-001 POL-011: an initiator cannot approve their own protected action even with an eligible signing key",
+        "POL-011: duplicate signer cannot satisfy threshold"
+      ],
       "test_files": [
         "tests/extended-security.test.mjs",
         "tests/lifecycle.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2146,11 +2348,13 @@
         "src/canonical.mjs",
         "src/crypto.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "POL-012: fewer than 3 customer bootstrap signers cannot start the service"
+      ],
       "test_files": [
         "tests/runtime-audit.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2172,11 +2376,15 @@
         "src/output.mjs",
         "src/advisory.mjs"
       ],
-      "tests": [],
-      "test_files": [
-        "tests/completion-security.test.mjs"
+      "tests": [
+        "POL-013 POL-014: emergency requires simulation and quorum, restricts exact scope, expires without reviving revocations",
+        "POL-013: emergency simulation validates at its persisted transaction time and expiry notifies security"
       ],
-      "verification_evidence": null,
+      "test_files": [
+        "tests/completion-security.test.mjs",
+        "tests/governance-hardening.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2198,11 +2406,15 @@
         "src/output.mjs",
         "src/advisory.mjs"
       ],
-      "tests": [],
-      "test_files": [
-        "tests/completion-security.test.mjs"
+      "tests": [
+        "POL-013 POL-014: emergency requires simulation and quorum, restricts exact scope, expires without reviving revocations",
+        "POL-008 POL-010 POL-014: activation respects the staged window and preserves immutable rollback history and revocations"
       ],
-      "verification_evidence": null,
+      "test_files": [
+        "tests/completion-security.test.mjs",
+        "tests/governance-hardening.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2219,11 +2431,13 @@
         "src/canonical.mjs",
         "src/crypto.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "POL-001 POL-002 POL-015: exact inputs and trusted test time produce identical decision and reasons"
+      ],
       "test_files": [
         "tests/extended-security.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2242,11 +2456,13 @@
         "src/schema.mjs",
         "src/fabric.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "COM-001 COM-009 COM-010: exact approved action executes and produces signed verified outcome"
+      ],
       "test_files": [
         "tests/lifecycle.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2263,12 +2479,15 @@
         "src/canonical.mjs",
         "src/crypto.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "COM-002 KEY-007: Ed25519 domain-separated signatures reject every altered field",
+        "COM-002: all independently signed certificate binding mutations still fail registered-authority equality"
+      ],
       "test_files": [
         "tests/canonical.test.mjs",
         "tests/extended-security.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2289,12 +2508,15 @@
         "src/canonical.mjs",
         "src/fabric.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "COM-003 NFR-TST-002: eight independent gate workers race; exactly one certificate is consumed",
+        "COM-003: consumed certificate is never replayed"
+      ],
       "test_files": [
         "tests/http-concurrency-ui.test.mjs",
         "tests/lifecycle.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2313,11 +2535,14 @@
         "src/schema.mjs",
         "src/fabric.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "COM-004 ACT-004: stale target state invalidates certificate",
+        "COM-004: expired certificate fails closed"
+      ],
       "test_files": [
         "tests/lifecycle.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2331,16 +2556,20 @@
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
       "implementation": [
-        "src/canonical.mjs",
         "src/crypto.mjs",
+        "src/canonical.mjs",
         "src/schema.mjs",
         "src/fabric.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "COM-005 ACT-012: an atomic batch failure leaves no target mutation and records every child as uncertain",
+        "COM-005 COM-012: target failure before commit rolls back and stays uncertain without blind retry"
+      ],
       "test_files": [
+        "tests/governance-hardening.test.mjs",
         "tests/lifecycle.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2359,11 +2588,13 @@
         "src/schema.mjs",
         "src/fabric.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "ACT-011 COM-006: proposal idempotency returns exact first result; changed request rejected"
+      ],
       "test_files": [
         "tests/lifecycle.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2379,7 +2610,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2395,7 +2626,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2414,12 +2645,18 @@
         "src/schema.mjs",
         "src/fabric.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "DAT-001 COM-009: exact data export cannot return extra columns from downstream",
+        "COM-001 COM-009 COM-010: exact approved action executes and produces signed verified outcome",
+        "CON-004 COM-009: malformed-response cannot produce false success",
+        "CON-004 COM-009: altered-response cannot produce false success",
+        "COM-009: self-consistent but unauthorised observed state must not pass reconciliation"
+      ],
       "test_files": [
         "tests/extended-security.test.mjs",
         "tests/lifecycle.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2438,11 +2675,13 @@
         "src/schema.mjs",
         "src/fabric.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "COM-001 COM-009 COM-010: exact approved action executes and produces signed verified outcome"
+      ],
       "test_files": [
         "tests/lifecycle.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2461,11 +2700,13 @@
         "src/schema.mjs",
         "src/fabric.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "COM-011: dry-run does not mutate or consume certificate"
+      ],
       "test_files": [
         "tests/lifecycle.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2484,12 +2725,17 @@
         "src/schema.mjs",
         "src/fabric.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "CON-004 COM-012: missing data-output fields return UNCERTAIN rather than an exception after dispatch",
+        "COM-012: post-commit timeout becomes UNCERTAIN; reconciliation finds one durable mutation",
+        "COM-005 COM-012: target failure before commit rolls back and stays uncertain without blind retry",
+        "COM-012: process crash reservation survives restart and prevents replay"
+      ],
       "test_files": [
         "tests/extended-security.test.mjs",
         "tests/lifecycle.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2508,11 +2754,14 @@
         "src/schema.mjs",
         "src/fabric.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "POL-006 COM-013: cooldown defers exact bank change",
+        "COM-013: cancellation closes issued authority"
+      ],
       "test_files": [
         "tests/lifecycle.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2531,11 +2780,13 @@
         "src/schema.mjs",
         "src/fabric.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "COM-014 POL-009: 3-of-5 customer software quorum protects exact policy activation"
+      ],
       "test_files": [
         "tests/lifecycle.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2555,12 +2806,15 @@
         "src/canonical.mjs",
         "src/store.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "NET-001 NET-002 NET-003 NET-007 NET-009 RUN-001: local process dispatch requires exact tenant/device/service capability, even offline",
+        "RUN-001 DAT-001: local scoped synthetic data read enforces rows and columns"
+      ],
       "test_files": [
         "tests/network-perception.test.mjs",
         "tests/runtime-audit.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2578,11 +2832,17 @@
         "src/canonical.mjs",
         "src/crypto.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "RUN-002 DAT-004: destination binding cannot be broadened",
+        "RUN-002 DAT-004: device_id binding cannot be broadened",
+        "RUN-002 DAT-004: resource binding cannot be broadened",
+        "RUN-002 DAT-004: purpose binding cannot be broadened",
+        "RUN-002: runtime request replay does not spend twice or return data twice"
+      ],
       "test_files": [
         "tests/runtime-audit.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2600,11 +2860,13 @@
         "src/canonical.mjs",
         "src/crypto.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "RUN-003: stale configured device health prevents renewal"
+      ],
       "test_files": [
         "tests/runtime-audit.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2622,15 +2884,24 @@
         "src/crypto.mjs",
         "src/network.mjs",
         "src/perception.mjs",
-        "src/store.mjs"
+        "src/store.mjs",
+        "src/fabric.mjs",
+        "src/runtime-config.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "RUN-004: runtime issuer-key revocation and active-policy change invalidate cached token",
+        "NET-004 NET-005 NET-006 NET-010 RUN-004 RUN-008 RUN-009: rate, quarantine, revocation, exhaustion and containment counters",
+        "RUN-004 IDN-008: device quarantine rejects issued capability immediately",
+        "RUN-004 RUN-006 RUN-009: signed capability revocation is immediate, scoped and does not expose payloads",
+        "RUN-004 RUN-008: signer revocation withdraws a local gate and cache saturation preserves existing authority"
+      ],
       "test_files": [
         "tests/extended-security.test.mjs",
         "tests/network-perception.test.mjs",
-        "tests/runtime-audit.test.mjs"
+        "tests/runtime-audit.test.mjs",
+        "tests/runtime-hardening.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2643,10 +2914,20 @@
       "status": "PARTIAL",
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
-      "implementation": [],
-      "tests": [],
-      "test_files": [],
-      "verification_evidence": null,
+      "implementation": [
+        "src/fabric.mjs",
+        "src/network.mjs",
+        "src/canonical.mjs",
+        "src/crypto.mjs",
+        "src/runtime-config.mjs"
+      ],
+      "tests": [
+        "RUN-005 RUN-010: local network gate requires a signed per-action configuration and rejects rollback"
+      ],
+      "test_files": [
+        "tests/runtime-hardening.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2659,10 +2940,20 @@
       "status": "PARTIAL",
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
-      "implementation": [],
-      "tests": [],
-      "test_files": [],
-      "verification_evidence": null,
+      "implementation": [
+        "src/fabric.mjs",
+        "src/network.mjs",
+        "src/canonical.mjs",
+        "src/crypto.mjs",
+        "src/runtime-config.mjs"
+      ],
+      "tests": [
+        "RUN-004 RUN-006 RUN-009: signed capability revocation is immediate, scoped and does not expose payloads"
+      ],
+      "test_files": [
+        "tests/runtime-hardening.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2680,11 +2971,13 @@
         "src/canonical.mjs",
         "src/crypto.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "RUN-007: cross-tenant capability cannot be consumed"
+      ],
       "test_files": [
         "tests/runtime-audit.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2701,13 +2994,20 @@
         "src/network.mjs",
         "src/perception.mjs",
         "src/crypto.mjs",
-        "src/canonical.mjs"
+        "src/canonical.mjs",
+        "src/fabric.mjs",
+        "src/runtime-config.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "NET-004 NET-005 NET-006 NET-010 RUN-004 RUN-008 RUN-009: rate, quarantine, revocation, exhaustion and containment counters",
+        "RUN-008 RUN-009: malformed requests and failed local services fail closed without duplicate delivery",
+        "RUN-004 RUN-008: signer revocation withdraws a local gate and cache saturation preserves existing authority"
+      ],
       "test_files": [
-        "tests/network-perception.test.mjs"
+        "tests/network-perception.test.mjs",
+        "tests/runtime-hardening.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2724,13 +3024,20 @@
         "src/network.mjs",
         "src/perception.mjs",
         "src/crypto.mjs",
-        "src/canonical.mjs"
+        "src/canonical.mjs",
+        "src/fabric.mjs",
+        "src/runtime-config.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "NET-004 NET-005 NET-006 NET-010 RUN-004 RUN-008 RUN-009: rate, quarantine, revocation, exhaustion and containment counters",
+        "RUN-004 RUN-006 RUN-009: signed capability revocation is immediate, scoped and does not expose payloads",
+        "RUN-008 RUN-009: malformed requests and failed local services fail closed without duplicate delivery"
+      ],
       "test_files": [
-        "tests/network-perception.test.mjs"
+        "tests/network-perception.test.mjs",
+        "tests/runtime-hardening.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2750,13 +3057,21 @@
         "src/runtime-config.mjs",
         "src/suites.mjs",
         "src/output.mjs",
-        "src/advisory.mjs"
+        "src/advisory.mjs",
+        "src/fabric.mjs",
+        "src/network.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "RUN-010: signed startup, tampering withdrawal, quorum reload and downgrade rejection",
+        "RUN-005 RUN-010: local network gate requires a signed per-action configuration and rejects rollback",
+        "RUN-010: runtime configuration rejection persists a version floor across a process restart",
+        "RUN-010: duplicate-key on-disk runtime configuration withdraws the gate"
+      ],
       "test_files": [
-        "tests/completion-security.test.mjs"
+        "tests/completion-security.test.mjs",
+        "tests/runtime-hardening.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2774,12 +3089,16 @@
         "src/crypto.mjs",
         "src/store.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "DAT-001 COM-009: exact data export cannot return extra columns from downstream",
+        "DAT-001: caller cannot mislabel dataset jurisdiction or sensitivity",
+        "RUN-001 DAT-001: local scoped synthetic data read enforces rows and columns"
+      ],
       "test_files": [
         "tests/extended-security.test.mjs",
         "tests/runtime-audit.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2800,12 +3119,16 @@
         "src/store.mjs",
         "src/canonical.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "DAT-002: concurrent gates cannot overspend shared rolling budget",
+        "DAT-002 DAT-009: low-and-slow extraction accumulates across newly minted capabilities",
+        "DAT-002: rolling budget recovers after bounded window expires"
+      ],
       "test_files": [
         "tests/http-concurrency-ui.test.mjs",
         "tests/runtime-audit.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2823,11 +3146,13 @@
         "src/canonical.mjs",
         "src/crypto.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "DAT-003: server-controlled sensitivity weight increases information charge"
+      ],
       "test_files": [
         "tests/runtime-audit.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2845,11 +3170,16 @@
         "src/canonical.mjs",
         "src/crypto.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "RUN-002 DAT-004: destination binding cannot be broadened",
+        "RUN-002 DAT-004: device_id binding cannot be broadened",
+        "RUN-002 DAT-004: resource binding cannot be broadened",
+        "RUN-002 DAT-004: purpose binding cannot be broadened"
+      ],
       "test_files": [
         "tests/runtime-audit.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2872,12 +3202,15 @@
         "src/advisory.mjs",
         "src/store.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "DAT-005 DAT-011: watermark is opt-in, attributed, deterministic and never mutates source data",
+        "DAT-005 POL-004: restricted export requires explicit new SHIELD proposal"
+      ],
       "test_files": [
         "tests/completion-security.test.mjs",
         "tests/runtime-audit.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2895,11 +3228,13 @@
         "src/canonical.mjs",
         "src/crypto.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "DAT-006: SQL-shaped columns and unrestricted row sets rejected"
+      ],
       "test_files": [
         "tests/runtime-audit.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2915,7 +3250,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2931,7 +3266,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2949,11 +3284,13 @@
         "src/canonical.mjs",
         "src/crypto.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "DAT-002 DAT-009: low-and-slow extraction accumulates across newly minted capabilities"
+      ],
       "test_files": [
         "tests/runtime-audit.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2969,7 +3306,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -2989,13 +3326,18 @@
         "src/runtime-config.mjs",
         "src/suites.mjs",
         "src/output.mjs",
-        "src/advisory.mjs"
+        "src/advisory.mjs",
+        "src/store.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "DAT-005 DAT-011: watermark is opt-in, attributed, deterministic and never mutates source data",
+        "DAT-011: output attribution validates source and policy without mutating protected rows"
+      ],
       "test_files": [
-        "tests/completion-security.test.mjs"
+        "tests/completion-security.test.mjs",
+        "tests/data-audit-hardening.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3009,15 +3351,20 @@
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
       "implementation": [
-        "src/store.mjs",
         "src/canonical.mjs",
-        "src/crypto.mjs"
+        "src/crypto.mjs",
+        "src/output.mjs",
+        "src/store.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "DAT-012 AUD-006: customer retention instructions cap evidence retention and preserve legal holds",
+        "DAT-012: expired evidence is held for active actions and legal hold; terminal evidence logically deleted"
+      ],
       "test_files": [
+        "tests/data-audit-hardening.test.mjs",
         "tests/runtime-audit.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3033,15 +3380,22 @@
       "implementation": [
         "src/canonical.mjs",
         "src/crypto.mjs",
-        "src/schema.mjs",
-        "src/fabric.mjs"
+        "src/suites.mjs",
+        "src/fabric.mjs",
+        "src/store.mjs",
+        "src/schema.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "IDN-001 POL-011: an initiator cannot approve their own protected action even with an eligible signing key",
+        "IDN-001 IDN-007 KEY-011: reset authenticator or revoked firmware fails protected capability issuance",
+        "IDN-001: software signature cannot satisfy hardware-required policy"
+      ],
       "test_files": [
         "tests/extended-security.test.mjs",
+        "tests/key-identity-hardening.test.mjs",
         "tests/lifecycle.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3060,11 +3414,13 @@
         "src/schema.mjs",
         "src/fabric.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "IDN-002: auditor login grants no mutation authority"
+      ],
       "test_files": [
         "tests/lifecycle.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3080,7 +3436,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3093,10 +3449,19 @@
       "status": "PARTIAL",
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
-      "implementation": [],
-      "tests": [],
-      "test_files": [],
-      "verification_evidence": null,
+      "implementation": [
+        "src/crypto.mjs",
+        "src/suites.mjs",
+        "src/fabric.mjs",
+        "src/store.mjs"
+      ],
+      "tests": [
+        "IDN-004: JIT privilege is exact-scoped, durable, and expires"
+      ],
+      "test_files": [
+        "tests/key-identity-hardening.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3109,10 +3474,19 @@
       "status": "PARTIAL",
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
-      "implementation": [],
-      "tests": [],
-      "test_files": [],
-      "verification_evidence": null,
+      "implementation": [
+        "src/crypto.mjs",
+        "src/suites.mjs",
+        "src/fabric.mjs",
+        "src/store.mjs"
+      ],
+      "tests": [
+        "IDN-005 IDN-006 IDN-010: recovery operations are separately recorded and reject weaker social recovery"
+      ],
+      "test_files": [
+        "tests/key-identity-hardening.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3125,10 +3499,19 @@
       "status": "PARTIAL",
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
-      "implementation": [],
-      "tests": [],
-      "test_files": [],
-      "verification_evidence": null,
+      "implementation": [
+        "src/crypto.mjs",
+        "src/suites.mjs",
+        "src/fabric.mjs",
+        "src/store.mjs"
+      ],
+      "tests": [
+        "IDN-005 IDN-006 IDN-010: recovery operations are separately recorded and reject weaker social recovery"
+      ],
+      "test_files": [
+        "tests/key-identity-hardening.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3141,10 +3524,19 @@
       "status": "PARTIAL",
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
-      "implementation": [],
-      "tests": [],
-      "test_files": [],
-      "verification_evidence": null,
+      "implementation": [
+        "src/crypto.mjs",
+        "src/suites.mjs",
+        "src/fabric.mjs",
+        "src/store.mjs"
+      ],
+      "tests": [
+        "IDN-001 IDN-007 KEY-011: reset authenticator or revoked firmware fails protected capability issuance"
+      ],
+      "test_files": [
+        "tests/key-identity-hardening.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3162,11 +3554,13 @@
         "src/canonical.mjs",
         "src/crypto.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "RUN-004 IDN-008: device quarantine rejects issued capability immediately"
+      ],
       "test_files": [
         "tests/runtime-audit.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3182,7 +3576,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3195,10 +3589,19 @@
       "status": "PARTIAL",
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
-      "implementation": [],
-      "tests": [],
-      "test_files": [],
-      "verification_evidence": null,
+      "implementation": [
+        "src/crypto.mjs",
+        "src/suites.mjs",
+        "src/fabric.mjs",
+        "src/store.mjs"
+      ],
+      "tests": [
+        "IDN-005 IDN-006 IDN-010: recovery operations are separately recorded and reject weaker social recovery"
+      ],
+      "test_files": [
+        "tests/key-identity-hardening.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3217,11 +3620,13 @@
         "src/crypto.mjs",
         "src/canonical.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "NET-001 NET-002 NET-003 NET-007 NET-009 RUN-001: local process dispatch requires exact tenant/device/service capability, even offline"
+      ],
       "test_files": [
         "tests/network-perception.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3240,11 +3645,13 @@
         "src/crypto.mjs",
         "src/canonical.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "NET-001 NET-002 NET-003 NET-007 NET-009 RUN-001: local process dispatch requires exact tenant/device/service capability, even offline"
+      ],
       "test_files": [
         "tests/network-perception.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3264,12 +3671,15 @@
         "src/canonical.mjs",
         "src/store.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "NET-001 NET-002 NET-003 NET-007 NET-009 RUN-001: local process dispatch requires exact tenant/device/service capability, even offline",
+        "NET-003 NET-004: local service envelope rejects other port and excess request rate"
+      ],
       "test_files": [
         "tests/network-perception.test.mjs",
         "tests/runtime-audit.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3289,12 +3699,15 @@
         "src/canonical.mjs",
         "src/store.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "NET-004 NET-005 NET-006 NET-010 RUN-004 RUN-008 RUN-009: rate, quarantine, revocation, exhaustion and containment counters",
+        "NET-003 NET-004: local service envelope rejects other port and excess request rate"
+      ],
       "test_files": [
         "tests/network-perception.test.mjs",
         "tests/runtime-audit.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3313,11 +3726,13 @@
         "src/crypto.mjs",
         "src/canonical.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "NET-004 NET-005 NET-006 NET-010 RUN-004 RUN-008 RUN-009: rate, quarantine, revocation, exhaustion and containment counters"
+      ],
       "test_files": [
         "tests/network-perception.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3336,11 +3751,13 @@
         "src/crypto.mjs",
         "src/canonical.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "NET-004 NET-005 NET-006 NET-010 RUN-004 RUN-008 RUN-009: rate, quarantine, revocation, exhaustion and containment counters"
+      ],
       "test_files": [
         "tests/network-perception.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3359,11 +3776,13 @@
         "src/crypto.mjs",
         "src/canonical.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "NET-001 NET-002 NET-003 NET-007 NET-009 RUN-001: local process dispatch requires exact tenant/device/service capability, even offline"
+      ],
       "test_files": [
         "tests/network-perception.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3379,7 +3798,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3398,11 +3817,13 @@
         "src/crypto.mjs",
         "src/canonical.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "NET-001 NET-002 NET-003 NET-007 NET-009 RUN-001: local process dispatch requires exact tenant/device/service capability, even offline"
+      ],
       "test_files": [
         "tests/network-perception.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3421,11 +3842,13 @@
         "src/crypto.mjs",
         "src/canonical.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "NET-004 NET-005 NET-006 NET-010 RUN-004 RUN-008 RUN-009: rate, quarantine, revocation, exhaustion and containment counters"
+      ],
       "test_files": [
         "tests/network-perception.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3444,11 +3867,13 @@
         "src/crypto.mjs",
         "src/canonical.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "PER-001 PER-003 PER-006 PER-007 PER-009 PER-010: software transport contract encrypts only allowed fields and never claims hardware assurance"
+      ],
       "test_files": [
         "tests/network-perception.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3464,7 +3889,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3483,11 +3908,13 @@
         "src/crypto.mjs",
         "src/canonical.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "PER-001 PER-003 PER-006 PER-007 PER-009 PER-010: software transport contract encrypts only allowed fields and never claims hardware assurance"
+      ],
       "test_files": [
         "tests/network-perception.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3503,7 +3930,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3519,7 +3946,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3538,11 +3965,13 @@
         "src/crypto.mjs",
         "src/canonical.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "PER-001 PER-003 PER-006 PER-007 PER-009 PER-010: software transport contract encrypts only allowed fields and never claims hardware assurance"
+      ],
       "test_files": [
         "tests/network-perception.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3564,12 +3993,15 @@
         "src/perception.mjs",
         "src/canonical.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "PER-007 PER-009: Secure Perception remains explicitly unavailable and fails closed",
+        "PER-001 PER-003 PER-006 PER-007 PER-009 PER-010: software transport contract encrypts only allowed fields and never claims hardware assurance"
+      ],
       "test_files": [
         "tests/http-concurrency-ui.test.mjs",
         "tests/network-perception.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3585,7 +4017,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3607,12 +4039,15 @@
         "src/perception.mjs",
         "src/canonical.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "PER-007 PER-009: Secure Perception remains explicitly unavailable and fails closed",
+        "PER-001 PER-003 PER-006 PER-007 PER-009 PER-010: software transport contract encrypts only allowed fields and never claims hardware assurance"
+      ],
       "test_files": [
         "tests/http-concurrency-ui.test.mjs",
         "tests/network-perception.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3631,11 +4066,13 @@
         "src/crypto.mjs",
         "src/canonical.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "PER-001 PER-003 PER-006 PER-007 PER-009 PER-010: software transport contract encrypts only allowed fields and never claims hardware assurance"
+      ],
       "test_files": [
         "tests/network-perception.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3648,10 +4085,19 @@
       "status": "PARTIAL",
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
-      "implementation": [],
-      "tests": [],
-      "test_files": [],
-      "verification_evidence": null,
+      "implementation": [
+        "src/crypto.mjs",
+        "src/suites.mjs",
+        "src/fabric.mjs",
+        "src/store.mjs"
+      ],
+      "tests": [
+        "KEY-001 KEY-002 KEY-003 KEY-009: recovery survives restart and requires three independent custodians plus delay"
+      ],
+      "test_files": [
+        "tests/key-identity-hardening.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3664,10 +4110,19 @@
       "status": "PARTIAL",
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
-      "implementation": [],
-      "tests": [],
-      "test_files": [],
-      "verification_evidence": null,
+      "implementation": [
+        "src/crypto.mjs",
+        "src/suites.mjs",
+        "src/fabric.mjs",
+        "src/store.mjs"
+      ],
+      "tests": [
+        "KEY-001 KEY-002 KEY-003 KEY-009: recovery survives restart and requires three independent custodians plus delay"
+      ],
+      "test_files": [
+        "tests/key-identity-hardening.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3680,10 +4135,19 @@
       "status": "PARTIAL",
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
-      "implementation": [],
-      "tests": [],
-      "test_files": [],
-      "verification_evidence": null,
+      "implementation": [
+        "src/crypto.mjs",
+        "src/suites.mjs",
+        "src/fabric.mjs",
+        "src/store.mjs"
+      ],
+      "tests": [
+        "KEY-001 KEY-002 KEY-003 KEY-009: recovery survives restart and requires three independent custodians plus delay"
+      ],
+      "test_files": [
+        "tests/key-identity-hardening.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3696,10 +4160,19 @@
       "status": "PARTIAL",
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
-      "implementation": [],
-      "tests": [],
-      "test_files": [],
-      "verification_evidence": null,
+      "implementation": [
+        "src/crypto.mjs",
+        "src/suites.mjs",
+        "src/fabric.mjs",
+        "src/store.mjs"
+      ],
+      "tests": [
+        "KEY-004 KEY-005 KEY-007 KEY-008 KEY-010 KEY-012: threshold key rotation preserves audit verification and prevents suite downgrade"
+      ],
+      "test_files": [
+        "tests/key-identity-hardening.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3719,13 +4192,20 @@
         "src/runtime-config.mjs",
         "src/suites.mjs",
         "src/output.mjs",
-        "src/advisory.mjs"
+        "src/advisory.mjs",
+        "src/fabric.mjs",
+        "src/store.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "KEY-005 KEY-006: algorithm migration preserves historical signatures and binds suite",
+        "KEY-004 KEY-005 KEY-007 KEY-008 KEY-010 KEY-012: threshold key rotation preserves audit verification and prevents suite downgrade",
+        "KEY-005 KEY-008: same-suite renewal and multiple rotation restart restore the newest public key"
+      ],
       "test_files": [
-        "tests/completion-security.test.mjs"
+        "tests/completion-security.test.mjs",
+        "tests/key-identity-hardening.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3747,11 +4227,13 @@
         "src/output.mjs",
         "src/advisory.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "KEY-005 KEY-006: algorithm migration preserves historical signatures and binds suite"
+      ],
       "test_files": [
         "tests/completion-security.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3766,13 +4248,20 @@
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
       "implementation": [
         "src/canonical.mjs",
-        "src/crypto.mjs"
+        "src/crypto.mjs",
+        "src/suites.mjs",
+        "src/fabric.mjs",
+        "src/store.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "COM-002 KEY-007: Ed25519 domain-separated signatures reject every altered field",
+        "KEY-004 KEY-005 KEY-007 KEY-008 KEY-010 KEY-012: threshold key rotation preserves audit verification and prevents suite downgrade"
+      ],
       "test_files": [
-        "tests/canonical.test.mjs"
+        "tests/canonical.test.mjs",
+        "tests/key-identity-hardening.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3785,10 +4274,20 @@
       "status": "PARTIAL",
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
-      "implementation": [],
-      "tests": [],
-      "test_files": [],
-      "verification_evidence": null,
+      "implementation": [
+        "src/crypto.mjs",
+        "src/suites.mjs",
+        "src/fabric.mjs",
+        "src/store.mjs"
+      ],
+      "tests": [
+        "KEY-004 KEY-005 KEY-007 KEY-008 KEY-010 KEY-012: threshold key rotation preserves audit verification and prevents suite downgrade",
+        "KEY-005 KEY-008: same-suite renewal and multiple rotation restart restore the newest public key"
+      ],
+      "test_files": [
+        "tests/key-identity-hardening.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3801,10 +4300,19 @@
       "status": "PARTIAL",
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
-      "implementation": [],
-      "tests": [],
-      "test_files": [],
-      "verification_evidence": null,
+      "implementation": [
+        "src/crypto.mjs",
+        "src/suites.mjs",
+        "src/fabric.mjs",
+        "src/store.mjs"
+      ],
+      "tests": [
+        "KEY-001 KEY-002 KEY-003 KEY-009: recovery survives restart and requires three independent custodians plus delay"
+      ],
+      "test_files": [
+        "tests/key-identity-hardening.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3819,13 +4327,20 @@
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
       "implementation": [
         "src/canonical.mjs",
-        "src/crypto.mjs"
+        "src/crypto.mjs",
+        "src/suites.mjs",
+        "src/fabric.mjs",
+        "src/store.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "KEY-010 NFR-MNT-002: independent verifiers reject signed-log tampering and duplicate JSON keys",
+        "KEY-004 KEY-005 KEY-007 KEY-008 KEY-010 KEY-012: threshold key rotation preserves audit verification and prevents suite downgrade"
+      ],
       "test_files": [
-        "tests/extended-security.test.mjs"
+        "tests/extended-security.test.mjs",
+        "tests/key-identity-hardening.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3838,10 +4353,19 @@
       "status": "PARTIAL",
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
-      "implementation": [],
-      "tests": [],
-      "test_files": [],
-      "verification_evidence": null,
+      "implementation": [
+        "src/crypto.mjs",
+        "src/suites.mjs",
+        "src/fabric.mjs",
+        "src/store.mjs"
+      ],
+      "tests": [
+        "IDN-001 IDN-007 KEY-011: reset authenticator or revoked firmware fails protected capability issuance"
+      ],
+      "test_files": [
+        "tests/key-identity-hardening.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3854,10 +4378,19 @@
       "status": "PARTIAL",
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
-      "implementation": [],
-      "tests": [],
-      "test_files": [],
-      "verification_evidence": null,
+      "implementation": [
+        "src/crypto.mjs",
+        "src/suites.mjs",
+        "src/fabric.mjs",
+        "src/store.mjs"
+      ],
+      "tests": [
+        "KEY-004 KEY-005 KEY-007 KEY-008 KEY-010 KEY-012: threshold key rotation preserves audit verification and prevents suite downgrade"
+      ],
+      "test_files": [
+        "tests/key-identity-hardening.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3875,11 +4408,14 @@
         "src/canonical.mjs",
         "src/crypto.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "AUD-001 AUD-005: export verifies with pinned root and rejects edit, reorder, removal and wrong root",
+        "AUD-001: append-only triggers reject SQL update and deletion"
+      ],
       "test_files": [
         "tests/runtime-audit.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3895,7 +4431,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3914,12 +4450,15 @@
         "src/schema.mjs",
         "src/fabric.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "AUD-003: AES-GCM binds ciphertext to tenant, record id and key",
+        "AUD-003 CON-003: stored sensitive fields never appear as plaintext in database/WAL"
+      ],
       "test_files": [
         "tests/canonical.test.mjs",
         "tests/lifecycle.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3938,11 +4477,13 @@
         "src/schema.mjs",
         "src/fabric.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "AUD-004: persisted clock regression halts security mutation"
+      ],
       "test_files": [
         "tests/lifecycle.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3956,15 +4497,20 @@
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
       "implementation": [
-        "src/store.mjs",
         "src/canonical.mjs",
-        "src/crypto.mjs"
+        "src/crypto.mjs",
+        "src/output.mjs",
+        "src/store.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "AUD-005 AUD-008 AUD-010: exports need pinned trust and projections exclude unassigned roles",
+        "AUD-001 AUD-005: export verifies with pinned root and rejects edit, reorder, removal and wrong root"
+      ],
       "test_files": [
+        "tests/data-audit-hardening.test.mjs",
         "tests/runtime-audit.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3977,10 +4523,19 @@
       "status": "PARTIAL",
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
-      "implementation": [],
-      "tests": [],
-      "test_files": [],
-      "verification_evidence": null,
+      "implementation": [
+        "src/canonical.mjs",
+        "src/crypto.mjs",
+        "src/output.mjs",
+        "src/store.mjs"
+      ],
+      "tests": [
+        "DAT-012 AUD-006: customer retention instructions cap evidence retention and preserve legal holds"
+      ],
+      "test_files": [
+        "tests/data-audit-hardening.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -3998,11 +4553,13 @@
         "src/canonical.mjs",
         "src/crypto.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "AUD-007: audit export access is itself recorded"
+      ],
       "test_files": [
         "tests/runtime-audit.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4016,15 +4573,20 @@
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
       "implementation": [
-        "src/store.mjs",
         "src/canonical.mjs",
-        "src/crypto.mjs"
+        "src/crypto.mjs",
+        "src/output.mjs",
+        "src/store.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "AUD-005 AUD-008 AUD-010: exports need pinned trust and projections exclude unassigned roles",
+        "AUD-008: externally pinned prior checkpoint detects a fork and truncation"
+      ],
       "test_files": [
+        "tests/data-audit-hardening.test.mjs",
         "tests/runtime-audit.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4040,7 +4602,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4060,13 +4622,20 @@
         "src/runtime-config.mjs",
         "src/suites.mjs",
         "src/output.mjs",
-        "src/advisory.mjs"
+        "src/advisory.mjs",
+        "src/store.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "AUD-010 UX-010: UI audit choices never widen role-specific server permissions",
+        "AUD-010: role projections reject cross-role/tenant access and never expose full source envelopes",
+        "AUD-005 AUD-008 AUD-010: exports need pinned trust and projections exclude unassigned roles"
+      ],
       "test_files": [
-        "tests/completion-security.test.mjs"
+        "tests/audit-ui.test.mjs",
+        "tests/completion-security.test.mjs",
+        "tests/data-audit-hardening.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4082,7 +4651,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4098,7 +4667,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4120,11 +4689,13 @@
         "src/output.mjs",
         "src/advisory.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "AIG-003 AIG-004 AIG-007: advisory extraction preserves spans/context and enforces narrow source, tenant and output authority"
+      ],
       "test_files": [
         "tests/completion-security.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4146,11 +4717,13 @@
         "src/output.mjs",
         "src/advisory.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "AIG-003 AIG-004 AIG-007: advisory extraction preserves spans/context and enforces narrow source, tenant and output authority"
+      ],
       "test_files": [
         "tests/completion-security.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4166,7 +4739,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4185,12 +4758,15 @@
         "src/schema.mjs",
         "src/fabric.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "AIG-006: source prose cannot override typed policy fields",
+        "EVD-005 AIG-006: email/advisory evidence cannot confer authority"
+      ],
       "test_files": [
         "tests/extended-security.test.mjs",
         "tests/lifecycle.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4212,11 +4788,13 @@
         "src/output.mjs",
         "src/advisory.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "AIG-003 AIG-004 AIG-007: advisory extraction preserves spans/context and enforces narrow source, tenant and output authority"
+      ],
       "test_files": [
         "tests/completion-security.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4232,7 +4810,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4248,7 +4826,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4270,11 +4848,15 @@
         "src/output.mjs",
         "src/advisory.mjs"
       ],
-      "tests": [],
-      "test_files": [
-        "tests/completion-security.test.mjs"
+      "tests": [
+        "AIG-010: versioned adversarial regression prevents provider promotion",
+        "AIG-010: only the configured local model can pass a complete versioned promotion report"
       ],
-      "verification_evidence": null,
+      "test_files": [
+        "tests/completion-security.test.mjs",
+        "tests/coverage-advisory-hardening.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4290,7 +4872,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4306,7 +4888,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4325,11 +4907,13 @@
         "src/schema.mjs",
         "src/fabric.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "AUD-003 CON-003: stored sensitive fields never appear as plaintext in database/WAL"
+      ],
       "test_files": [
         "tests/lifecycle.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4348,12 +4932,16 @@
         "src/schema.mjs",
         "src/fabric.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "CON-004 COM-012: missing data-output fields return UNCERTAIN rather than an exception after dispatch",
+        "CON-004 COM-009: malformed-response cannot produce false success",
+        "CON-004 COM-009: altered-response cannot produce false success"
+      ],
       "test_files": [
         "tests/extended-security.test.mjs",
         "tests/lifecycle.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4369,7 +4957,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4391,11 +4979,16 @@
         "src/output.mjs",
         "src/advisory.mjs"
       ],
-      "tests": [],
-      "test_files": [
-        "tests/completion-security.test.mjs"
+      "tests": [
+        "CON-006 NFR-MNT-005: lifecycle forbids EOL use and silent downgrade and preserves migration instructions",
+        "COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle",
+        "COV-003 COV-010 CON-006: bypass evidence is exact and connector downgrades fail closed"
       ],
-      "verification_evidence": null,
+      "test_files": [
+        "tests/completion-security.test.mjs",
+        "tests/coverage-advisory-hardening.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4411,7 +5004,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4427,7 +5020,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4443,7 +5036,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4459,7 +5052,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4475,7 +5068,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4495,12 +5088,15 @@
         "src/bootstrap.mjs",
         "src/schema.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "ACT-007 UX-002: unsupported or ambiguous currency scales fail rather than render a false amount",
+        "UX-002 UX-003: UI state logic exposes no generic approval or executable non-ALLOW state"
+      ],
       "test_files": [
         "tests/extended-security.test.mjs",
         "tests/http-concurrency-ui.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4519,11 +5115,13 @@
         "src/crypto.mjs",
         "src/schema.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "UX-002 UX-003: UI state logic exposes no generic approval or executable non-ALLOW state"
+      ],
       "test_files": [
         "tests/http-concurrency-ui.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4539,7 +5137,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4555,7 +5153,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4577,11 +5175,14 @@
         "src/output.mjs",
         "src/advisory.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "ACT-012 UX-006: exact batch signatures execute each child once and never manufacture child authority",
+        "UX-006: hidden additions and changed child evidence invalidate every batch approval"
+      ],
       "test_files": [
         "tests/completion-security.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4600,11 +5201,13 @@
         "src/crypto.mjs",
         "src/schema.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "UX-007: static interface labels all named inputs and uses no unsafe DOM injection sink"
+      ],
       "test_files": [
         "tests/http-concurrency-ui.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4622,11 +5225,13 @@
         "src/canonical.mjs",
         "src/crypto.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "POL-010 UX-008: policy simulation records diff without activating candidate"
+      ],
       "test_files": [
         "tests/runtime-audit.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4642,7 +5247,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4655,10 +5260,18 @@
       "status": "PARTIAL",
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
-      "implementation": [],
-      "tests": [],
-      "test_files": [],
-      "verification_evidence": null,
+      "implementation": [
+        "src/server.mjs"
+      ],
+      "tests": [
+        "AUD-010 UX-010: UI audit choices never widen role-specific server permissions",
+        "NFR-SEC-005 UX-010: preview permits only configured hosts and origin-bound secure sessions"
+      ],
+      "test_files": [
+        "tests/audit-ui.test.mjs",
+        "tests/preview-origin.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4671,10 +5284,16 @@
       "status": "PARTIAL",
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
-      "implementation": [],
-      "tests": [],
-      "test_files": [],
-      "verification_evidence": null,
+      "implementation": [
+        "src/server.mjs"
+      ],
+      "tests": [
+        "NFR-SEC-001 NFR-PERF-005: aborted and oversized clients cannot crash the HTTP gate"
+      ],
+      "test_files": [
+        "tests/transport-abort.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4690,7 +5309,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4706,7 +5325,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4725,11 +5344,13 @@
         "src/crypto.mjs",
         "src/schema.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "NFR-SEC-004: bootstrap creates random credentials, private files and refuses overwrite"
+      ],
       "test_files": [
         "tests/http-concurrency-ui.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4746,13 +5367,18 @@
         "src/canonical.mjs",
         "src/crypto.mjs",
         "src/schema.mjs",
-        "src/fabric.mjs"
+        "src/fabric.mjs",
+        "src/server.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "NFR-SEC-005: cross-tenant read and execution rejected",
+        "NFR-SEC-005 UX-010: preview permits only configured hosts and origin-bound secure sessions"
+      ],
       "test_files": [
-        "tests/lifecycle.test.mjs"
+        "tests/lifecycle.test.mjs",
+        "tests/preview-origin.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4768,7 +5394,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4784,7 +5410,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4800,7 +5426,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4816,7 +5442,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4832,7 +5458,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4848,7 +5474,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4864,7 +5490,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4877,10 +5503,16 @@
       "status": "PARTIAL",
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
-      "implementation": [],
-      "tests": [],
-      "test_files": [],
-      "verification_evidence": null,
+      "implementation": [
+        "src/server.mjs"
+      ],
+      "tests": [
+        "NFR-SEC-001 NFR-PERF-005: aborted and oversized clients cannot crash the HTTP gate"
+      ],
+      "test_files": [
+        "tests/transport-abort.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4896,7 +5528,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4912,7 +5544,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4928,7 +5560,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4944,7 +5576,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4960,7 +5592,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4976,7 +5608,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -4992,7 +5624,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5008,7 +5640,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5024,7 +5656,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5040,7 +5672,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5056,7 +5688,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5072,7 +5704,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5085,10 +5717,17 @@
       "status": "PARTIAL",
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
-      "implementation": [],
-      "tests": [],
-      "test_files": [],
-      "verification_evidence": null,
+      "implementation": [
+        "src/crypto.mjs",
+        "src/canonical.mjs"
+      ],
+      "tests": [
+        "NFR-OPS-003 NFR-OPS-004: high-severity alerts enforce owner acknowledgement and incidents cannot skip recovery stages"
+      ],
+      "test_files": [
+        "tests/governance-hardening.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5101,10 +5740,17 @@
       "status": "PARTIAL",
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
-      "implementation": [],
-      "tests": [],
-      "test_files": [],
-      "verification_evidence": null,
+      "implementation": [
+        "src/crypto.mjs",
+        "src/canonical.mjs"
+      ],
+      "tests": [
+        "NFR-OPS-003 NFR-OPS-004: high-severity alerts enforce owner acknowledgement and incidents cannot skip recovery stages"
+      ],
+      "test_files": [
+        "tests/governance-hardening.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5117,10 +5763,17 @@
       "status": "PARTIAL",
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
-      "implementation": [],
-      "tests": [],
-      "test_files": [],
-      "verification_evidence": null,
+      "implementation": [
+        "src/crypto.mjs",
+        "src/canonical.mjs"
+      ],
+      "tests": [
+        "NFR-OPS-005: deployment must progress staging to canary to production and rollback retains current policy/key integrity"
+      ],
+      "test_files": [
+        "tests/governance-hardening.test.mjs"
+      ],
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5136,7 +5789,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5153,11 +5806,13 @@
         "src/canonical.mjs",
         "src/crypto.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "KEY-010 NFR-MNT-002: independent verifiers reject signed-log tampering and duplicate JSON keys"
+      ],
       "test_files": [
         "tests/extended-security.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5173,7 +5828,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5189,7 +5844,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5211,11 +5866,13 @@
         "src/output.mjs",
         "src/advisory.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "CON-006 NFR-MNT-005: lifecycle forbids EOL use and silent downgrade and preserves migration instructions"
+      ],
       "test_files": [
         "tests/completion-security.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5231,7 +5888,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5247,7 +5904,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5263,7 +5920,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5279,7 +5936,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5295,7 +5952,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5311,7 +5968,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5327,7 +5984,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5343,7 +6000,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5357,11 +6014,15 @@
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
       "implementation": [],
-      "tests": [],
+      "tests": [
+        "NFR-TST-001 TRACE-001: ledger enumerates the SRS, not historical completion arrays",
+        "NFR-TST-001: missing, stale, failed and merely ID-named evidence never closes a requirement",
+        "NFR-TST-001: execution parser preserves failures and rejects skipped tests as proof"
+      ],
       "test_files": [
         "tests/completion-evidence.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5380,11 +6041,13 @@
         "src/crypto.mjs",
         "src/schema.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "COM-003 NFR-TST-002: eight independent gate workers race; exactly one certificate is consumed"
+      ],
       "test_files": [
         "tests/http-concurrency-ui.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5400,7 +6063,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5416,7 +6079,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5432,7 +6095,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5448,7 +6111,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5464,7 +6127,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5480,7 +6143,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5496,7 +6159,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5512,7 +6175,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5528,7 +6191,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5544,7 +6207,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5560,7 +6223,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5576,7 +6239,7 @@
       "implementation": [],
       "tests": [],
       "test_files": [],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     },
@@ -5590,11 +6253,13 @@
       "blocker_reason": null,
       "remaining_work": "Review full implementation and acceptance criteria; test-name references alone do not establish closure.",
       "implementation": [],
-      "tests": [],
+      "tests": [
+        "NFR-TST-001 TRACE-001: ledger enumerates the SRS, not historical completion arrays"
+      ],
       "test_files": [
         "tests/completion-evidence.test.mjs"
       ],
-      "verification_evidence": null,
+      "verification_evidence": "reports/completion-tests.json",
       "owner": "Principal engineering review pending",
       "release_baseline": "Full SRS closure"
     }
