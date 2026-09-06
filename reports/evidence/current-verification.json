@@ -1,5 +1,5 @@
 {
-  "source_revision": "c61e6f73d405d6f47d101c390d04105fe2369f71",
+  "source_revision": "c8335177def68c83dbf0e2846f722233391bf721",
   "source_hashes": {
     "src/advisory.mjs": "0c32f6a215b88bd982937355bb4366ab65028789f4bd35fab4929bc3c9146b32",
     "src/audit-views.mjs": "f9acd573a8eead6087ef0eb4c601cd04d9c4a446810ed80946bc7fda665ef63a",
@@ -103,7 +103,7 @@
       ],
       "exit_code": 0,
       "result_file": "reports/evidence/current-tests.xml",
-      "sha256": "37b4183c582a5c8e701a68c0e91714f55e2682e2a0e910e5f6ebec3bf804118c"
+      "sha256": "b06c7c861872eb3bd36a4970a559cd13fd56e7096a7307a93b055ee301c03ea9"
     },
     {
       "command": [
