@@ -1,5 +1,5 @@
 {
-  "source_revision": "d334e58e466c76ce3f28aa6a803b2f20d8bb64aa",
+  "source_revision": "c61e6f73d405d6f47d101c390d04105fe2369f71",
   "source_hashes": {
     "src/advisory.mjs": "0c32f6a215b88bd982937355bb4366ab65028789f4bd35fab4929bc3c9146b32",
     "src/audit-views.mjs": "f9acd573a8eead6087ef0eb4c601cd04d9c4a446810ed80946bc7fda665ef63a",
@@ -23,7 +23,7 @@
     "src/runtime-config.mjs": "49db2c0ea6697995ebb9551c834ce62cefb3e209a2cd24d8e9bee93471c44373",
     "src/runtime.mjs": "589b472a7723c2a1e687e57d8693d8d4224ffeea76656122448cdad9bee695d1",
     "src/schema.mjs": "8146fde23cb97306be93768a8845de6bff801fc24fb467c9c9c63252597087b1",
-    "src/server.mjs": "20e7cb39203fd8f0ced0e68d62f8caa28254beec1b249cca70613a3c84149cad",
+    "src/server.mjs": "8ca825dd8def2271ea74ab532e8a97764c4edf14eaa8c4884144a5786266359f",
     "src/store.mjs": "dedd6be74eb6925b59991b298dfb2e3dcb1f628474f32cb7da4bb036fe101bc2",
     "src/suites.mjs": "3db3b5456a60b9813e99e26f007751c0ba9b6fbcfb5d0820299eec62812f3a34",
     "src/target.mjs": "7b2dad331d6db4a24d752e83649f0a8d09afe39748ce4e8a10e614c09a381040",
@@ -31,6 +31,7 @@
     "web/index.html": "569277b413e3b6fa58b9c2d687672c94e501b12d7be9d1100eae7046918c5779",
     "web/style.css": "38c561cd85c404dc9625f93c6216379777ea2ded8b0984ae27069ae2c35e67db",
     "web/workspace.html": "a4e4b8ef6362086a8dcbe65180e952f8bae19a131781116d10415e4807c14001",
+    "tests/api-contract.test.mjs": "814a7d7bf310c757333490850c72956364176f2b2d6cd1e39c70a86d981d320f",
     "tests/atomic-batch.test.mjs": "4c037a0513fdd0376e4494daa5f1e6f23fdc78368d076f64bd5b3b7596de67e9",
     "tests/canonical.test.mjs": "1caae6ca6c72c66ea363fc89b42a4d3de8e2f0f990f673aabebb50c63eae6bcb",
     "tests/completion-security.test.mjs": "0439d65482591c45546e77d06d085e332f9ea321c1f1fd1529e6782532c5bc4e",
@@ -55,8 +56,8 @@
     "scripts/canonical-vectors.py": "bf9b7e46ec4f206c18a0140fb318a923c4b736d1284d9f082023977bbb22a340",
     "scripts/check.mjs": "a394a08c1681e1dfb64edd1efa658a235a93fa4e83142fe09414c479c6fee5c4",
     "scripts/completion-ledger.py": "bfa4c41e4545340e996ca78f3ca7545a809962924dc42d33ff8e419c6449230d",
-    "scripts/generate-contracts.mjs": "ee39773542f4f4b1caa3a174bac07f1254238c4ff6e31b3055cd68f08b971c03",
-    "scripts/record-verification.py": "b1b308b426a3f06bb2144079419913de027b610578ba9d7fff86ea131f4bb843",
+    "scripts/generate-contracts.mjs": "75807649c854b6484b6d98472030ef1eabf166849749bcc04fa24256ebb69513",
+    "scripts/record-verification.py": "14f04b338a0126c9cda664bae86c6dce46590f9f8617f1377fd96ffd641ec15e",
     "scripts/release-check.mjs": "68f6020cd3320124e207896127bc8357c1bcdc232aafca8785675571f84d96a2",
     "scripts/simulate.mjs": "c60b015a295dbb41126a5f366217cbffa79159538cf083798105a4237e96b423",
     "scripts/start-local.sh": "b34a9783ae12685e77567448e3ec8c01217c52334f42c7ba0b4b87831ebdab97",
@@ -73,7 +74,7 @@
       ],
       "exit_code": 0,
       "result_file": "reports/evidence/source-check.txt",
-      "sha256": "e86fd99144a5129da113083f67683e2ac982526de8dbcfd4050272a321484872"
+      "sha256": "454ce9f3f2f9f76c0eb39868fde030cb051c2f2b3b4ca4c955e66d9d27d19e75"
     },
     {
       "command": [
@@ -81,6 +82,7 @@
         "--test",
         "--test-concurrency=1",
         "--test-reporter=junit",
+        "tests/api-contract.test.mjs",
         "tests/atomic-batch.test.mjs",
         "tests/canonical.test.mjs",
         "tests/completion-security.test.mjs",
@@ -101,7 +103,7 @@
       ],
       "exit_code": 0,
       "result_file": "reports/evidence/current-tests.xml",
-      "sha256": "66220b3a70cf0ca5a1e148740b78b425a2f7537a115a80f9d0f81bd346af7dac"
+      "sha256": "37b4183c582a5c8e701a68c0e91714f55e2682e2a0e910e5f6ebec3bf804118c"
     },
     {
       "command": [
@@ -114,7 +116,7 @@
       "sha256": "4b6d1b4757f0770b7cbe90b5d1c5560be4fc2911b56383c6c248c79121c56208"
     }
   ],
-  "passed": 136,
+  "passed": 138,
   "failed": 0,
   "failing_tests": [],
   "skipped": 0,

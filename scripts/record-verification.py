@@ -15,7 +15,7 @@ for cmd,file in commands:
 xml=ROOT/'reports/evidence/current-tests.xml';cases=ET.parse(xml).findall('.//testcase') if xml.exists() else []
 passed={c.attrib['name'] for c in cases if c.find('failure') is None and c.find('error') is None and c.find('skipped') is None}
 failed=[c.attrib['name'] for c in cases if c.find('failure') is not None or c.find('error') is not None]
-state={'source_revision':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),'source_hashes':inputs,'checks':results,'passed':len(passed),'failed':len(failed),'failing_tests':failed,'skipped':sum(c.find('skipped') is not None for c in cases),'pass':all(r['exit_code']==0 for r in results) and bool(cases)}
+state={'source_revision':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),'source_hashes':inputs,'checks':results,'passed':len(passed),'failed':len(failed),'failing_tests':failed,'skipped':sum(c.find('skipped') is not None for c in cases),'pass':all(r['exit_code']==0 for r in results) and bool(cases) and not any(c.find('skipped') is not None for c in cases)}
 (ROOT/'reports/evidence/current-verification.json').write_text(json.dumps(state,indent=2)+'\n')
 proof_file=ROOT/'reports/requirement-evidence.json';proof=json.loads(proof_file.read_text())
 if state['pass']:

@@ -1,147 +1,149 @@
 <?xml version="1.0" encoding="utf-8"?>
 <testsuites>
-	<testcase name="ACT-012 COM-005 UX-006: atomic batch commits every exact child and rejects replay, missing or reversed authority" time="0.127096" classname="test" file="/tmp/antivi-fishing/tests/atomic-batch.test.mjs"/>
-	<testcase name="COM-005 COM-012 ACT-012: atomic child-1 preserves all-or-none state and durable replay protection" time="0.109551" classname="test" file="/tmp/antivi-fishing/tests/atomic-batch.test.mjs"/>
-	<testcase name="COM-005 COM-012 ACT-012: atomic before-commit preserves all-or-none state and durable replay protection" time="0.102659" classname="test" file="/tmp/antivi-fishing/tests/atomic-batch.test.mjs"/>
-	<testcase name="COM-005 COM-012 ACT-012: atomic after-commit preserves all-or-none state and durable replay protection" time="0.102521" classname="test" file="/tmp/antivi-fishing/tests/atomic-batch.test.mjs"/>
-	<testcase name="COM-005 COM-012 ACT-012: atomic process-crash preserves all-or-none state and durable replay protection" time="0.095901" classname="test" file="/tmp/antivi-fishing/tests/atomic-batch.test.mjs"/>
-	<testcase name="COM-005 COM-004 ACT-012: stale last child rolls back all reservations, not just target writes" time="0.080913" classname="test" file="/tmp/antivi-fishing/tests/atomic-batch.test.mjs"/>
-	<testcase name="COM-005 NFR-SEC-005: another tenant cannot execute or reconcile a batch" time="0.089749" classname="test" file="/tmp/antivi-fishing/tests/atomic-batch.test.mjs"/>
-	<testcase name="ACT-001 ACT-003: stable field order and exact material binding" time="0.001532" classname="test" file="/tmp/antivi-fishing/tests/canonical.test.mjs"/>
-	<testcase name="ACT-007: ambiguous encodings and unknown types rejected" time="0.000545" classname="test" file="/tmp/antivi-fishing/tests/canonical.test.mjs"/>
-	<testcase name="ACT-003: strict parser rejects duplicate keys, trailing values and prototype keys" time="0.000756" classname="test" file="/tmp/antivi-fishing/tests/canonical.test.mjs"/>
-	<testcase name="ACT-003: 2000 deterministic canonical round trips with integer and Unicode vectors" time="0.057068" classname="test" file="/tmp/antivi-fishing/tests/canonical.test.mjs"/>
-	<testcase name="ACT-007: oversized nesting and bodies rejected" time="0.001057" classname="test" file="/tmp/antivi-fishing/tests/canonical.test.mjs"/>
-	<testcase name="COM-002 KEY-007: Ed25519 domain-separated signatures reject every altered field" time="0.005089" classname="test" file="/tmp/antivi-fishing/tests/canonical.test.mjs"/>
-	<testcase name="AUD-003: AES-GCM binds ciphertext to tenant, record id and key" time="0.001156" classname="test" file="/tmp/antivi-fishing/tests/canonical.test.mjs"/>
-	<testcase name="KEY-005 KEY-006: algorithm migration preserves historical signatures and binds suite" time="0.008930" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
-	<testcase name="RUN-010: signed startup, tampering withdrawal, quorum reload and downgrade rejection" time="0.063413" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
-	<testcase name="ACT-012: deterministic nested composition rejects cycles, duplicates, hidden and missing authority" time="0.000881" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
-	<testcase name="ACT-012 UX-006: exact batch signatures execute each child once and never manufacture child authority" time="0.107609" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
-	<testcase name="UX-006: hidden additions and changed child evidence invalidate every batch approval" time="0.067161" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
-	<testcase name="POL-013 POL-014: emergency requires simulation and quorum, restricts exact scope, expires without reviving revocations" time="0.077602" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
-	<testcase name="AUD-010: role projections reject cross-role/tenant access and never expose full source envelopes" time="0.053283" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
-	<testcase name="DAT-005 DAT-011: watermark is opt-in, attributed, deterministic and never mutates source data" time="0.000999" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
-	<testcase name="AIG-003 AIG-004 AIG-007: advisory extraction preserves spans/context and enforces narrow source, tenant and output authority" time="0.045845" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
-	<testcase name="AIG-010: versioned adversarial regression prevents provider promotion" time="0.000520" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
-	<testcase name="CON-006 NFR-MNT-005: lifecycle forbids EOL use and silent downgrade and preserves migration instructions" time="0.037713" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
-	<testcase name="COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle" time="0.048661" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
-	<testcase name="CON-001 CON-002 CON-010: tenant-signed connector manifest enumerates actions, least privilege and limitations" time="0.050457" classname="test" file="/tmp/antivi-fishing/tests/connector-lifecycle.test.mjs"/>
-	<testcase name="CON-006 NFR-MNT-005: schema expiry invalidates already-issued certificates and cannot be delayed to revive authority" time="0.060464" classname="test" file="/tmp/antivi-fishing/tests/connector-lifecycle.test.mjs"/>
-	<testcase name="CON-006 NFR-MNT-005: connector expiry invalidates already-issued certificates and cannot be delayed to revive authority" time="0.052300" classname="test" file="/tmp/antivi-fishing/tests/connector-lifecycle.test.mjs"/>
-	<testcase name="COV-001 COV-002 COV-008 COV-010: every declared path has a mandatory assigned plan and manual claims fail closed" time="0.071394" classname="test" file="/tmp/antivi-fishing/tests/coverage-lifecycle.test.mjs"/>
-	<testcase name="COV-003 COV-005 COV-006 COV-007 COV-009: scope-bound signed evidence, expiry intervals and tenant history isolation" time="0.051411" classname="test" file="/tmp/antivi-fishing/tests/coverage-lifecycle.test.mjs"/>
-	<testcase name="COV-004 COV-005: revoked assessor and changed configuration withdraw previously enforced paths" time="0.047211" classname="test" file="/tmp/antivi-fishing/tests/coverage-lifecycle.test.mjs"/>
-	<testcase name="KEY-005 COM-002: key algorithm, suite, signature encoding and verification cutoff cannot be confused" time="0.005870" classname="test" file="/tmp/antivi-fishing/tests/crypto-agility.test.mjs"/>
-	<testcase name="KEY-005 KEY-010 NFR-MNT-002: independent verifiers accept mixed-suite audit history and reject cross-suite tampering" time="0.236811" classname="test" file="/tmp/antivi-fishing/tests/crypto-agility.test.mjs"/>
-	<testcase name="KEY-005 KEY-008 KEY-010: customer-quorum suite rotation survives restart and preserves independently pinned audit history" time="0.116689" classname="test" file="/tmp/antivi-fishing/tests/crypto-agility.test.mjs"/>
-	<testcase name="KEY-005: execution suite rotation invalidates old live authority and a stale peer cannot mint with the retired key" time="0.089033" classname="test" file="/tmp/antivi-fishing/tests/crypto-agility.test.mjs"/>
-	<testcase name="COM-002: all independently signed certificate binding mutations still fail registered-authority equality" time="0.081760" classname="test" file="/tmp/antivi-fishing/tests/extended-security.test.mjs"/>
-	<testcase name="RUN-004: runtime issuer-key revocation and active-policy change invalidate cached token" time="0.041488" classname="test" file="/tmp/antivi-fishing/tests/extended-security.test.mjs"/>
-	<testcase name="DAT-001 COM-009: exact data export cannot return extra columns from downstream" time="0.049072" classname="test" file="/tmp/antivi-fishing/tests/extended-security.test.mjs"/>
-	<testcase name="DAT-001: caller cannot mislabel dataset jurisdiction or sensitivity" time="0.043785" classname="test" file="/tmp/antivi-fishing/tests/extended-security.test.mjs"/>
-	<testcase name="IDN-001 POL-011: an initiator cannot approve their own protected action even with an eligible signing key" time="0.037295" classname="test" file="/tmp/antivi-fishing/tests/extended-security.test.mjs"/>
-	<testcase name="AIG-006: source prose cannot override typed policy fields" time="0.042904" classname="test" file="/tmp/antivi-fishing/tests/extended-security.test.mjs"/>
-	<testcase name="KEY-010 NFR-MNT-002: independent verifiers reject signed-log tampering and duplicate JSON keys" time="0.293254" classname="test" file="/tmp/antivi-fishing/tests/extended-security.test.mjs"/>
-	<testcase name="ACT-007 UX-002: unsupported or ambiguous currency scales fail rather than render a false amount" time="0.034926" classname="test" file="/tmp/antivi-fishing/tests/extended-security.test.mjs"/>
-	<testcase name="POL-001 POL-002 POL-015: exact inputs and trusted test time produce identical decision and reasons" time="0.154534" classname="test" file="/tmp/antivi-fishing/tests/extended-security.test.mjs"/>
-	<testcase name="CON-004 COM-012: missing data-output fields return UNCERTAIN rather than an exception after dispatch" time="0.049456" classname="test" file="/tmp/antivi-fishing/tests/extended-security.test.mjs"/>
-	<testcase name="POL-003 UC-08: all-address 0.0.0.0/0 never becomes executable" time="0.057486" classname="test" file="/tmp/antivi-fishing/tests/firewall-scope.test.mjs"/>
-	<testcase name="POL-003 UC-08: all-address ::/0 never becomes executable" time="0.045914" classname="test" file="/tmp/antivi-fishing/tests/firewall-scope.test.mjs"/>
-	<testcase name="POL-003 UC-08: all-address 0:0:0:0:0:0:0:0/0 never becomes executable" time="0.039410" classname="test" file="/tmp/antivi-fishing/tests/firewall-scope.test.mjs"/>
-	<testcase name="ACT-007 UC-08: ambiguous masks, mapped address families and masked host bits fail before authorization" time="0.000888" classname="test" file="/tmp/antivi-fishing/tests/firewall-scope.test.mjs"/>
-	<testcase name="HTTP: health, ready, console assets and hardened headers are served" time="0.076014" classname="test" file="/tmp/antivi-fishing/tests/http-concurrency-ui.test.mjs"/>
-	<testcase name="HTTP: missing/expired auth, cross origin, unknown host, traversal and cross-tenant objects denied" time="0.050692" classname="test" file="/tmp/antivi-fishing/tests/http-concurrency-ui.test.mjs"/>
-	<testcase name="HTTP: duplicate keys, wrong content-type and huge bodies reject safely" time="0.045340" classname="test" file="/tmp/antivi-fishing/tests/http-concurrency-ui.test.mjs"/>
-	<testcase name="HTTP: same-origin HttpOnly cookie session requires CSRF and logs out" time="0.041771" classname="test" file="/tmp/antivi-fishing/tests/http-concurrency-ui.test.mjs"/>
-	<testcase name="HTTP: full propose -> evidence -> independent signatures -> ALLOW -> certificate -> execute -> audit" time="0.078720" classname="test" file="/tmp/antivi-fishing/tests/http-concurrency-ui.test.mjs"/>
-	<testcase name="PER-007 PER-009: Secure Perception remains explicitly unavailable and fails closed" time="0.037831" classname="test" file="/tmp/antivi-fishing/tests/http-concurrency-ui.test.mjs"/>
-	<testcase name="COM-003 NFR-TST-002: eight independent gate workers race; exactly one certificate is consumed" time="0.498750" classname="test" file="/tmp/antivi-fishing/tests/http-concurrency-ui.test.mjs"/>
-	<testcase name="DAT-002: concurrent gates cannot overspend shared rolling budget" time="0.385479" classname="test" file="/tmp/antivi-fishing/tests/http-concurrency-ui.test.mjs"/>
-	<testcase name="NFR-SEC-004: bootstrap creates random credentials, private files and refuses overwrite" time="0.068434" classname="test" file="/tmp/antivi-fishing/tests/http-concurrency-ui.test.mjs"/>
-	<testcase name="UX-002 UX-003: UI state logic exposes no generic approval or executable non-ALLOW state" time="0.000735" classname="test" file="/tmp/antivi-fishing/tests/http-concurrency-ui.test.mjs"/>
-	<testcase name="UX-007: static interface labels all named inputs and uses no unsafe DOM injection sink" time="0.000631" classname="test" file="/tmp/antivi-fishing/tests/http-concurrency-ui.test.mjs"/>
-	<testcase name="COM-001 COM-009 COM-010: exact approved action executes and produces signed verified outcome" time="0.077616" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
-	<testcase name="ACT-008: tampered schema digest rejected" time="0.035588" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
-	<testcase name="ACT-011 COM-006: proposal idempotency returns exact first result; changed request rejected" time="0.040678" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
-	<testcase name="POL-003 POL-005: missing evidence/approvals cannot mint or execute" time="0.043162" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
-	<testcase name="POL-007: denied nonce cannot be revived or re-evaluated" time="0.039973" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
-	<testcase name="POL-006 COM-013: cooldown defers exact bank change" time="0.041226" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
-	<testcase name="COM-003: consumed certificate is never replayed" time="0.056547" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
-	<testcase name="COM-004 ACT-004: stale target state invalidates certificate" time="0.050511" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
-	<testcase name="COM-004: expired certificate fails closed" time="0.046483" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
-	<testcase name="COM-011: dry-run does not mutate or consume certificate" time="0.055641" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
-	<testcase name="COM-012: post-commit timeout becomes UNCERTAIN; reconciliation finds one durable mutation" time="0.055365" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
-	<testcase name="COM-005 COM-012: target failure before commit rolls back and stays uncertain without blind retry" time="0.053417" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
-	<testcase name="CON-004 COM-009: malformed-response cannot produce false success" time="0.052824" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
-	<testcase name="CON-004 COM-009: altered-response cannot produce false success" time="0.052893" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
-	<testcase name="COM-012: process crash reservation survives restart and prevents replay" time="0.061334" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
-	<testcase name="COM-013: cancellation closes issued authority" time="0.048774" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
-	<testcase name="NFR-SEC-005: cross-tenant read and execution rejected" time="0.045313" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
-	<testcase name="IDN-002: auditor login grants no mutation authority" time="0.033193" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
-	<testcase name="AUD-003 CON-003: stored sensitive fields never appear as plaintext in database/WAL" time="0.045846" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
-	<testcase name="AUD-004: persisted clock regression halts security mutation" time="0.035253" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
-	<testcase name="EVD-001 EVD-002: correlated issuer and derivative evidence cannot satisfy independence" time="0.044096" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
-	<testcase name="EVD-005 AIG-006: email/advisory evidence cannot confer authority" time="0.045405" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
-	<testcase name="EVD-009: conflicting evidence remains escrow despite sufficient positive sources" time="0.046878" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
-	<testcase name="EVD-008: evidence revocation invalidates pending certificate immediately" time="0.048916" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
-	<testcase name="EVD-003: tampered issuer signature and wrong tenant evidence are rejected" time="0.039067" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
-	<testcase name="IDN-001: software signature cannot satisfy hardware-required policy" time="0.045098" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
-	<testcase name="POL-011: duplicate signer cannot satisfy threshold" time="0.042947" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
-	<testcase name="ACT-010: material change or graph change invalidates exact approval" time="0.038656" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
-	<testcase name="COM-014 POL-009: 3-of-5 customer software quorum protects exact policy activation" time="0.080399" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
-	<testcase name="UC-02: exact first payment enforces beneficiary amount and cannot repeat" time="0.049491" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
-	<testcase name="COM-009: self-consistent but unauthorised observed state must not pass reconciliation" time="0.050310" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
-	<testcase name="POL-010: exact candidate simulation required before policy certificate" time="0.048839" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
-	<testcase name="NET-001 NET-002 NET-003 NET-007 NET-009 RUN-001: local process dispatch requires exact tenant/device/service capability, even offline" time="0.055428" classname="test" file="/tmp/antivi-fishing/tests/network-perception.test.mjs"/>
-	<testcase name="NET-004 NET-005 NET-006 NET-010 RUN-004 RUN-008 RUN-009: rate, quarantine, revocation, exhaustion and containment counters" time="0.043890" classname="test" file="/tmp/antivi-fishing/tests/network-perception.test.mjs"/>
-	<testcase name="PER-001 PER-003 PER-006 PER-007 PER-009 PER-010: software transport contract encrypts only allowed fields and never claims hardware assurance" time="0.064778" classname="test" file="/tmp/antivi-fishing/tests/network-perception.test.mjs"/>
-	<testcase name="RUN-010 NET-007 RUN-004: local gate rejects unsigned startup, signed-control replay, wrong tenant and stale control" time="0.041854" classname="test" file="/tmp/antivi-fishing/tests/network-perception.test.mjs"/>
-	<testcase name="NFR-PERF-005 RUN-008 RUN-009: cache churn does not evict active authority and adversarial control growth fails closed" time="0.247050" classname="test" file="/tmp/antivi-fishing/tests/network-perception.test.mjs"/>
-	<testcase name="NFR-OPS-003: five-minute acknowledgement SLO escalates once and enforces owner and tenant boundaries" time="0.059311" classname="test" file="/tmp/antivi-fishing/tests/operations.test.mjs"/>
-	<testcase name="NFR-OPS-004: customer-visible incident lifecycle survives restart and cannot skip containment or corrective-action evidence" time="0.055469" classname="test" file="/tmp/antivi-fishing/tests/operations.test.mjs"/>
-	<testcase name="PER-007 PER-006: issuer revocation terminates live protected transport before plaintext release" time="0.122387" classname="test" file="/tmp/antivi-fishing/tests/perception-lifecycle.test.mjs"/>
-	<testcase name="PER-007 PER-006: device revocation terminates live protected transport before plaintext release" time="0.083050" classname="test" file="/tmp/antivi-fishing/tests/perception-lifecycle.test.mjs"/>
-	<testcase name="PER-007 PER-006: firmware revocation terminates live protected transport before plaintext release" time="0.098095" classname="test" file="/tmp/antivi-fishing/tests/perception-lifecycle.test.mjs"/>
-	<testcase name="PER-001 PER-007 PER-009 PER-010: software sessions reject wrong purpose, oversized fields, empty scope and stale challenges without hardware claims" time="0.078427" classname="test" file="/tmp/antivi-fishing/tests/perception-lifecycle.test.mjs"/>
-	<testcase name="POL-008 POL-010: signed development, shadow and canary stages bind exact policy and cannot be skipped or self-asserted" time="0.081609" classname="test" file="/tmp/antivi-fishing/tests/policy-staging.test.mjs"/>
-	<testcase name="POL-008 POL-009 POL-014: activation and rollback advance versions and never restore revoked authorities" time="0.145486" classname="test" file="/tmp/antivi-fishing/tests/policy-staging.test.mjs"/>
-	<testcase name="POL-008: staging without simulation, stale baseline or expired evidence cannot activate" time="0.050993" classname="test" file="/tmp/antivi-fishing/tests/policy-staging.test.mjs"/>
-	<testcase name="KEY-006 KEY-005: ML-DSA-65-v1 signs, rejects tampering and verifies independently without classical fallback" time="0.106213" classname="test" file="/tmp/antivi-fishing/tests/post-quantum.test.mjs"/>
-	<testcase name="KEY-006 KEY-005: HYBRID-Ed25519-ML-DSA-65-v1 signs, rejects tampering and verifies independently without classical fallback" time="0.094980" classname="test" file="/tmp/antivi-fishing/tests/post-quantum.test.mjs"/>
-	<testcase name="KEY-006 KEY-005: customer-approved hybrid migration executes real certificates and forbids component downgrade" time="0.074771" classname="test" file="/tmp/antivi-fishing/tests/post-quantum.test.mjs"/>
-	<testcase name="RUN-001 DAT-001: local scoped synthetic data read enforces rows and columns" time="0.057923" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
-	<testcase name="DAT-002 DAT-009: low-and-slow extraction accumulates across newly minted capabilities" time="0.216440" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
-	<testcase name="DAT-002: rolling budget recovers after bounded window expires" time="0.047501" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
-	<testcase name="DAT-003: server-controlled sensitivity weight increases information charge" time="0.039265" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
-	<testcase name="RUN-002 DAT-004: destination binding cannot be broadened" time="0.039232" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
-	<testcase name="RUN-002 DAT-004: device_id binding cannot be broadened" time="0.036350" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
-	<testcase name="RUN-002 DAT-004: resource binding cannot be broadened" time="0.037109" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
-	<testcase name="RUN-002 DAT-004: purpose binding cannot be broadened" time="0.037181" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
-	<testcase name="DAT-006: SQL-shaped columns and unrestricted row sets rejected" time="0.038027" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
-	<testcase name="RUN-007: cross-tenant capability cannot be consumed" time="0.035951" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
-	<testcase name="RUN-004 IDN-008: device quarantine rejects issued capability immediately" time="0.040214" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
-	<testcase name="RUN-003: stale configured device health prevents renewal" time="0.035524" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
-	<testcase name="RUN-002: runtime request replay does not spend twice or return data twice" time="0.038781" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
-	<testcase name="NET-003 NET-004: local service envelope rejects other port and excess request rate" time="0.061301" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
-	<testcase name="DAT-005 POL-004: restricted export requires explicit new SHIELD proposal" time="0.041585" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
-	<testcase name="AUD-001 AUD-005: export verifies with pinned root and rejects edit, reorder, removal and wrong root" time="0.052567" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
-	<testcase name="AUD-008: externally pinned prior checkpoint detects a fork and truncation" time="0.040846" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
-	<testcase name="AUD-001: append-only triggers reject SQL update and deletion" time="0.034366" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
-	<testcase name="AUD-007: audit export access is itself recorded" time="0.033551" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
-	<testcase name="DAT-012: expired evidence is held for active actions and legal hold; terminal evidence logically deleted" time="0.041808" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
-	<testcase name="COV-002 COV-007 COV-008: no manual declaration can claim ENFORCED or production guarantee" time="0.035653" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
-	<testcase name="POL-010 UX-008: policy simulation records diff without activating candidate" time="0.038382" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
-	<testcase name="POL-012: fewer than 3 customer bootstrap signers cannot start the service" time="0.039353" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
-	<testcase name="RUN-010: restart cannot roll back signed configuration or rebind an accepted version" time="0.075921" classname="test" file="/tmp/antivi-fishing/tests/runtime-integrity.test.mjs"/>
-	<testcase name="RUN-010 RUN-003: expiry, revoked custodian, duplicate signer and stale process withdraw local authority" time="0.063296" classname="test" file="/tmp/antivi-fishing/tests/runtime-integrity.test.mjs"/>
-	<testcase name="RUN-010 NFR-SEC-006: duplicate JSON configuration keys are rejected at startup" time="0.037296" classname="test" file="/tmp/antivi-fishing/tests/runtime-integrity.test.mjs"/>
-	<!-- tests 136 -->
+	<testcase name="NFR-MNT-001: every implemented literal control/gate endpoint has a versioned API operation" time="0.001623" classname="test" file="/tmp/antivi-fishing/tests/api-contract.test.mjs"/>
+	<testcase name="KEY-005 NFR-MNT-001: advertised envelope variants accept actual signatures with exact suite-specific lengths" time="0.010312" classname="test" file="/tmp/antivi-fishing/tests/api-contract.test.mjs"/>
+	<testcase name="ACT-012 COM-005 UX-006: atomic batch commits every exact child and rejects replay, missing or reversed authority" time="0.119867" classname="test" file="/tmp/antivi-fishing/tests/atomic-batch.test.mjs"/>
+	<testcase name="COM-005 COM-012 ACT-012: atomic child-1 preserves all-or-none state and durable replay protection" time="0.103046" classname="test" file="/tmp/antivi-fishing/tests/atomic-batch.test.mjs"/>
+	<testcase name="COM-005 COM-012 ACT-012: atomic before-commit preserves all-or-none state and durable replay protection" time="0.097489" classname="test" file="/tmp/antivi-fishing/tests/atomic-batch.test.mjs"/>
+	<testcase name="COM-005 COM-012 ACT-012: atomic after-commit preserves all-or-none state and durable replay protection" time="0.095105" classname="test" file="/tmp/antivi-fishing/tests/atomic-batch.test.mjs"/>
+	<testcase name="COM-005 COM-012 ACT-012: atomic process-crash preserves all-or-none state and durable replay protection" time="0.092407" classname="test" file="/tmp/antivi-fishing/tests/atomic-batch.test.mjs"/>
+	<testcase name="COM-005 COM-004 ACT-012: stale last child rolls back all reservations, not just target writes" time="0.079152" classname="test" file="/tmp/antivi-fishing/tests/atomic-batch.test.mjs"/>
+	<testcase name="COM-005 NFR-SEC-005: another tenant cannot execute or reconcile a batch" time="0.081647" classname="test" file="/tmp/antivi-fishing/tests/atomic-batch.test.mjs"/>
+	<testcase name="ACT-001 ACT-003: stable field order and exact material binding" time="0.001429" classname="test" file="/tmp/antivi-fishing/tests/canonical.test.mjs"/>
+	<testcase name="ACT-007: ambiguous encodings and unknown types rejected" time="0.000533" classname="test" file="/tmp/antivi-fishing/tests/canonical.test.mjs"/>
+	<testcase name="ACT-003: strict parser rejects duplicate keys, trailing values and prototype keys" time="0.000741" classname="test" file="/tmp/antivi-fishing/tests/canonical.test.mjs"/>
+	<testcase name="ACT-003: 2000 deterministic canonical round trips with integer and Unicode vectors" time="0.053651" classname="test" file="/tmp/antivi-fishing/tests/canonical.test.mjs"/>
+	<testcase name="ACT-007: oversized nesting and bodies rejected" time="0.001072" classname="test" file="/tmp/antivi-fishing/tests/canonical.test.mjs"/>
+	<testcase name="COM-002 KEY-007: Ed25519 domain-separated signatures reject every altered field" time="0.005213" classname="test" file="/tmp/antivi-fishing/tests/canonical.test.mjs"/>
+	<testcase name="AUD-003: AES-GCM binds ciphertext to tenant, record id and key" time="0.001157" classname="test" file="/tmp/antivi-fishing/tests/canonical.test.mjs"/>
+	<testcase name="KEY-005 KEY-006: algorithm migration preserves historical signatures and binds suite" time="0.008210" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
+	<testcase name="RUN-010: signed startup, tampering withdrawal, quorum reload and downgrade rejection" time="0.060777" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
+	<testcase name="ACT-012: deterministic nested composition rejects cycles, duplicates, hidden and missing authority" time="0.000839" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
+	<testcase name="ACT-012 UX-006: exact batch signatures execute each child once and never manufacture child authority" time="0.104363" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
+	<testcase name="UX-006: hidden additions and changed child evidence invalidate every batch approval" time="0.062089" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
+	<testcase name="POL-013 POL-014: emergency requires simulation and quorum, restricts exact scope, expires without reviving revocations" time="0.074278" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
+	<testcase name="AUD-010: role projections reject cross-role/tenant access and never expose full source envelopes" time="0.047963" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
+	<testcase name="DAT-005 DAT-011: watermark is opt-in, attributed, deterministic and never mutates source data" time="0.000976" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
+	<testcase name="AIG-003 AIG-004 AIG-007: advisory extraction preserves spans/context and enforces narrow source, tenant and output authority" time="0.040977" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
+	<testcase name="AIG-010: versioned adversarial regression prevents provider promotion" time="0.000585" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
+	<testcase name="CON-006 NFR-MNT-005: lifecycle forbids EOL use and silent downgrade and preserves migration instructions" time="0.034771" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
+	<testcase name="COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle" time="0.044031" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
+	<testcase name="CON-001 CON-002 CON-010: tenant-signed connector manifest enumerates actions, least privilege and limitations" time="0.053362" classname="test" file="/tmp/antivi-fishing/tests/connector-lifecycle.test.mjs"/>
+	<testcase name="CON-006 NFR-MNT-005: schema expiry invalidates already-issued certificates and cannot be delayed to revive authority" time="0.057429" classname="test" file="/tmp/antivi-fishing/tests/connector-lifecycle.test.mjs"/>
+	<testcase name="CON-006 NFR-MNT-005: connector expiry invalidates already-issued certificates and cannot be delayed to revive authority" time="0.048866" classname="test" file="/tmp/antivi-fishing/tests/connector-lifecycle.test.mjs"/>
+	<testcase name="COV-001 COV-002 COV-008 COV-010: every declared path has a mandatory assigned plan and manual claims fail closed" time="0.067127" classname="test" file="/tmp/antivi-fishing/tests/coverage-lifecycle.test.mjs"/>
+	<testcase name="COV-003 COV-005 COV-006 COV-007 COV-009: scope-bound signed evidence, expiry intervals and tenant history isolation" time="0.048410" classname="test" file="/tmp/antivi-fishing/tests/coverage-lifecycle.test.mjs"/>
+	<testcase name="COV-004 COV-005: revoked assessor and changed configuration withdraw previously enforced paths" time="0.045735" classname="test" file="/tmp/antivi-fishing/tests/coverage-lifecycle.test.mjs"/>
+	<testcase name="KEY-005 COM-002: key algorithm, suite, signature encoding and verification cutoff cannot be confused" time="0.005695" classname="test" file="/tmp/antivi-fishing/tests/crypto-agility.test.mjs"/>
+	<testcase name="KEY-005 KEY-010 NFR-MNT-002: independent verifiers accept mixed-suite audit history and reject cross-suite tampering" time="0.223097" classname="test" file="/tmp/antivi-fishing/tests/crypto-agility.test.mjs"/>
+	<testcase name="KEY-005 KEY-008 KEY-010: customer-quorum suite rotation survives restart and preserves independently pinned audit history" time="0.105514" classname="test" file="/tmp/antivi-fishing/tests/crypto-agility.test.mjs"/>
+	<testcase name="KEY-005: execution suite rotation invalidates old live authority and a stale peer cannot mint with the retired key" time="0.083614" classname="test" file="/tmp/antivi-fishing/tests/crypto-agility.test.mjs"/>
+	<testcase name="COM-002: all independently signed certificate binding mutations still fail registered-authority equality" time="0.080387" classname="test" file="/tmp/antivi-fishing/tests/extended-security.test.mjs"/>
+	<testcase name="RUN-004: runtime issuer-key revocation and active-policy change invalidate cached token" time="0.038428" classname="test" file="/tmp/antivi-fishing/tests/extended-security.test.mjs"/>
+	<testcase name="DAT-001 COM-009: exact data export cannot return extra columns from downstream" time="0.045493" classname="test" file="/tmp/antivi-fishing/tests/extended-security.test.mjs"/>
+	<testcase name="DAT-001: caller cannot mislabel dataset jurisdiction or sensitivity" time="0.035902" classname="test" file="/tmp/antivi-fishing/tests/extended-security.test.mjs"/>
+	<testcase name="IDN-001 POL-011: an initiator cannot approve their own protected action even with an eligible signing key" time="0.035603" classname="test" file="/tmp/antivi-fishing/tests/extended-security.test.mjs"/>
+	<testcase name="AIG-006: source prose cannot override typed policy fields" time="0.040740" classname="test" file="/tmp/antivi-fishing/tests/extended-security.test.mjs"/>
+	<testcase name="KEY-010 NFR-MNT-002: independent verifiers reject signed-log tampering and duplicate JSON keys" time="0.267153" classname="test" file="/tmp/antivi-fishing/tests/extended-security.test.mjs"/>
+	<testcase name="ACT-007 UX-002: unsupported or ambiguous currency scales fail rather than render a false amount" time="0.033697" classname="test" file="/tmp/antivi-fishing/tests/extended-security.test.mjs"/>
+	<testcase name="POL-001 POL-002 POL-015: exact inputs and trusted test time produce identical decision and reasons" time="0.156863" classname="test" file="/tmp/antivi-fishing/tests/extended-security.test.mjs"/>
+	<testcase name="CON-004 COM-012: missing data-output fields return UNCERTAIN rather than an exception after dispatch" time="0.044458" classname="test" file="/tmp/antivi-fishing/tests/extended-security.test.mjs"/>
+	<testcase name="POL-003 UC-08: all-address 0.0.0.0/0 never becomes executable" time="0.054644" classname="test" file="/tmp/antivi-fishing/tests/firewall-scope.test.mjs"/>
+	<testcase name="POL-003 UC-08: all-address ::/0 never becomes executable" time="0.040783" classname="test" file="/tmp/antivi-fishing/tests/firewall-scope.test.mjs"/>
+	<testcase name="POL-003 UC-08: all-address 0:0:0:0:0:0:0:0/0 never becomes executable" time="0.035589" classname="test" file="/tmp/antivi-fishing/tests/firewall-scope.test.mjs"/>
+	<testcase name="ACT-007 UC-08: ambiguous masks, mapped address families and masked host bits fail before authorization" time="0.000760" classname="test" file="/tmp/antivi-fishing/tests/firewall-scope.test.mjs"/>
+	<testcase name="HTTP: health, ready, console assets and hardened headers are served" time="0.074847" classname="test" file="/tmp/antivi-fishing/tests/http-concurrency-ui.test.mjs"/>
+	<testcase name="HTTP: missing/expired auth, cross origin, unknown host, traversal and cross-tenant objects denied" time="0.048825" classname="test" file="/tmp/antivi-fishing/tests/http-concurrency-ui.test.mjs"/>
+	<testcase name="HTTP: duplicate keys, wrong content-type and huge bodies reject safely" time="0.042100" classname="test" file="/tmp/antivi-fishing/tests/http-concurrency-ui.test.mjs"/>
+	<testcase name="HTTP: same-origin HttpOnly cookie session requires CSRF and logs out" time="0.039687" classname="test" file="/tmp/antivi-fishing/tests/http-concurrency-ui.test.mjs"/>
+	<testcase name="HTTP: full propose -> evidence -> independent signatures -> ALLOW -> certificate -> execute -> audit" time="0.074825" classname="test" file="/tmp/antivi-fishing/tests/http-concurrency-ui.test.mjs"/>
+	<testcase name="PER-007 PER-009: Secure Perception remains explicitly unavailable and fails closed" time="0.034615" classname="test" file="/tmp/antivi-fishing/tests/http-concurrency-ui.test.mjs"/>
+	<testcase name="COM-003 NFR-TST-002: eight independent gate workers race; exactly one certificate is consumed" time="0.452587" classname="test" file="/tmp/antivi-fishing/tests/http-concurrency-ui.test.mjs"/>
+	<testcase name="DAT-002: concurrent gates cannot overspend shared rolling budget" time="0.353982" classname="test" file="/tmp/antivi-fishing/tests/http-concurrency-ui.test.mjs"/>
+	<testcase name="NFR-SEC-004: bootstrap creates random credentials, private files and refuses overwrite" time="0.063878" classname="test" file="/tmp/antivi-fishing/tests/http-concurrency-ui.test.mjs"/>
+	<testcase name="UX-002 UX-003: UI state logic exposes no generic approval or executable non-ALLOW state" time="0.000649" classname="test" file="/tmp/antivi-fishing/tests/http-concurrency-ui.test.mjs"/>
+	<testcase name="UX-007: static interface labels all named inputs and uses no unsafe DOM injection sink" time="0.000579" classname="test" file="/tmp/antivi-fishing/tests/http-concurrency-ui.test.mjs"/>
+	<testcase name="COM-001 COM-009 COM-010: exact approved action executes and produces signed verified outcome" time="0.071660" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
+	<testcase name="ACT-008: tampered schema digest rejected" time="0.033396" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
+	<testcase name="ACT-011 COM-006: proposal idempotency returns exact first result; changed request rejected" time="0.038515" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
+	<testcase name="POL-003 POL-005: missing evidence/approvals cannot mint or execute" time="0.038594" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
+	<testcase name="POL-007: denied nonce cannot be revived or re-evaluated" time="0.037237" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
+	<testcase name="POL-006 COM-013: cooldown defers exact bank change" time="0.037223" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
+	<testcase name="COM-003: consumed certificate is never replayed" time="0.053055" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
+	<testcase name="COM-004 ACT-004: stale target state invalidates certificate" time="0.050343" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
+	<testcase name="COM-004: expired certificate fails closed" time="0.044302" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
+	<testcase name="COM-011: dry-run does not mutate or consume certificate" time="0.052900" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
+	<testcase name="COM-012: post-commit timeout becomes UNCERTAIN; reconciliation finds one durable mutation" time="0.052053" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
+	<testcase name="COM-005 COM-012: target failure before commit rolls back and stays uncertain without blind retry" time="0.051780" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
+	<testcase name="CON-004 COM-009: malformed-response cannot produce false success" time="0.051807" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
+	<testcase name="CON-004 COM-009: altered-response cannot produce false success" time="0.049056" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
+	<testcase name="COM-012: process crash reservation survives restart and prevents replay" time="0.054008" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
+	<testcase name="COM-013: cancellation closes issued authority" time="0.044297" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
+	<testcase name="NFR-SEC-005: cross-tenant read and execution rejected" time="0.043498" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
+	<testcase name="IDN-002: auditor login grants no mutation authority" time="0.029725" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
+	<testcase name="AUD-003 CON-003: stored sensitive fields never appear as plaintext in database/WAL" time="0.042034" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
+	<testcase name="AUD-004: persisted clock regression halts security mutation" time="0.031390" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
+	<testcase name="EVD-001 EVD-002: correlated issuer and derivative evidence cannot satisfy independence" time="0.041624" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
+	<testcase name="EVD-005 AIG-006: email/advisory evidence cannot confer authority" time="0.043616" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
+	<testcase name="EVD-009: conflicting evidence remains escrow despite sufficient positive sources" time="0.043133" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
+	<testcase name="EVD-008: evidence revocation invalidates pending certificate immediately" time="0.047326" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
+	<testcase name="EVD-003: tampered issuer signature and wrong tenant evidence are rejected" time="0.036187" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
+	<testcase name="IDN-001: software signature cannot satisfy hardware-required policy" time="0.049140" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
+	<testcase name="POL-011: duplicate signer cannot satisfy threshold" time="0.040298" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
+	<testcase name="ACT-010: material change or graph change invalidates exact approval" time="0.035678" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
+	<testcase name="COM-014 POL-009: 3-of-5 customer software quorum protects exact policy activation" time="0.073514" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
+	<testcase name="UC-02: exact first payment enforces beneficiary amount and cannot repeat" time="0.049092" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
+	<testcase name="COM-009: self-consistent but unauthorised observed state must not pass reconciliation" time="0.047970" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
+	<testcase name="POL-010: exact candidate simulation required before policy certificate" time="0.043912" classname="test" file="/tmp/antivi-fishing/tests/lifecycle.test.mjs"/>
+	<testcase name="NET-001 NET-002 NET-003 NET-007 NET-009 RUN-001: local process dispatch requires exact tenant/device/service capability, even offline" time="0.052333" classname="test" file="/tmp/antivi-fishing/tests/network-perception.test.mjs"/>
+	<testcase name="NET-004 NET-005 NET-006 NET-010 RUN-004 RUN-008 RUN-009: rate, quarantine, revocation, exhaustion and containment counters" time="0.041670" classname="test" file="/tmp/antivi-fishing/tests/network-perception.test.mjs"/>
+	<testcase name="PER-001 PER-003 PER-006 PER-007 PER-009 PER-010: software transport contract encrypts only allowed fields and never claims hardware assurance" time="0.085412" classname="test" file="/tmp/antivi-fishing/tests/network-perception.test.mjs"/>
+	<testcase name="RUN-010 NET-007 RUN-004: local gate rejects unsigned startup, signed-control replay, wrong tenant and stale control" time="0.038833" classname="test" file="/tmp/antivi-fishing/tests/network-perception.test.mjs"/>
+	<testcase name="NFR-PERF-005 RUN-008 RUN-009: cache churn does not evict active authority and adversarial control growth fails closed" time="0.247558" classname="test" file="/tmp/antivi-fishing/tests/network-perception.test.mjs"/>
+	<testcase name="NFR-OPS-003: five-minute acknowledgement SLO escalates once and enforces owner and tenant boundaries" time="0.055246" classname="test" file="/tmp/antivi-fishing/tests/operations.test.mjs"/>
+	<testcase name="NFR-OPS-004: customer-visible incident lifecycle survives restart and cannot skip containment or corrective-action evidence" time="0.050858" classname="test" file="/tmp/antivi-fishing/tests/operations.test.mjs"/>
+	<testcase name="PER-007 PER-006: issuer revocation terminates live protected transport before plaintext release" time="0.132157" classname="test" file="/tmp/antivi-fishing/tests/perception-lifecycle.test.mjs"/>
+	<testcase name="PER-007 PER-006: device revocation terminates live protected transport before plaintext release" time="0.064695" classname="test" file="/tmp/antivi-fishing/tests/perception-lifecycle.test.mjs"/>
+	<testcase name="PER-007 PER-006: firmware revocation terminates live protected transport before plaintext release" time="0.053307" classname="test" file="/tmp/antivi-fishing/tests/perception-lifecycle.test.mjs"/>
+	<testcase name="PER-001 PER-007 PER-009 PER-010: software sessions reject wrong purpose, oversized fields, empty scope and stale challenges without hardware claims" time="0.122766" classname="test" file="/tmp/antivi-fishing/tests/perception-lifecycle.test.mjs"/>
+	<testcase name="POL-008 POL-010: signed development, shadow and canary stages bind exact policy and cannot be skipped or self-asserted" time="0.079087" classname="test" file="/tmp/antivi-fishing/tests/policy-staging.test.mjs"/>
+	<testcase name="POL-008 POL-009 POL-014: activation and rollback advance versions and never restore revoked authorities" time="0.135201" classname="test" file="/tmp/antivi-fishing/tests/policy-staging.test.mjs"/>
+	<testcase name="POL-008: staging without simulation, stale baseline or expired evidence cannot activate" time="0.046036" classname="test" file="/tmp/antivi-fishing/tests/policy-staging.test.mjs"/>
+	<testcase name="KEY-006 KEY-005: ML-DSA-65-v1 signs, rejects tampering and verifies independently without classical fallback" time="0.098474" classname="test" file="/tmp/antivi-fishing/tests/post-quantum.test.mjs"/>
+	<testcase name="KEY-006 KEY-005: HYBRID-Ed25519-ML-DSA-65-v1 signs, rejects tampering and verifies independently without classical fallback" time="0.089962" classname="test" file="/tmp/antivi-fishing/tests/post-quantum.test.mjs"/>
+	<testcase name="KEY-006 KEY-005: customer-approved hybrid migration executes real certificates and forbids component downgrade" time="0.068746" classname="test" file="/tmp/antivi-fishing/tests/post-quantum.test.mjs"/>
+	<testcase name="RUN-001 DAT-001: local scoped synthetic data read enforces rows and columns" time="0.053354" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
+	<testcase name="DAT-002 DAT-009: low-and-slow extraction accumulates across newly minted capabilities" time="0.195394" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
+	<testcase name="DAT-002: rolling budget recovers after bounded window expires" time="0.044750" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
+	<testcase name="DAT-003: server-controlled sensitivity weight increases information charge" time="0.041510" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
+	<testcase name="RUN-002 DAT-004: destination binding cannot be broadened" time="0.035749" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
+	<testcase name="RUN-002 DAT-004: device_id binding cannot be broadened" time="0.034919" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
+	<testcase name="RUN-002 DAT-004: resource binding cannot be broadened" time="0.034180" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
+	<testcase name="RUN-002 DAT-004: purpose binding cannot be broadened" time="0.035793" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
+	<testcase name="DAT-006: SQL-shaped columns and unrestricted row sets rejected" time="0.035370" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
+	<testcase name="RUN-007: cross-tenant capability cannot be consumed" time="0.033653" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
+	<testcase name="RUN-004 IDN-008: device quarantine rejects issued capability immediately" time="0.036402" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
+	<testcase name="RUN-003: stale configured device health prevents renewal" time="0.031047" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
+	<testcase name="RUN-002: runtime request replay does not spend twice or return data twice" time="0.034745" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
+	<testcase name="NET-003 NET-004: local service envelope rejects other port and excess request rate" time="0.056549" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
+	<testcase name="DAT-005 POL-004: restricted export requires explicit new SHIELD proposal" time="0.037811" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
+	<testcase name="AUD-001 AUD-005: export verifies with pinned root and rejects edit, reorder, removal and wrong root" time="0.049833" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
+	<testcase name="AUD-008: externally pinned prior checkpoint detects a fork and truncation" time="0.037913" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
+	<testcase name="AUD-001: append-only triggers reject SQL update and deletion" time="0.031462" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
+	<testcase name="AUD-007: audit export access is itself recorded" time="0.030669" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
+	<testcase name="DAT-012: expired evidence is held for active actions and legal hold; terminal evidence logically deleted" time="0.038177" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
+	<testcase name="COV-002 COV-007 COV-008: no manual declaration can claim ENFORCED or production guarantee" time="0.033236" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
+	<testcase name="POL-010 UX-008: policy simulation records diff without activating candidate" time="0.036415" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
+	<testcase name="POL-012: fewer than 3 customer bootstrap signers cannot start the service" time="0.037702" classname="test" file="/tmp/antivi-fishing/tests/runtime-audit.test.mjs"/>
+	<testcase name="RUN-010: restart cannot roll back signed configuration or rebind an accepted version" time="0.070255" classname="test" file="/tmp/antivi-fishing/tests/runtime-integrity.test.mjs"/>
+	<testcase name="RUN-010 RUN-003: expiry, revoked custodian, duplicate signer and stale process withdraw local authority" time="0.058391" classname="test" file="/tmp/antivi-fishing/tests/runtime-integrity.test.mjs"/>
+	<testcase name="RUN-010 NFR-SEC-006: duplicate JSON configuration keys are rejected at startup" time="0.035010" classname="test" file="/tmp/antivi-fishing/tests/runtime-integrity.test.mjs"/>
+	<!-- tests 138 -->
 	<!-- suites 0 -->
-	<!-- pass 136 -->
+	<!-- pass 138 -->
 	<!-- fail 0 -->
 	<!-- cancelled 0 -->
 	<!-- skipped 0 -->
 	<!-- todo 0 -->
-	<!-- duration_ms 10018.386585 -->
+	<!-- duration_ms 9499.365484 -->
 </testsuites>
