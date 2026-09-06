@@ -1,0 +1,100 @@
+{
+  "COV-001": {
+    "implementation": [
+      "src/coverage.mjs",
+      "src/fabric.mjs"
+    ],
+    "status": "VERIFIED",
+    "blocker_reason": null,
+    "remaining_work": null,
+    "verification_evidence": [
+      {
+        "command": "node --test --test-reporter=junit tests/coverage-lifecycle.test.mjs tests/completion-security.test.mjs",
+        "result_file": "reports/evidence/coverage.xml",
+        "result_sha256": "6b9b35bfe10653e97afc7cbbb2087f7fc4c5ffbe1f04831417b20ad88cd0c653",
+        "passing_test_names": [
+          "COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle",
+          "COV-001 COV-002 COV-008 COV-010: every declared path has a mandatory assigned plan and manual claims fail closed"
+        ],
+        "source_hashes": {
+          "src/coverage.mjs": "dd8e29586a813a58303a601bde04da7415b0df522bed9464c64f0482ef5fcd7b",
+          "src/fabric.mjs": "4578d25d4fa10cf88f879a84938a4a35a2c8d2a96d5f99e4bd22a6c37e95004a",
+          "tests/coverage-lifecycle.test.mjs": "69e2d4bf9087b354231442822ca05bd7a2ae75394e8e17d663b141e5bd2c3a6d"
+        }
+      }
+    ]
+  },
+  "COV-002": {
+    "implementation": [
+      "src/coverage.mjs",
+      "src/fabric.mjs"
+    ],
+    "status": "VERIFIED",
+    "blocker_reason": null,
+    "remaining_work": null,
+    "verification_evidence": [
+      {
+        "command": "node --test --test-reporter=junit tests/coverage-lifecycle.test.mjs tests/completion-security.test.mjs",
+        "result_file": "reports/evidence/coverage.xml",
+        "result_sha256": "6b9b35bfe10653e97afc7cbbb2087f7fc4c5ffbe1f04831417b20ad88cd0c653",
+        "passing_test_names": [
+          "COV-001 COV-002 COV-008 COV-010: every declared path has a mandatory assigned plan and manual claims fail closed"
+        ],
+        "source_hashes": {
+          "src/coverage.mjs": "dd8e29586a813a58303a601bde04da7415b0df522bed9464c64f0482ef5fcd7b",
+          "src/fabric.mjs": "4578d25d4fa10cf88f879a84938a4a35a2c8d2a96d5f99e4bd22a6c37e95004a",
+          "tests/coverage-lifecycle.test.mjs": "69e2d4bf9087b354231442822ca05bd7a2ae75394e8e17d663b141e5bd2c3a6d"
+        }
+      }
+    ]
+  },
+  "COV-008": {
+    "implementation": [
+      "src/coverage.mjs",
+      "src/fabric.mjs"
+    ],
+    "status": "VERIFIED",
+    "blocker_reason": null,
+    "remaining_work": null,
+    "verification_evidence": [
+      {
+        "command": "node --test --test-reporter=junit tests/coverage-lifecycle.test.mjs tests/completion-security.test.mjs",
+        "result_file": "reports/evidence/coverage.xml",
+        "result_sha256": "6b9b35bfe10653e97afc7cbbb2087f7fc4c5ffbe1f04831417b20ad88cd0c653",
+        "passing_test_names": [
+          "COV-001 COV-002 COV-008 COV-010: every declared path has a mandatory assigned plan and manual claims fail closed"
+        ],
+        "source_hashes": {
+          "src/coverage.mjs": "dd8e29586a813a58303a601bde04da7415b0df522bed9464c64f0482ef5fcd7b",
+          "src/fabric.mjs": "4578d25d4fa10cf88f879a84938a4a35a2c8d2a96d5f99e4bd22a6c37e95004a",
+          "tests/coverage-lifecycle.test.mjs": "69e2d4bf9087b354231442822ca05bd7a2ae75394e8e17d663b141e5bd2c3a6d"
+        }
+      }
+    ]
+  },
+  "COV-009": {
+    "implementation": [
+      "src/coverage.mjs",
+      "src/fabric.mjs"
+    ],
+    "status": "VERIFIED",
+    "blocker_reason": null,
+    "remaining_work": null,
+    "verification_evidence": [
+      {
+        "command": "node --test --test-reporter=junit tests/coverage-lifecycle.test.mjs tests/completion-security.test.mjs",
+        "result_file": "reports/evidence/coverage.xml",
+        "result_sha256": "6b9b35bfe10653e97afc7cbbb2087f7fc4c5ffbe1f04831417b20ad88cd0c653",
+        "passing_test_names": [
+          "COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle",
+          "COV-003 COV-005 COV-006 COV-007 COV-009: scope-bound signed evidence, expiry intervals and tenant history isolation"
+        ],
+        "source_hashes": {
+          "src/coverage.mjs": "dd8e29586a813a58303a601bde04da7415b0df522bed9464c64f0482ef5fcd7b",
+          "src/fabric.mjs": "4578d25d4fa10cf88f879a84938a4a35a2c8d2a96d5f99e4bd22a6c37e95004a",
+          "tests/coverage-lifecycle.test.mjs": "69e2d4bf9087b354231442822ca05bd7a2ae75394e8e17d663b141e5bd2c3a6d"
+        }
+      }
+    ]
+  }
+}

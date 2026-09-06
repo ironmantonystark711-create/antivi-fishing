@@ -107,6 +107,7 @@ export function createServer(fabric, { port = 8080, host = '127.0.0.1', origin =
       if (path === '/v1/emergencies/activate' && req.method === 'POST') return send(201, fabric.emergencies.activate(p, await body(req)));
       if (path === '/v1/emergencies/expire' && req.method === 'POST') { fields(await body(req), []); return send(200, fabric.emergencies.sweep(p)); }
       if (path === '/v1/runtime/configuration' && req.method === 'POST') return send(200, fabric.runtimeIntegrity.reload(p, await body(req)));
+      if ((m = /^\/v1\/coverage\/([A-Za-z0-9_.:-]+)\/history$/.exec(path)) && req.method === 'GET') return send(200, fabric.coverageLifecycle.timeline(p, m[1]));
       if (path === '/v1/coverage/drift' && req.method === 'POST') return send(200, fabric.coverageLifecycle.drift(p, await body(req)));
       if (path === '/v1/coverage/revalidate' && req.method === 'POST') return send(200, fabric.coverageLifecycle.revalidate(p, await body(req)));
       if (path === '/v1/versions' && req.method === 'POST') return send(201, fabric.versions.publish(p, await body(req)));

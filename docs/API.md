@@ -42,3 +42,11 @@ The outcomes GET follows the SRS’s reconciliation endpoint and may append a ne
 The HTTP body limit is 1 MiB; JSON nesting is bounded, object keys are ASCII and safe-integer quantities only are accepted. Evidence is bounded at 32 items per action. List pagination is limit/offset (max 100). Policy simulation scans at most 500 recent actions. Retention stops conservatively if it cannot establish all references within its batch bound. Engineering audit export is in-memory rather than a production streaming/pagination API.
 
 There are no external URL fetch, plaintext-key extraction, raw SQL, universal administrator bypass, automatic compensating mutation, real bank connector, root-key enrollment, arbitrary capability widening, or production-enable API. Distributed revocation, true emergency policies, composition/batch atomicity, crypto migration and several long-term SRS features remain in the explicit gap register.
+
+### Coverage history
+
+`GET /v1/coverage/{path_id}/history` requires a tenant security or auditor role.
+It returns ordered transitions with half-open `valid_from`/`valid_until`
+intervals. Enforcement intervals stop at evidence expiry even when a later
+request discovers expiry. Assessor revocation also withdraws enforcement.
+Manifests enumerate every declared path, never a silently truncated first page.

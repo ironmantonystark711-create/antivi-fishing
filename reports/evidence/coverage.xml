@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites>
+	<testcase name="KEY-005 KEY-006: algorithm migration preserves historical signatures and binds suite" time="0.007640" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
+	<testcase name="RUN-010: signed startup, tampering withdrawal, quorum reload and downgrade rejection" time="0.072128" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
+	<testcase name="ACT-012: deterministic nested composition rejects cycles, duplicates, hidden and missing authority" time="0.001176" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
+	<testcase name="ACT-012 UX-006: exact batch signatures execute each child once and never manufacture child authority" time="0.115673" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
+	<testcase name="UX-006: hidden additions and changed child evidence invalidate every batch approval" time="0.059580" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
+	<testcase name="POL-013 POL-014: emergency requires simulation and quorum, restricts exact scope, expires without reviving revocations" time="0.071303" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
+	<testcase name="AUD-010: role projections reject cross-role/tenant access and never expose full source envelopes" time="0.048302" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
+	<testcase name="DAT-005 DAT-011: watermark is opt-in, attributed, deterministic and never mutates source data" time="0.001021" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
+	<testcase name="AIG-003 AIG-004 AIG-007: advisory extraction preserves spans/context and enforces narrow source, tenant and output authority" time="0.038594" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
+	<testcase name="AIG-010: versioned adversarial regression prevents provider promotion" time="0.000516" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
+	<testcase name="CON-006 NFR-MNT-005: lifecycle forbids EOL use and silent downgrade and preserves migration instructions" time="0.033781" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
+	<testcase name="COV-001 COV-003 COV-004 COV-005 COV-006 COV-009 COV-010 CON-006: technical evidence, drift and upgrade lifecycle" time="0.041759" classname="test" file="/tmp/antivi-fishing/tests/completion-security.test.mjs"/>
+	<testcase name="COV-001 COV-002 COV-008 COV-010: every declared path has a mandatory assigned plan and manual claims fail closed" time="0.065001" classname="test" file="/tmp/antivi-fishing/tests/coverage-lifecycle.test.mjs"/>
+	<testcase name="COV-003 COV-005 COV-006 COV-007 COV-009: scope-bound signed evidence, expiry intervals and tenant history isolation" time="0.046301" classname="test" file="/tmp/antivi-fishing/tests/coverage-lifecycle.test.mjs"/>
+	<testcase name="COV-004 COV-005: revoked assessor and changed configuration withdraw previously enforced paths" time="0.041087" classname="test" file="/tmp/antivi-fishing/tests/coverage-lifecycle.test.mjs"/>
+	<!-- tests 15 -->
+	<!-- suites 0 -->
+	<!-- pass 15 -->
+	<!-- fail 0 -->
+	<!-- cancelled 0 -->
+	<!-- skipped 0 -->
+	<!-- todo 0 -->
+	<!-- duration_ms 790.38085 -->
+</testsuites>

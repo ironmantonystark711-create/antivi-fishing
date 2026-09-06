@@ -299,7 +299,7 @@ export class Fabric {
     });
   }
   auditView(p, role, purpose) { return auditView(this, p, role, purpose); }
-  coverage(p) { this.authorize(p, ['operator', 'approver', 'custodian', 'security', 'auditor', 'policy_admin']); this.coverageLifecycle.refresh(p); return coverageManifest(p.tenant_id, this.store.list(p.tenant_id, 'coverage'), this.clock(), this.keys(p.tenant_id).audit); }
+  coverage(p) { this.authorize(p, ['operator', 'approver', 'custodian', 'security', 'auditor', 'policy_admin']); this.coverageLifecycle.refresh(p); return coverageManifest(p.tenant_id, this.coverageLifecycle.inventory(p.tenant_id), this.clock(), this.keys(p.tenant_id).audit); }
   declareCoverage(p, input) {
     this.authorize(p, ['security']); return this.transaction(p, now => {
       const path = declarePath(input, now); this.coverageLifecycle.history(p.tenant_id, path, now, 'DECLARED'); this.store.put(p.tenant_id, 'coverage', path.path_id, path, now);
