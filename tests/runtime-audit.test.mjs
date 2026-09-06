@@ -32,9 +32,12 @@ test('NET-003 NET-004: local service envelope rejects other port and excess requ
   for (let i = 0; i < 20; i++) assert.equal(h.f.runtime.consume(h.p(), runtimeRequest(cap)).decision, 'ALLOW');
   assert.throws(() => h.f.runtime.consume(h.p(), runtimeRequest(cap)), hasCode('INV-429-RATE'));
 });
-test('DAT-005 POL-004: restricted export requires explicit new SHIELD proposal', t => {
+test('DAT-005 POL-004: restricted export requires a separately evidenced reduced-scope SHIELD successor', t => {
   const h = fixture(t), r = h.proposed('data.export', { dataset: 'dataset-1', columns: ['name', 'passport'], row_ids: ['row-1'], max_rows: 1, classification: 'internal', jurisdiction: 'EU' }, { action: { type: 'data.export', target_resource: 'dataset-1', purpose: 'Operations' }, destination: 'customer-vault' });
-  const decision = h.f.evaluate(h.p(), r.capsule.capsule_id); assert.equal(decision.decision, 'SHIELD'); assert.deepEqual(decision.transformation.columns, ['name']); assert.throws(() => h.f.certificate(h.p(), r.capsule.capsule_id), hasCode('INV-412-EVIDENCE'));
+  h.evidence(r, { kind: 'dataset_authority' }); const decision = h.f.evaluate(h.p(), r.capsule.capsule_id); assert.equal(decision.decision, 'SHIELD'); assert.deepEqual(decision.transformation.columns, ['name']);
+  assert.throws(() => h.f.certificate(h.p(), r.capsule.capsule_id), hasCode('INV-412-EVIDENCE'));
+  const successor = h.f.createShieldedProposal(h.p(), r.capsule.capsule_id); assert.notEqual(successor.capsule_digest, r.capsule_digest); assert.equal(h.f.evaluate(h.p(), successor.capsule.capsule_id).decision, 'ESCROW'); h.evidence(successor, { kind: 'dataset_authority' }); assert.equal(h.f.evaluate(h.p(), successor.capsule.capsule_id).decision, 'ALLOW');
+  const outcome = h.f.execute(h.p(), h.f.certificate(h.p(), successor.capsule.capsule_id)); assert.equal(outcome.payload.status, 'VERIFIED'); assert.deepEqual(outcome.payload.output, [{ name: 'Synthetic Ada' }]);
 });
 test('AUD-001 AUD-005: export verifies with pinned root and rejects edit, reorder, removal and wrong root', t => {
   const h = fixture(t); h.ready(); const bundle = h.f.exportAudit(h.p('auditor'), 'Offline verification'); assert.equal(verifyAudit(bundle, bundle.public_keys).valid, true);

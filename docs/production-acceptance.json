@@ -8,12 +8,12 @@
     {"id":"customer-hardware-key-governance","status":"BLOCKED","reason":"No HSM/MPC devices, separated custodian hardware or real key ceremony."},
     {"id":"phishing-resistant-identity","status":"BLOCKED","reason":"WebAuthn, federation, trusted device attestation and protected recovery are not implemented."},
     {"id":"secure-perception","status":"BLOCKED","reason":"No attested trusted display/input hardware or hostile-OS test environment."},
-    {"id":"network-enforcement","status":"BLOCKED","reason":"Decision simulation does not enforce real packets, endpoint health or quarantine."},
+    {"id":"network-enforcement","status":"BLOCKED","reason":"Loopback HTTP mediation and signed revocation feeds are implemented; host-wide packet interception, production total mediation and deployment-specific endpoint attestation remain unaccepted."},
     {"id":"multi-zone-dr","status":"BLOCKED","reason":"No assigned infrastructure or credentials; no multi-zone backend or live DR evidence."},
-    {"id":"browser-accessibility","status":"BLOCKED","reason":"No browser or Playwright installed; package installation prohibited; no visual/WCAG/usability evidence."},
-    {"id":"freshness-supply-chain","status":"BLOCKED","reason":"nodejs.org:443 denied by network allowlist; current advisory and release provenance validation unavailable."},
+    {"id":"browser-accessibility","status":"BLOCKED","reason":"Chromium interaction, responsive-layout and label tests run locally and in CI. Full WCAG assessment and human approval-comprehension acceptance remain incomplete, not blocked by tooling."},
+    {"id":"freshness-supply-chain","status":"BLOCKED","reason":"Dependencies and CI actions are pinned and signed release-evidence verification exists; complete advisory scanning, reproducible build provenance and independent release assessment remain required."},
     {"id":"independent-security-assessment","status":"BLOCKED","reason":"No independent assessor, real-system penetration test or signed acceptance."},
-    {"id":"runtime-latency-target","status":"NOT_MET","reason":"Measured durable signed-audit software runtime p99 exceeds the 1 ms target; microbenchmark is not dataplane validation."},
+    {"id":"runtime-latency-target","status":"BLOCKED","reason":"Cached local decision measurements meet the 1 ms reference target; durable execution and HTTP transport are reported separately. Production capacity and deployed packet-enforcement targets remain unaccepted."},
     {"id":"operational-legal-ownership","status":"BLOCKED","reason":"No assigned on-call team, reporting channel, legal/compliance sign-off, contracts or named maintainers."},
     {"id":"live-production-verification","status":"BLOCKED","reason":"No production environment assigned; deployment, health, live flows and rollback not executed."}
   ]

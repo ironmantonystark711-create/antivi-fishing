@@ -40,14 +40,16 @@ async function main() {
   const [file, trust, witness] = process.argv.slice(2); check(file && trust, 'Usage: bun scripts/verify-export-webcrypto.mjs BUNDLE PINNED-TRUST [PRIOR-CHECKPOINT]');
   const read = p => { const raw = readFileSync(p, 'utf8'); check(Buffer.byteLength(raw) <= 20 * 1024 * 1024, 'File too large'); noDuplicates(raw); const value = JSON.parse(raw); encode(value); return value; };
   const bundle = read(file), keys = read(trust), prior = witness ? read(witness) : null;
-  check(bundle.format === 'IF-AUDIT-1' && Array.isArray(bundle.entries), 'Bad bundle'); const checkpoint = await verify(bundle.checkpoint, keys, 'checkpoint');
+  check(Object.keys(bundle).sort().join() === 'checkpoint,entries,format,public_keys' && bundle.format === 'IF-AUDIT-1' && Array.isArray(bundle.entries) && bundle.entries.length <= 100000, 'Bad bundle'); const checkpoint = await verify(bundle.checkpoint, keys, 'checkpoint');
+  check(Object.keys(checkpoint).sort().join() === 'head,issued_at,size,tenant_id' && /^[a-f0-9]{64}$/.test(checkpoint.head) && Number.isSafeInteger(checkpoint.issued_at) && checkpoint.issued_at > 0 && Number.isSafeInteger(checkpoint.size) && checkpoint.size >= 0, 'Bad checkpoint');
   let head = '0'.repeat(64), n = 0, time = 0;
   for (const row of bundle.entries) {
+    check(row && Object.keys(row).sort().join() === 'envelope,hash' && typeof row.hash === 'string' && /^[a-f0-9]{64}$/.test(row.hash), 'Bad audit entry');
     const e = await verify(row.envelope, keys, 'audit');
     check(e.tenant_id === checkpoint.tenant_id && e.sequence === ++n && e.previous === head && e.time >= time && row.hash === await hash(e), 'Broken continuity'); head = row.hash; time = e.time;
     if (prior && n === prior.size) check(head === prior.head, 'Witness fork');
   }
-  check(checkpoint.size === n && checkpoint.head === head && (!prior || (prior.tenant_id === checkpoint.tenant_id && n >= prior.size)), 'Checkpoint mismatch');
+  check(checkpoint.size === n && checkpoint.head === head && (!prior || (prior.tenant_id === checkpoint.tenant_id && n >= prior.size && checkpoint.issued_at >= prior.issued_at)), 'Checkpoint mismatch');
   console.log(JSON.stringify({ valid: true, entries: n, head, tenant_id: checkpoint.tenant_id, verifier: 'independent-webcrypto' }));
 }
 main().catch(e => { console.error(JSON.stringify({ valid: false, message: e.message })); process.exitCode = 1; });

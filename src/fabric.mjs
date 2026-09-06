@@ -6,12 +6,17 @@ import { RuntimeIntegrity } from './runtime-config.mjs';
 import { Compositions } from './composition.mjs';
 import { EmergencyPolicies } from './emergency.mjs';
 import { VersionLifecycle } from './lifecycle.mjs';
+import { IdentityLifecycle } from './identity-lifecycle.mjs';
+import { KeyLifecycle } from './key-lifecycle.mjs';
+import { RuntimeRevocationOutbox } from './revocation-outbox.mjs';
+import { Operations } from './operations.mjs';
 import { auditView } from './audit-views.mjs';
 import { AdvisoryPlane } from './advisory.mjs';
 import { digest, clone, canonical } from './canonical.mjs';
 import { signed, verifySigned } from './crypto.mjs';
-import { fields, text, identifier, integer, uniqueStrings, validateProposal } from './schema.mjs';
-import { evaluatePolicy, validatePolicy, policyDiff } from './policy.mjs';
+import { protectOutput } from './output.mjs';
+import { fields, text, identifier, integer, oneOf, uniqueStrings, validateProposal } from './schema.mjs';
+import { evaluatePolicy, validatePolicy, policyContentDigest, policyDiff, PolicyPromotions } from './policy.mjs';
 import { declarePath, coverageManifest, CoverageLifecycle } from './coverage.mjs';
 import { requireThat, InvariantError } from './errors.mjs';
 import { join } from 'node:path';
@@ -23,7 +28,7 @@ export class Fabric {
     const encryption = {}, audit = {};
     for (const [tenant, t] of Object.entries(config.tenants)) { encryption[tenant] = t.encryption_key; audit[tenant] = t.keys.audit; }
     this.store = new Store(join(directory, 'fabric.db'), encryption, audit);
-    this.target = new SimulatedTarget(join(directory, 'target.db'), encryption); this.runtime = new RuntimeGate(this); this.runtimeIntegrity = new RuntimeIntegrity(this); this.compositions = new Compositions(this); this.emergencies = new EmergencyPolicies(this); this.coverageLifecycle = new CoverageLifecycle(this); this.versions = new VersionLifecycle(this); this.advisory = new AdvisoryPlane(this);
+    this.target = new SimulatedTarget(join(directory, 'target.db'), encryption); this.identityLifecycle = new IdentityLifecycle(this); this.keyLifecycle = new KeyLifecycle(this); this.revocationOutbox = new RuntimeRevocationOutbox(this); this.runtime = new RuntimeGate(this); this.runtimeIntegrity = new RuntimeIntegrity(this); this.compositions = new Compositions(this); this.emergencies = new EmergencyPolicies(this); this.coverageLifecycle = new CoverageLifecycle(this); this.versions = new VersionLifecycle(this); this.promotions = new PolicyPromotions(this); this.operations = new Operations(this); this.advisory = new AdvisoryPlane(this);
     try { for (const [tenant, t] of Object.entries(config.tenants)) {
       this.runtimeIntegrity.check(tenant);
       validatePolicy(t.genesis_policy);
@@ -36,19 +41,22 @@ export class Fabric {
       }
       requireThat(roots.size >= 3 && domains.size >= 3, 'INV-503-CONFIG', 'Genesis requires independent 3-of-5 software signatures', 503);
       this.store.tx(() => {
+        this.versions.registerDefaults(tenant, this.clock());
         if (!this.store.get(tenant, 'policy', 'active')) {
           this.store.put(tenant, 'policy', 'active', t.genesis_policy, this.clock());
           this.store.audit(tenant, 'POLICY_GENESIS', 'customer-bootstrap', t.genesis_policy.policy_id, { policy_digest: digest(t.genesis_policy), software_quorum: roots.size }, this.clock());
         }
+        const active = this.store.must(tenant, 'policy', 'active'), historyId = `${active.policy_id}:${active.version}`;
+        if (!this.store.get(tenant, 'policy-history', historyId)) this.store.insert(tenant, 'policy-history', historyId, { policy: clone(active), policy_digest: digest(active), content_digest: policyContentDigest(active), version: active.version, activated_at: this.clock(), activated_by: 'customer-bootstrap', source_certificate_id: null, rollback_of_version: null }, this.clock());
       });
     } } catch (error) { this.close(); throw error; }
   }
   close() { this.target.close(); this.store.close(); }
   tenant(t) { const row = this.config.tenants[t]; requireThat(row, 'INV-404-NOT-FOUND', 'Resource not found', 404); return row; }
   keys(t) { return this.tenant(t).keys; }
-  executionPublic(t) { const key = this.keys(t).execution; return { [key.key_id]: { public_key: key.public_key } }; }
+  executionPublic(t) { return this.keyLifecycle.publicMaterial(t, 'execution'); }
   identity(p) {
-    const identity = Object.values(this.tenant(p.tenant_id).identities).find(x => x.subject_id === p.subject_id);
+    const identity = this.identityLifecycle.effective(p.tenant_id, p.subject_id);
     requireThat(identity && !identity.revoked, 'INV-401-AUTH', 'Authentication required', 401); return identity;
   }
   authorize(p, roles) {
@@ -60,7 +68,7 @@ export class Fabric {
   }
   transaction(principal, fn) {
     this.authorize(principal, ['operator', 'approver', 'custodian', 'security', 'auditor', 'policy_admin', 'workload', 'audit_finance', 'audit_privacy', 'audit_technical', 'audit_security']);
-    try { return this.store.tx(() => { const now = this.clock(); this.store.clock(now); return fn(now); }); }
+    try { return this.store.tx(() => { const now = this.clock(); this.store.clock(now); this.coverageLifecycle?.refreshTenant(principal.tenant_id, now); return fn(now); }); }
     catch (error) {
       if (error instanceof InvariantError && error.code !== 'INV-503-TIME') {
         this.store.tx(() => { const now = this.clock(); this.store.clock(now); this.store.audit(principal.tenant_id, 'SECURITY_OPERATION_REJECTED', principal.subject_id, 'local-gate', { code: error.code }, now); });
@@ -70,11 +78,24 @@ export class Fabric {
   }
   revoked(tenant, kind, id) { return Boolean(this.store.get(tenant, 'revocation', `${kind}:${id}`)); }
   policy(t) { return this.store.must(t, 'policy', 'active'); }
-  identities(t) { return Object.fromEntries(Object.entries(this.tenant(t).identities).map(([id, v]) => [id, { ...v, revoked: v.revoked || this.revoked(t, 'key', id) || this.revoked(t, 'subject', v.subject_id) }])); }
+  identities(t) { return this.identityLifecycle.all(t); }
   assertHealthy(t, subject, device, now) {
     requireThat(!this.revoked(t, 'subject', subject) && !this.revoked(t, 'device', device), 'INV-403-QUARANTINE', 'Subject or device quarantined', 403);
-    const identity = Object.values(this.tenant(t).identities).find(x => x.subject_id === subject);
-    requireThat(identity && identity.device_id === device && identity.health_expires_at > now, 'INV-403-HEALTH', 'Configured device health evidence expired or mismatched', 403);
+    return this.identityLifecycle.assertAssured(t, subject, device, now);
+  }
+  shieldedInput(capsule, transformation, now) {
+    requireThat(capsule.action.type === 'data.export', 'INV-451-POLICY', 'Only data exports may be SHIELD transformed', 451);
+    fields(transformation, ['columns', 'exclusions']); uniqueStrings(transformation.columns, 'shield columns', 64); uniqueStrings(transformation.exclusions, 'shield exclusions', 64);
+    const requested = capsule.requested_state;
+    requireThat(transformation.columns.length > 0 && transformation.columns.every(column => requested.columns.includes(column) && !transformation.exclusions.includes(column)), 'INV-451-POLICY', 'SHIELD transformation exceeds the authorised export', 451);
+    const { capsule_id, tenant_id, ...input } = clone(capsule);
+    return { ...input, requested_state: { ...clone(requested), columns: transformation.columns }, exclusions: transformation.exclusions, nonce: randomUUID(), created_at: now };
+  }
+  executableDecision(t, record, cert, now) {
+    const decision = this.evaluation(t, record, now);
+    requireThat(decision.decision === 'ALLOW', 'INV-412-EVIDENCE', 'Execution predicates no longer hold', 412);
+    requireThat(cert.constraints?.requested_digest === digest(record.capsule.requested_state), 'INV-409-STATE', 'Certificate authority does not match the action', 409);
+    return clone(record.capsule);
   }
   getCapsule(p, id) { this.authorize(p, ['operator', 'approver', 'custodian', 'security', 'policy_admin']); return this.store.must(p.tenant_id, 'capsule', identifier(id)); }
   propose(p, input, idempotencyKey) {
@@ -93,7 +114,7 @@ export class Fabric {
       return record;
     }));
   }
-  ensureMutable(record) { requireThat(!['DENY', 'CANCELLED', 'CERTIFIED', 'EXECUTING', 'VERIFIED', 'UNCERTAIN', 'FAILED'].includes(record.status), 'INV-409-STATE', 'Action is immutable in its current state', 409); }
+  ensureMutable(record) { requireThat(!record.shield_successor_id && !['DENY', 'CANCELLED', 'CERTIFIED', 'EXECUTING', 'VERIFIED', 'UNCERTAIN', 'FAILED'].includes(record.status), 'INV-409-STATE', 'Action is immutable in its current state', 409); }
   graph(t, record) {
     const items = record.evidence.map(id => {
       const e = this.store.get(t, 'evidence', id);
@@ -111,8 +132,9 @@ export class Fabric {
     return this.transaction(p, now => {
       const t = p.tenant_id, record = this.store.must(t, 'capsule', id); this.ensureMutable(record);
       const payload = verifySigned(envelope, this.tenant(t).issuers, 'evidence');
-      fields(payload, ['evidence_id', 'tenant_id', 'capsule_digest', 'kind', 'content_digest', 'acquired_at', 'expires_at', 'confidence', 'advisory', 'claim', 'dependencies', 'provenance', 'retention_until']);
-      identifier(payload.evidence_id); text(payload.kind, 'evidence kind'); text(payload.provenance, 'provenance', 2048); uniqueStrings(payload.dependencies, 'dependencies', 32);
+      fields(payload, ['evidence_id', 'tenant_id', 'capsule_digest', 'kind', 'content_digest', 'acquired_at', 'expires_at', 'confidence', 'advisory', 'claim', 'dependencies', 'provenance', 'verification_method', 'acquisition_purpose', 'retention_until']);
+      identifier(payload.evidence_id); text(payload.kind, 'evidence kind'); uniqueStrings(payload.dependencies, 'dependencies', 32); text(payload.verification_method, 'verification method', 128); text(payload.acquisition_purpose, 'evidence acquisition purpose', 256);
+      fields(payload.provenance, ['connector_id', 'source_type', 'source_reference_digest', 'transformations']); identifier(payload.provenance.connector_id, 'evidence connector'); oneOf(payload.provenance.source_type, ['direct', 'ai_extraction', 'communication'], 'evidence source type'); requireThat(/^[a-f0-9]{64}$/.test(payload.provenance.source_reference_digest), 'INV-400-SCHEMA', 'Invalid source reference digest'); uniqueStrings(payload.provenance.transformations, 'evidence transformations', 32);
       requireThat(payload.tenant_id === t && payload.capsule_digest === record.capsule_digest, 'INV-403-SCOPE', 'Evidence scope mismatch', 403);
       integer(payload.confidence, 'confidence', 0, 100); integer(payload.acquired_at, 'acquisition time', 1, now); integer(payload.expires_at, 'evidence expiry', now + 1); integer(payload.retention_until, 'retention', payload.expires_at);
       requireThat(typeof payload.advisory === 'boolean' && ['supports', 'conflict'].includes(payload.claim) && /^[a-f0-9]{64}$/.test(payload.content_digest), 'INV-400-SCHEMA', 'Invalid evidence claim');
@@ -121,7 +143,11 @@ export class Fabric {
       requireThat(record.evidence.length < 32, 'INV-429-CAPACITY', 'Evidence set limit reached', 429);
       const issuer = this.tenant(t).issuers[envelope.protected.key_id];
       requireThat(issuer.kinds.includes(payload.kind), 'INV-403-SCOPE', 'Issuer is not trusted for this evidence kind', 403);
-      this.store.insert(t, 'evidence', payload.evidence_id, { payload: clone(payload), envelope: clone(envelope), legal_hold: false }, now);
+      requireThat(payload.provenance.source_type !== 'ai_extraction' || payload.advisory, 'INV-403-SCOPE', 'AI-derived evidence must remain advisory', 403);
+      requireThat(payload.provenance.source_type !== 'communication' || issuer.channel === 'communication', 'INV-403-SCOPE', 'Communication provenance requires a communication issuer', 403);
+      const instruction = this.store.get(t, 'retention-policy', record.capsule.action.type);
+      const retention_until = Math.min(payload.retention_until, instruction ? now + instruction.evidence_retention_ms : payload.retention_until);
+      this.store.insert(t, 'evidence', payload.evidence_id, { payload: clone(payload), envelope: clone(envelope), legal_hold: false, retention_until, retention_instruction_digest: instruction ? digest(instruction) : null }, now);
       record.evidence.push(payload.evidence_id); record.status = 'EVIDENCED'; record.approvals = []; record.decision = null;
       this.store.put(t, 'capsule', id, record, now); this.store.audit(t, 'EVIDENCE_ATTACHED', p.subject_id, id, { evidence_id: payload.evidence_id, evidence_digest: digest(envelope) }, now);
       return { evidence_id: payload.evidence_id, evidence_graph_digest: this.graph(t, record).digest };
@@ -153,9 +179,14 @@ export class Fabric {
     const graph = this.graph(t, record), identities = this.identities(t);
     if (this.emergencies.restriction(t, record.capsule, now)) return { decision: 'DENY', reasons: [{ code: 'EMERGENCY_RESTRICTION', message: 'A scoped customer emergency policy prohibits this action.' }], explanation: 'Emergency restriction; no bypass.', policy_version: policy.version, policy_digest: digest(policy), owner: record.capsule.actor.subject_id, expires_at: record.capsule.expires_at, evaluated_at: now };
     if (record.capsule.action.type === 'policy.change') {
-      const candidateDigest = digest(record.capsule.requested_state.policy);
+      const candidate = record.capsule.requested_state.policy;
+      try { validatePolicy(candidate); } catch { return { decision: 'DENY', reasons: [{ code: 'POLICY_INVALID', message: 'The proposed policy is invalid.' }], explanation: 'The proposed policy is invalid.', owner: record.capsule.actor.subject_id, expires_at: record.capsule.expires_at, evaluated_at: now, policy_version: policy.version, policy_digest: digest(policy) }; }
+      if (candidate.not_before > now) return { decision: 'DEFER', reasons: [{ code: 'POLICY_NOT_ACTIVE', message: 'The staged policy activation time has not been reached.' }], explanation: 'The staged policy activation time has not been reached.', owner: record.capsule.actor.subject_id, expires_at: record.capsule.expires_at, evaluated_at: now, policy_version: policy.version, policy_digest: digest(policy) };
+      if (candidate.expires_at <= now) return { decision: 'DENY', reasons: [{ code: 'POLICY_EXPIRED', message: 'The staged policy has expired.' }], explanation: 'The staged policy has expired.', owner: record.capsule.actor.subject_id, expires_at: record.capsule.expires_at, evaluated_at: now, policy_version: policy.version, policy_digest: digest(policy) };
+      const candidateDigest = digest(candidate);
       const reviewed = this.store.list(t, 'simulation', 500).some(s => s.candidate_digest === candidateDigest && s.baseline_digest === digest(this.policy(t)));
       if (!reviewed) return { decision: 'ESCROW', reasons: [{ code: 'SIMULATION_REQUIRED', message: 'Simulate the exact candidate policy against the active baseline before activation.' }], explanation: 'Exact policy simulation is required.', owner: record.capsule.actor.subject_id, expires_at: record.capsule.expires_at, evaluated_at: now, policy_version: policy.version, policy_digest: digest(policy) };
+      try { this.promotions.current(t, candidateDigest, 'production', now); } catch { return { decision: 'ESCROW', reasons: [{ code: 'PROMOTION_REQUIRED', message: 'A current, signed production promotion is required before activation.' }], explanation: 'A current, signed production promotion is required before activation.', owner: record.capsule.actor.subject_id, expires_at: record.capsule.expires_at, evaluated_at: now, policy_version: policy.version, policy_digest: digest(policy) }; }
     }
     const approvals = record.approvals.filter(a => a.payload.policy_digest === digest(policy) && a.payload.evidence_graph_digest === graph.digest).map(a => {
       try { return a.batch_envelope ? this.compositions.resolve(t, a) : verifySigned(a, identities, 'action-approval'); } catch { return null; }
@@ -171,21 +202,70 @@ export class Fabric {
       return record.decision;
     });
   }
+  createShieldedProposal(p, id) {
+    this.authorize(p, ['operator', 'policy_admin']);
+    return this.transaction(p, now => {
+      const t = p.tenant_id, parent = this.store.must(t, 'capsule', id);
+      requireThat(!parent.shield_successor_id, 'INV-409-REPLAY', 'A SHIELD decision may create only one reduced-scope successor', 409); this.ensureMutable(parent);
+      const decision = this.evaluation(t, parent, now);
+      requireThat(decision.decision === 'SHIELD' && parent.capsule.action.type === 'data.export' && decision.transformation, 'INV-409-STATE', 'Only a current SHIELD data-export decision can create a reduced-scope proposal', 409);
+      const input = this.shieldedInput(parent.capsule, decision.transformation, now); validateProposal(input); this.versions.check(t, 'schema', input.schema_id, '1');
+      const capsule = { ...input, capsule_id: randomUUID(), tenant_id: t }, record = { capsule, capsule_digest: digest(capsule), status: 'CANONICALISED', evidence: [], approvals: [], decision: null, certificate_id: null, created_at: now, shield_parent: { capsule_id: parent.capsule.capsule_id, capsule_digest: parent.capsule_digest, transformation_digest: digest(decision.transformation), created_at: now } };
+      this.store.db.prepare('INSERT INTO nonces VALUES(?,?,?)').run(t, capsule.nonce, capsule.capsule_id);
+      this.store.insert(t, 'capsule', capsule.capsule_id, record, now);
+      parent.status = 'SHIELD'; parent.decision = decision; parent.shield_successor_id = capsule.capsule_id; this.store.put(t, 'capsule', parent.capsule.capsule_id, parent, now);
+      this.store.audit(t, 'SHIELD_PROPOSAL_CREATED', p.subject_id, capsule.capsule_id, { parent_capsule_id: parent.capsule.capsule_id, parent_capsule_digest: parent.capsule_digest, transformed_capsule_digest: record.capsule_digest, transformation_digest: record.shield_parent.transformation_digest }, now);
+      return record;
+    });
+  }
   certificate(p, id) {
     this.authorize(p, ['operator', 'policy_admin']);
     return this.transaction(p, now => {
       const t = p.tenant_id, r = this.store.must(t, 'capsule', id); this.ensureMutable(r);
       requireThat(!r.certificate_id, 'INV-409-REPLAY', 'Action already has a certificate', 409);
       const decision = this.evaluation(t, r, now), policy = this.policy(t);
-      requireThat(decision.decision === 'ALLOW', 'INV-412-EVIDENCE', 'Only ALLOW may receive an execution certificate', 412, decision);
+      requireThat(decision.decision === 'ALLOW', 'INV-412-EVIDENCE', 'Only an independently re-evaluated ALLOW action may receive an execution certificate', 412, decision);
       this.assertHealthy(t, r.capsule.actor.subject_id, r.capsule.actor.device_id, now);
       const graph = this.graph(t, r), expiry = Math.min(now + policy.certificate_ttl_ms, r.capsule.expires_at, policy.expires_at, ...graph.items.map(e => e.payload.expires_at), ...r.approvals.map(a => a.payload.expires_at));
-      const payload = { certificate_id: randomUUID(), tenant_id: t, capsule_id: id, capsule_digest: r.capsule_digest, evidence_graph_digest: graph.digest, policy_id: policy.policy_id, policy_version: policy.version, policy_digest: digest(policy), decision: 'ALLOW', constraints: { destination: r.capsule.destination, quantity: r.capsule.quantity, requested_digest: digest(r.capsule.requested_state), current_state: r.capsule.current_state, exclusions: r.capsule.exclusions }, target_gate_id: this.config.gate_id, signer_set: decision.eligible_signers, nonce: r.capsule.nonce, issued_at: now, expires_at: expiry, single_use: true, revocation_ref: `certificate:${id}` };
+      const payload = { certificate_id: randomUUID(), tenant_id: t, capsule_id: id, capsule_digest: r.capsule_digest, evidence_graph_digest: graph.digest, policy_id: policy.policy_id, policy_version: policy.version, policy_digest: digest(policy), decision: 'ALLOW', constraints: { destination: r.capsule.destination, quantity: r.capsule.quantity, requested_digest: digest(r.capsule.requested_state), current_state: r.capsule.current_state, exclusions: r.capsule.exclusions }, target_gate_id: this.config.gate_id, signer_set: decision.eligible_signers ?? [], nonce: r.capsule.nonce, issued_at: now, expires_at: expiry, single_use: true, revocation_ref: `certificate:${id}` };
       requireThat(!this.revoked(t, 'key', this.keys(t).execution.key_id), 'INV-401-SIGNATURE', 'Execution key revoked', 401);
       const envelope = signed(payload, this.keys(t).execution, 'action-certificate');
       this.store.insert(t, 'certificate', payload.certificate_id, { envelope, consumed: false, status: 'CERTIFIED' }, now);
       r.certificate_id = payload.certificate_id; r.status = 'CERTIFIED'; r.decision = decision; this.store.put(t, 'capsule', id, r, now);
       this.store.audit(t, 'CERTIFICATE_ISSUED', p.subject_id, id, { certificate_id: payload.certificate_id, certificate_digest: digest(envelope) }, now); return envelope;
+    });
+  }
+  reserveBatch(p, envelopes, compositionId) {
+    this.authorize(p, ['operator', 'policy_admin']);
+    identifier(compositionId, 'composition id'); requireThat(Array.isArray(envelopes) && envelopes.length > 0 && envelopes.length <= 32, 'INV-400-COMPOSITION', 'Invalid batch certificates');
+    return this.transaction(p, now => {
+      const t = p.tenant_id, composition = this.store.must(t, 'composition', compositionId), batch = verifySigned(composition.envelope, this.executionPublic(t), 'composition');
+      requireThat(batch.composition_id === compositionId && !composition.started && batch.expires_at > now, 'INV-409-REPLAY', 'Composition already started or expired; reconcile its durable outcome', 409);
+      const certificates = envelopes.map(envelope => ({ envelope, cert: verifySigned(envelope, this.executionPublic(t), 'action-certificate') }));
+      requireThat(new Set(certificates.map(({ cert }) => cert.certificate_id)).size === certificates.length, 'INV-409-REPLAY', 'A certificate cannot appear twice in one batch', 409);
+      requireThat(certificates.length === batch.children.length && certificates.every(({ cert }, index) => cert.capsule_id === batch.children[index].capsule_id && cert.capsule_digest === batch.children[index].capsule_digest), 'INV-403-SCOPE', 'Batch certificate set does not match the composition', 403);
+      const reservations = certificates.map(({ envelope, cert }) => {
+        requireThat(cert.tenant_id === t && cert.target_gate_id === this.config.gate_id, 'INV-403-SCOPE', 'Certificate scope mismatch', 403);
+        requireThat(!this.revoked(t, 'key', envelope.protected.key_id) && !this.revoked(t, 'certificate', cert.certificate_id) && cert.issued_at <= now && cert.expires_at > now, 'INV-401-CERTIFICATE', 'Certificate expired or revoked', 401);
+        const stored = this.store.must(t, 'certificate', cert.certificate_id), record = this.store.must(t, 'capsule', cert.capsule_id);
+        requireThat(digest(stored.envelope) === digest(envelope), 'INV-401-CERTIFICATE', 'Certificate does not match issued authority', 401);
+        requireThat(!stored.consumed && record.status === 'CERTIFIED', 'INV-409-REPLAY', 'Certificate already consumed or action cancelled', 409);
+        requireThat(record.capsule_digest === cert.capsule_digest && this.graph(t, record).digest === cert.evidence_graph_digest && digest(this.policy(t)) === cert.policy_digest, 'INV-409-STATE', 'Action, evidence or policy changed', 409);
+        const capsule = this.executableDecision(t, record, cert, now);
+        this.assertHealthy(t, record.capsule.actor.subject_id, record.capsule.actor.device_id, now);
+        const state = this.target.state(t, record.capsule.action.target_resource);
+        requireThat(state.version === record.capsule.current_state.version && state.digest === record.capsule.current_state.digest, 'INV-409-STATE', 'Target state changed', 409);
+        return { cert, capsule, stored, record };
+      });
+      for (const reservation of reservations) {
+        reservation.stored.consumed = true; reservation.stored.status = 'EXECUTING'; reservation.stored.transaction_id = reservation.cert.certificate_id;
+        reservation.record.status = 'EXECUTING'; this.store.put(t, 'certificate', reservation.cert.certificate_id, reservation.stored, now); this.store.put(t, 'capsule', reservation.cert.capsule_id, reservation.record, now);
+        this.store.audit(t, 'EXECUTION_RESERVED', p.subject_id, reservation.cert.certificate_id, { capsule_digest: reservation.cert.capsule_digest, composition: true }, now);
+      }
+      composition.started = true; composition.status = 'RESERVED'; composition.certificate_ids = reservations.map(({ cert }) => cert.certificate_id); composition.reserved_at = now;
+      this.store.put(t, 'composition', compositionId, composition, now);
+      this.store.audit(t, 'COMPOSITION_RESERVED', p.subject_id, compositionId, { certificate_ids: composition.certificate_ids, composition_digest: digest(composition.envelope) }, now);
+      return { now, reservations: reservations.map(({ cert, capsule }) => ({ cert, capsule })) };
     });
   }
   execute(p, envelope, { dryRun = false, fault = null } = {}) {
@@ -199,7 +279,7 @@ export class Fabric {
       requireThat(digest(stored.envelope) === digest(envelope), 'INV-401-CERTIFICATE', 'Certificate does not match issued authority', 401);
       requireThat(!stored.consumed && record.status === 'CERTIFIED', 'INV-409-REPLAY', 'Certificate already consumed or action cancelled', 409);
       requireThat(record.capsule_digest === cert.capsule_digest && this.graph(t, record).digest === cert.evidence_graph_digest && digest(this.policy(t)) === cert.policy_digest, 'INV-409-STATE', 'Action, evidence or policy changed', 409);
-      requireThat(this.evaluation(t, record, now).decision === 'ALLOW', 'INV-412-EVIDENCE', 'Execution predicates no longer hold', 412);
+      const capsule = this.executableDecision(t, record, cert, now);
       this.assertHealthy(t, record.capsule.actor.subject_id, record.capsule.actor.device_id, now);
       const state = this.target.state(t, record.capsule.action.target_resource);
       requireThat(state.version === record.capsule.current_state.version && state.digest === record.capsule.current_state.digest, 'INV-409-STATE', 'Target state changed', 409);
@@ -210,7 +290,7 @@ export class Fabric {
       stored.consumed = true; stored.status = 'EXECUTING'; stored.transaction_id = cert.certificate_id;
       record.status = 'EXECUTING'; this.store.put(t, 'certificate', cert.certificate_id, stored, now); this.store.put(t, 'capsule', cert.capsule_id, record, now);
       this.store.audit(t, 'EXECUTION_RESERVED', p.subject_id, cert.certificate_id, { capsule_digest: cert.capsule_digest }, now);
-      return { cert, capsule: record.capsule, now };
+      return { cert, capsule, now };
     });
     if (reservation.dry_run) return reservation;
     const { cert, capsule, now } = reservation;
@@ -248,14 +328,22 @@ export class Fabric {
           outputValid = exactOutput.length === requested.row_ids.length && digest(raw.output) === digest(exactOutput);
         }
       }
-      const valid = responseShape && expected && outputValid && raw.execution_time >= cert.issued_at && raw.execution_time <= now && raw.execution_time < cert.expires_at && digest(expected) === raw.observed_state_digest && raw.status === 'VERIFIED' && raw.target_transaction_id === cert.certificate_id && raw.capsule_digest === cert.capsule_digest && raw.authorised_requested_digest === digest(r.capsule.requested_state) && raw.observed_state_digest === digest(raw.observed_state) && raw.simulation === true;
+      const valid = responseShape && expected && outputValid && raw.execution_time >= cert.issued_at && raw.execution_time <= now && raw.execution_time < cert.expires_at && digest(expected) === raw.observed_state_digest && raw.status === 'VERIFIED' && raw.target_transaction_id === cert.certificate_id && raw.capsule_digest === digest(r.capsule) && raw.authorised_requested_digest === digest(r.capsule.requested_state) && raw.observed_state_digest === digest(raw.observed_state) && raw.simulation === true;
       if (status === 'VERIFIED' && !valid) { status = 'UNCERTAIN'; reason = 'TARGET_RESPONSE_INVALID'; }
       if (valid && r.capsule.action.type === 'policy.change') {
         const next = r.capsule.requested_state.policy;
-        requireThat(next.version === this.policy(t).version + 1, 'INV-409-STATE', 'Policy activation sequence changed', 409);
+        validatePolicy(next);
+        requireThat(next.tenant_id === t && next.policy_id === this.policy(t).policy_id && next.version === this.policy(t).version + 1 && next.not_before <= raw.execution_time && next.expires_at > raw.execution_time, 'INV-409-STATE', 'Policy activation sequence or validity changed', 409);
+        const prior = this.policy(t), priorHistory = this.store.list(t, 'policy-history', 10000).find(entry => entry.content_digest === policyContentDigest(next) && entry.version !== prior.version);
+        const promotion = this.promotions.current(t, digest(next), 'production', raw.execution_time);
         this.store.put(t, 'policy', 'active', next, now);
+        const history = { policy: clone(next), policy_digest: digest(next), content_digest: policyContentDigest(next), version: next.version, activated_at: now, activated_by: p.subject_id, source_certificate_id: cert.certificate_id, promotion_digest: digest(promotion), reviewed_commit: promotion.reviewed_commit, rollback_of_version: priorHistory?.version ?? null };
+        this.store.insert(t, 'policy-history', `${next.policy_id}:${next.version}`, history, now);
+        this.store.audit(t, priorHistory ? 'POLICY_ROLLED_BACK' : 'POLICY_ACTIVATED', p.subject_id, next.policy_id, { policy_digest: digest(next), source_certificate_id: cert.certificate_id, rollback_of_version: history.rollback_of_version }, now);
       }
-      const payload = { certificate_id: cert.certificate_id, capsule_digest: cert.capsule_digest, target_transaction_id: cert.certificate_id, observed_state_digest: valid ? raw.observed_state_digest : null, status, reason, execution_time: valid ? raw.execution_time : now, reconciliation_evidence: valid ? digest(raw) : null, simulation: true, output: valid ? raw.output : null };
+      const outputRows = valid && Array.isArray(raw.output) ? raw.output : null;
+      const protectedOutput = outputRows !== null ? protectOutput(outputRows, { tenant_id: t, subject_id: r.capsule.actor.subject_id, session_id: cert.certificate_id, destination: r.capsule.destination }, this.policy(t).runtime.watermark, this.store.key(t)) : { rows: null, watermark: null };
+      const payload = { certificate_id: cert.certificate_id, capsule_digest: cert.capsule_digest, target_transaction_id: cert.certificate_id, observed_state_digest: valid ? raw.observed_state_digest : null, status, reason, execution_time: valid ? raw.execution_time : now, reconciliation_evidence: valid ? digest(raw) : null, simulation: true, output: protectedOutput.rows, watermark: protectedOutput.watermark };
       const envelope = signed(payload, this.keys(t).audit, 'outcome');
       this.store.put(t, 'outcome', cert.certificate_id, envelope, now); stored.status = status; r.status = status;
       this.store.put(t, 'certificate', cert.certificate_id, stored, now); this.store.put(t, 'capsule', cert.capsule_id, r, now);
@@ -271,6 +359,10 @@ export class Fabric {
     const cert = stored.envelope.payload, raw = this.target.outcome(t, id);
     return this.finish(p, cert, raw, raw ? 'VERIFIED' : 'UNCERTAIN', raw ? 'RECONCILED_FROM_TARGET_JOURNAL' : 'NO_TARGET_CONFIRMATION_DO_NOT_RETRY');
   }
+  reconcileComposition(p, id) {
+    this.authorize(p, ['operator', 'security', 'policy_admin']); identifier(id, 'composition id');
+    return this.compositions.reconcile(p, id);
+  }
   cancel(p, id) {
     this.authorize(p, ['operator', 'security', 'policy_admin']);
     return this.transaction(p, now => {
@@ -281,25 +373,33 @@ export class Fabric {
   }
   revoke(p, input) {
     this.authorize(p, ['security']); fields(input, ['kind', 'id', 'reason']); text(input.reason, 'revocation reason'); identifier(input.id);
-    requireThat(['certificate', 'evidence', 'issuer', 'key', 'subject', 'device', 'capability'].includes(input.kind), 'INV-400-SCHEMA', 'Unsupported revocation type');
+    requireThat(['certificate', 'evidence', 'issuer', 'key', 'subject', 'device', 'capability', 'component', 'jit', 'artifact', 'deployment'].includes(input.kind), 'INV-400-SCHEMA', 'Unsupported revocation type');
     return this.transaction(p, now => {
-      const payload = { ...clone(input), tenant_id: p.tenant_id, revoked_at: now, actor: p.subject_id, propagation: 'local-synchronous', remote_propagation: 'NOT_IMPLEMENTED' };
+      const payload = { ...clone(input), tenant_id: p.tenant_id, revoked_at: now, actor: p.subject_id, propagation: 'local-synchronous', remote_propagation: ['capability', 'subject', 'key'].includes(input.kind) ? 'durable-gate-outbox' : 'NOT_APPLICABLE' };
       this.store.put(p.tenant_id, 'revocation', `${input.kind}:${input.id}`, payload, now);
+      if (input.kind === 'key') this.coverageLifecycle.refreshTenant(p.tenant_id, now);
+      const envelope = signed(payload, this.keys(p.tenant_id).audit, 'revocation');
+      this.revocationOutbox.enqueue(p.tenant_id, envelope, payload, now);
       this.store.audit(p.tenant_id, 'AUTHORITY_REVOKED', p.subject_id, `${input.kind}:${input.id}`, { reason_digest: digest(input.reason) }, now);
-      return signed(payload, this.keys(p.tenant_id).audit, 'revocation');
+      return envelope;
     });
   }
   simulate(p, candidate) {
     this.authorize(p, ['policy_admin', 'security']); validatePolicy(candidate); requireThat(candidate.tenant_id === p.tenant_id, 'INV-403-SCOPE', 'Policy scope mismatch', 403);
     return this.transaction(p, now => {
       const active = this.policy(p.tenant_id), records = this.store.list(p.tenant_id, 'capsule', 500);
+      requireThat(candidate.policy_id === active.policy_id && [active.version, active.version + 1].includes(candidate.version) && candidate.expires_at > now, 'INV-409-STATE', 'Candidate must be the active or next unexpired policy version', 409);
       const results = records.map(r => ({ capsule_id: r.capsule.capsule_id, observed_status: r.status, projected: this.evaluation(p.tenant_id, { ...r, capsule: { ...r.capsule, policy_version: candidate.version } }, now, candidate).decision }));
       const result = { simulation_id: randomUUID(), candidate_digest: digest(candidate), baseline_digest: digest(active), activation: false, approvals_invalidated_by_policy_change: true, time_basis: now, diff: policyDiff(active, candidate), results, counts: Object.fromEntries(['ALLOW', 'SHIELD', 'ESCROW', 'DEFER', 'DENY'].map(d => [d, results.filter(r => r.projected === d).length])), truncated: records.length === 500 };
       this.store.insert(p.tenant_id, 'simulation', result.simulation_id, result, now); this.store.audit(p.tenant_id, 'POLICY_SIMULATED', p.subject_id, result.simulation_id, { candidate_digest: digest(candidate), result_digest: digest(result) }, now); return result;
     });
   }
+  policyPromotionChallenge(p, input) { return this.promotions.challenge(p, input); }
+  promotePolicy(p, input) { return this.promotions.promote(p, input); }
+  runAdvisoryRegression(p, input) { return this.advisory.runRegression(p, input); }
+  promoteAdvisory(p, input) { return this.advisory.promote(p, input); }
   auditView(p, role, purpose) { return auditView(this, p, role, purpose); }
-  coverage(p) { this.authorize(p, ['operator', 'approver', 'custodian', 'security', 'auditor', 'policy_admin']); this.coverageLifecycle.refresh(p); return coverageManifest(p.tenant_id, this.store.list(p.tenant_id, 'coverage'), this.clock(), this.keys(p.tenant_id).audit); }
+  coverage(p) { this.authorize(p, ['operator', 'approver', 'custodian', 'security', 'auditor', 'policy_admin']); return this.transaction(p, now => coverageManifest(p.tenant_id, this.store.list(p.tenant_id, 'coverage'), now, this.keys(p.tenant_id).audit)); }
   declareCoverage(p, input) {
     this.authorize(p, ['security']); return this.transaction(p, now => {
       const path = declarePath(input, now); this.coverageLifecycle.history(p.tenant_id, path, now, 'DECLARED'); this.store.put(p.tenant_id, 'coverage', path.path_id, path, now);
@@ -308,19 +408,32 @@ export class Fabric {
   }
   exportAudit(p, purpose) {
     this.authorize(p, ['auditor', 'security']); text(purpose, 'audit export purpose', 256);
-    return this.transaction(p, now => { this.store.audit(p.tenant_id, 'AUDIT_ACCESSED', p.subject_id, 'tenant-log', { purpose_digest: digest(purpose) }, now); return this.store.auditExport(p.tenant_id); });
+    return this.transaction(p, now => { this.store.audit(p.tenant_id, 'AUDIT_ACCESSED', p.subject_id, 'tenant-log', { purpose_digest: digest(purpose) }, now); const bundle = this.store.auditExport(p.tenant_id, now); bundle.public_keys = this.keyLifecycle.publicMaterial(p.tenant_id, 'audit'); return bundle; });
   }
   retention(p, input) {
     this.authorize(p, ['security']); fields(input, ['evidence_id', 'legal_hold']); identifier(input.evidence_id); requireThat(typeof input.legal_hold === 'boolean', 'INV-400-SCHEMA', 'Legal hold must be boolean');
     return this.transaction(p, now => { const e = this.store.must(p.tenant_id, 'evidence', input.evidence_id); e.legal_hold = input.legal_hold; this.store.put(p.tenant_id, 'evidence', input.evidence_id, e, now); this.store.audit(p.tenant_id, 'RETENTION_HOLD_CHANGED', p.subject_id, input.evidence_id, { legal_hold: input.legal_hold }, now); return { evidence_id: input.evidence_id, legal_hold: input.legal_hold }; });
   }
+  retentionInstruction(p, input) {
+    this.authorize(p, ['security']); fields(input, ['action_type', 'legal_basis', 'customer_instruction_digest', 'evidence_retention_ms', 'audit_retention_ms']);
+    text(input.action_type, 'action type', 128); text(input.legal_basis, 'retention legal basis', 256); integer(input.evidence_retention_ms, 'evidence retention', 0, 2592000000); integer(input.audit_retention_ms, 'audit retention', 0, 2592000000);
+    requireThat(/^[a-f0-9]{64}$/.test(input.customer_instruction_digest), 'INV-400-SCHEMA', 'Customer retention instruction must be a digest');
+    return this.transaction(p, now => {
+      requireThat(Object.hasOwn(this.policy(p.tenant_id).rules, input.action_type), 'INV-400-SCHEMA', 'Retention instruction action type is unsupported');
+      const instruction = { ...clone(input), tenant_id: p.tenant_id, configured_at: now, configured_by: p.subject_id };
+      this.store.put(p.tenant_id, 'retention-policy', input.action_type, instruction, now);
+      this.store.insert(p.tenant_id, 'retention-policy-history', randomUUID(), instruction, now);
+      this.store.audit(p.tenant_id, 'RETENTION_POLICY_CONFIGURED', p.subject_id, input.action_type, { instruction_digest: digest(instruction), legal_basis: input.legal_basis }, now);
+      return clone(instruction);
+    });
+  }
   retentionSweep(p) {
-    this.authorize(p, ['security']); return this.transaction(p, now => {
+    this.authorize(p, ['security']); const result = this.transaction(p, now => {
       const items = this.store.list(p.tenant_id, 'evidence', 10000), records = this.store.list(p.tenant_id, 'capsule', 10000); let deleted = 0, held = 0;
       // Conservative batch boundary: do not erase if a reference could be outside this scan.
       if (records.length === 10000) return { deleted: 0, held: items.length, reason: 'Reference scan limit reached; no deletion performed', complete_payload_erasure: false };
       for (const e of items) {
-        if (e.payload.retention_until > now) continue;
+        if ((e.retention_until ?? e.payload.retention_until) > now) continue;
         const activeReference = records.some(r => r.evidence.includes(e.payload.evidence_id) && !['VERIFIED', 'FAILED', 'DENY', 'CANCELLED'].includes(r.status));
         if (e.legal_hold || activeReference) { held++; continue; }
         const original_digest = digest(e.envelope);
@@ -328,7 +441,8 @@ export class Fabric {
         this.store.remove(p.tenant_id, 'evidence', e.payload.evidence_id); deleted++;
         this.store.audit(p.tenant_id, 'RETENTION_DELETED', p.subject_id, e.payload.evidence_id, { original_digest, logical_deletion_only: true }, now);
       }
-      return { deleted, held, complete_payload_erasure: false, limitation: 'Logical deletion does not remove old ciphertext from backups or SQLite free pages; per-record key destruction is not implemented.' };
+      return { deleted, held };
     });
+    return { ...result, complete_payload_erasure: result.deleted === 0 || this.store.lastSecureErase?.completed === true, erasure_method: result.deleted ? this.store.lastSecureErase?.method ?? null : null, limitation: 'The local SQLite store securely deletes and compacts its own evidence; copies exported outside this store remain the recipient or backup operator\'s retention responsibility.' };
   }
 }

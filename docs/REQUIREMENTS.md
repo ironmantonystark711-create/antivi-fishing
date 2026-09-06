@@ -1,4 +1,6 @@
-# Requirements traceability
+# Historical requirements traceability
+
+This inherited numbered-row inventory is retained as historical context, not current acceptance evidence. Use [COMPLETION_LEDGER.md](COMPLETION_LEDGER.md) and its source-bound reviews/results for current status, including nonnumbered normative clauses. The status counts below are historical and must not be used to claim completion or classify current external blockers.
 
 All **211** numbered rows in the supplied SRS are preserved in `requirements.csv`: **166 functional** and **45 non-functional**. No missing requirements were silently removed or treated as optional. Original source language, minimum acceptance, evidence method, accountable role, baseline and current gap are recorded. Named human owners remain unassigned, which itself prevents production acceptance.
 

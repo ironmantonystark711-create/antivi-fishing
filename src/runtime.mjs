@@ -6,21 +6,35 @@ import { requireThat } from './errors.mjs';
 import { protectOutput } from './output.mjs';
 
 export class RuntimeGate {
-  constructor(fabric) { this.f = fabric; this.capabilityCache = new Map(); this.policyCache = new Map(); }
-  verifiedCapability(t, envelope) {
-    const fingerprint = JSON.stringify(envelope);
+  constructor(fabric) { this.f = fabric; this.capabilityCache = new Map(); this.policyCache = new Map(); this.runtimeMetrics = new Map(); }
+  #recordMetric(principal, operation, code) {
+    const tenant = principal?.tenant_id && this.f.config.tenants[principal.tenant_id] ? principal.tenant_id : 'invalid', metrics = this.runtimeMetrics.get(tenant) ?? { counters: {} }, safeCode = /^[A-Z0-9-]{3,64}$/.test(code) ? code : 'INV-500-INTERNAL';
+    let key = `${operation}.${safeCode}`;
+    if (!Object.hasOwn(metrics.counters, key) && Object.keys(metrics.counters).length >= 64) key = `${operation}.OTHER`;
+    metrics.counters[key] = (metrics.counters[key] ?? 0) + 1; this.runtimeMetrics.set(tenant, metrics);
+  }
+  #measured(principal, operation, operationFn) {
+    try { const result = operationFn(); this.#recordMetric(principal, operation, 'ALLOW'); return result; }
+    catch (error) { this.#recordMetric(principal, operation, error?.code ?? 'INV-500-INTERNAL'); throw error; }
+  }
+  metrics(tenant) { return clone({ format: 'IF-RUNTIME-METRICS-1', tenant_id: tenant, counters: this.runtimeMetrics.get(tenant)?.counters ?? {} }); }
+  verifiedCapability(t, envelope, capacity) {
+    const fingerprint = digest(envelope);
     const key = `${t}:${fingerprint}`;
     if (this.capabilityCache.has(key)) return this.capabilityCache.get(key);
     const payload = clone(verifySigned(envelope, this.f.executionPublic(t), 'capability'));
-    if (this.capabilityCache.size >= 256) this.capabilityCache.delete(this.capabilityCache.keys().next().value);
+    if (this.capabilityCache.size >= capacity) this.capabilityCache.delete(this.capabilityCache.keys().next().value);
     this.capabilityCache.set(key, payload); return payload;
   }
   policyDigest(t) {
-    const policy = this.f.policy(t), fingerprint = JSON.stringify(policy), prior = this.policyCache.get(t);
+    const policy = this.f.policy(t), fingerprint = digest(policy), prior = this.policyCache.get(t);
     if (prior?.fingerprint === fingerprint) return prior.digest;
     const value = digest(policy); this.policyCache.set(t, { fingerprint, digest: value }); return value;
   }
   issue(principal, input) {
+    return this.#measured(principal, 'issue', () => this.#issue(principal, input));
+  }
+  #issue(principal, input) {
     this.f.runtimeIntegrity.check(principal.tenant_id);
     fields(input, ['device_id', 'resource', 'destination', 'action', 'purpose', 'columns', 'row_ids', 'classification', 'jurisdiction', 'max_cost', 'ttl_ms']);
     identifier(input.device_id); identifier(input.resource); text(input.destination, 'destination'); oneOf(input.action, ['data.read', 'service.connect'], 'runtime action');
@@ -35,7 +49,8 @@ export class RuntimeGate {
       if (input.action === 'data.read') requireThat(input.columns.length && input.row_ids.length, 'INV-400-SCHEMA', 'Data capabilities require explicit rows and columns');
       if (input.action === 'service.connect') requireThat(r.services.includes(input.resource) && input.destination === input.resource && !input.columns.length && !input.row_ids.length, 'INV-403-SCOPE', 'Network service scope denied', 403);
       requireThat(input.max_cost <= r.max_cost && input.ttl_ms <= policy.capability_ttl_ms && policy.expires_at > now && policy.not_before <= now, 'INV-403-SCOPE', 'Capability limit denied', 403);
-      const payload = { ...clone(input), capability_id: randomUUID(), tenant_id: t, subject_id: principal.subject_id, policy_digest: digest(policy), policy_version: policy.version, issued_at: now, expires_at: Math.min(now + input.ttl_ms, policy.expires_at), gate_id: this.f.config.gate_id, runtime_policy: clone(r) };
+      const resourceState = this.f.target.state(t, input.resource);
+      const payload = { ...clone(input), capability_id: randomUUID(), tenant_id: t, subject_id: principal.subject_id, hardware_backed: identity.hardware_backed, resource_state: { version: resourceState.version, digest: resourceState.digest }, policy_digest: digest(policy), policy_version: policy.version, issued_at: now, expires_at: Math.min(now + input.ttl_ms, policy.expires_at), gate_id: this.f.config.gate_id, runtime_policy: clone(r) };
       const envelope = signed(payload, this.f.keys(t).execution, 'capability');
       this.f.store.insert(t, 'capability', payload.capability_id, envelope, now);
       this.f.store.audit(t, 'CAPABILITY_ISSUED', principal.subject_id, payload.capability_id, { digest: digest(envelope), resource: input.resource }, now);
@@ -43,17 +58,23 @@ export class RuntimeGate {
     });
   }
   consume(principal, input) {
-    this.f.runtimeIntegrity.check(principal.tenant_id);
+    return this.#measured(principal, 'consume', () => this.#consume(principal, input));
+  }
+  #consume(principal, input) {
+    const runtimeConfig = this.f.runtimeIntegrity.check(principal.tenant_id);
     fields(input, ['capability', 'device_id', 'resource', 'destination', 'action', 'purpose', 'columns', 'row_ids', 'request_id', 'protocol', 'port']);
     identifier(input.request_id); identifier(input.device_id); identifier(input.resource); text(input.destination, 'destination');
     uniqueStrings(input.columns, 'columns', 64); uniqueStrings(input.row_ids, 'row ids', 256);
     oneOf(input.protocol, ['https'], 'protocol'); integer(input.port, 'port', 443, 443);
     return this.f.transaction(principal, now => {
-      const t = principal.tenant_id, cap = this.verifiedCapability(t, input.capability);
+      const t = principal.tenant_id, cap = this.verifiedCapability(t, input.capability, runtimeConfig.cache_entries);
       requireThat(cap.tenant_id === t && cap.subject_id === principal.subject_id && cap.gate_id === this.f.config.gate_id, 'INV-403-SCOPE', 'Capability scope denied', 403);
       this.f.assertHealthy(t, principal.subject_id, input.device_id, now);
+      requireThat(cap.hardware_backed === this.f.identity(principal).hardware_backed, 'INV-401-CAPABILITY', 'Capability hardware binding changed', 401);
       requireThat(cap.expires_at > now && cap.issued_at <= now && !this.f.revoked(t, 'capability', cap.capability_id) && !this.f.revoked(t, 'key', input.capability.protected.key_id), 'INV-401-CAPABILITY', 'Capability is expired or revoked', 401);
       requireThat(this.f.store.get(t, 'capability', cap.capability_id) && cap.policy_digest === this.policyDigest(t), 'INV-401-CAPABILITY', 'Capability policy is no longer active', 401);
+      const resourceState = this.f.target.state(t, cap.resource);
+      requireThat(cap.resource_state && cap.resource_state.version === resourceState.version && cap.resource_state.digest === resourceState.digest, 'INV-409-STATE', 'Resource state changed since capability issuance', 409);
       for (const key of ['device_id', 'resource', 'destination', 'action', 'purpose']) requireThat(input[key] === cap[key], 'INV-403-SCOPE', 'Capability binding mismatch', 403);
       requireThat(input.columns.every(c => cap.columns.includes(c)) && input.row_ids.every(id => cap.row_ids.includes(id)), 'INV-403-SCOPE', 'Data scope denied', 403);
       requireThat(input.action !== 'data.read' || (input.columns.length > 0 && input.row_ids.length > 0), 'INV-400-SCHEMA', 'Data request requires explicit selection');

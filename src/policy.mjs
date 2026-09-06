@@ -1,6 +1,8 @@
 import { digest, clone } from './canonical.mjs';
-import { fields, integer, uniqueStrings, oneOf, text } from './schema.mjs';
+import { signed, verifySigned } from './crypto.mjs';
+import { fields, identifier, integer, uniqueStrings, oneOf, text } from './schema.mjs';
 import { requireThat } from './errors.mjs';
+import { verifyReleaseEvidence } from './operations.mjs';
 
 export function defaultPolicy(tenant) {
   const standard = { evidence_kinds: ['ownership'], independent_domains: 2, approval_threshold: 2, approval_role: 'approver', cooldown_ms: 0, max_quantity: 1_000_000_000, require_hardware: false, destinations: [], forbidden_fields: [], max_evidence_age_ms: 3600000 };
@@ -47,6 +49,7 @@ export function evaluatePolicy({ capsule, policy, evidence = [], approvals = [],
   const reason = (code, message) => ({ code, message });
   if (!rule) return result('DENY', [reason('UNSUPPORTED_ACTION', 'Action type is not authorised.')]);
   if (quarantined) return result('DENY', [reason('QUARANTINED', 'The subject or device is quarantined.')]);
+  if (policy.not_before > now) return result('DEFER', [reason('POLICY_NOT_ACTIVE', 'The candidate policy activation time has not been reached.')]);
   if (p.expires_at <= now || policy.expires_at <= now) return result('DENY', [reason('EXPIRED', 'Action or policy has expired.')]);
   if (p.policy_version !== policy.version) return result('DENY', [reason('POLICY_CHANGED', 'Re-propose under the active policy version.')]);
   if (p.quantity > rule.max_quantity) return result('DENY', [reason('QUANTITY_LIMIT', 'Requested quantity exceeds policy.')]);
@@ -108,4 +111,80 @@ export function policyDiff(before, after) {
     else changes.push({ path, before: a ?? null, after: b ?? null });
   }
   walk(before, after, ''); return changes;
+}
+
+// Versions and activation windows differ on every deployment and are not policy content.
+export function policyContentDigest(policy) {
+  const { version, not_before, expires_at, ...content } = policy;
+  return digest(content);
+}
+
+const STAGES = ['staging', 'canary', 'production'];
+const priorStage = { canary: 'staging', production: 'canary' };
+
+export class PolicyPromotions {
+  constructor(fabric) { this.f = fabric; }
+  id(policyDigest, stage) { return `${policyDigest}:${stage}`; }
+  challenge(p, input) {
+    this.f.authorize(p, ['policy_admin', 'security']); fields(input, ['candidate', 'reviewed_commit', 'stage', 'environment', 'simulation_id', 'expires_at', 'release_evidence']);
+    validatePolicy(input.candidate); text(input.reviewed_commit, 'reviewed commit', 64); identifier(input.environment, 'promotion environment'); identifier(input.simulation_id, 'simulation id'); oneOf(input.stage, STAGES, 'promotion stage');
+    requireThat(/^[a-f0-9]{40,64}$/.test(input.reviewed_commit), 'INV-400-SCHEMA', 'Reviewed commit must be an immutable SHA-1 or SHA-256 identifier');
+    return this.f.transaction(p, now => {
+      const active = this.f.policy(p.tenant_id), candidate = input.candidate;
+      requireThat(candidate.tenant_id === p.tenant_id && candidate.policy_id === active.policy_id && candidate.version === active.version + 1 && candidate.expires_at > now, 'INV-409-STATE', 'Promotion must target the next unexpired policy version', 409);
+      const simulation = this.f.store.must(p.tenant_id, 'simulation', input.simulation_id);
+      requireThat(simulation.candidate_digest === digest(candidate) && simulation.baseline_digest === digest(active) && simulation.activation === false && simulation.time_basis <= now && simulation.time_basis >= now - 86400000, 'INV-409-STATE', 'Promotion must bind a current exact deterministic simulation against the active baseline', 409);
+      integer(input.expires_at, 'promotion expiry', now + 1, Math.min(candidate.expires_at, now + 3600000));
+      const expected = { release_id: digest(candidate), source_commit: input.reviewed_commit, artifact_digest: digest(candidate), policy_digest: digest(candidate), execution_key_id: this.f.keys(p.tenant_id).execution.key_id, stage: input.stage, environment: input.environment };
+      const release = verifyReleaseEvidence(this.f, p.tenant_id, input.release_evidence, expected, now);
+      requireThat(release.reviewer_subject_id !== p.subject_id, 'INV-403-SCOPE', 'Policy author cannot self-review a release', 403);
+      this.f.store.put(p.tenant_id, 'release-evidence', release.evidence_digest, { binding: expected, evidence: clone(input.release_evidence), verified_at: now }, now);
+      return { format: 'IF-POLICY-PROMOTION-1', tenant_id: p.tenant_id, policy_id: candidate.policy_id, policy_version: candidate.version, policy_digest: digest(candidate), baseline_digest: digest(active), reviewed_commit: input.reviewed_commit, stage: input.stage, environment: input.environment, release_evidence_digest: release.evidence_digest, simulation_id: simulation.simulation_id, simulation_digest: digest(simulation), issued_at: now, expires_at: input.expires_at };
+    });
+  }
+  promote(p, input) {
+    this.f.authorize(p, ['policy_admin']); fields(input, ['challenge', 'signatures']);
+    return this.f.transaction(p, now => {
+      const x = input.challenge;
+      fields(x, ['format', 'tenant_id', 'policy_id', 'policy_version', 'policy_digest', 'baseline_digest', 'reviewed_commit', 'stage', 'environment', 'release_evidence_digest', 'simulation_id', 'simulation_digest', 'issued_at', 'expires_at']);
+      requireThat(x.format === 'IF-POLICY-PROMOTION-1' && x.tenant_id === p.tenant_id && /^[a-f0-9]{40,64}$/.test(x.reviewed_commit), 'INV-403-SCOPE', 'Promotion scope is invalid', 403);
+      oneOf(x.stage, STAGES, 'promotion stage'); integer(x.issued_at, 'promotion issue time', now - 300000, now); integer(x.expires_at, 'promotion expiry', now + 1, now + 3600000);
+      const active = this.f.policy(p.tenant_id), simulation = this.f.store.must(p.tenant_id, 'simulation', x.simulation_id);
+      const releaseEvidence = this.f.store.get(p.tenant_id, 'release-evidence', x.release_evidence_digest);
+      requireThat(x.policy_id === active.policy_id && x.policy_version === active.version + 1 && x.baseline_digest === digest(active) && x.policy_digest === simulation.candidate_digest && x.simulation_digest === digest(simulation) && simulation.baseline_digest === digest(active) && simulation.activation === false && releaseEvidence && digest(releaseEvidence.binding) === digest({ release_id: x.policy_digest, source_commit: x.reviewed_commit, artifact_digest: x.policy_digest, policy_digest: x.policy_digest, execution_key_id: this.f.keys(p.tenant_id).execution.key_id, stage: x.stage, environment: x.environment }) && !this.f.revoked(p.tenant_id, 'artifact', x.policy_digest), 'INV-409-STATE', 'Promotion no longer matches verified release evidence', 409);
+      const predecessor = priorStage[x.stage];
+      if (predecessor) this.current(p.tenant_id, x.policy_digest, predecessor, now);
+      requireThat(Array.isArray(input.signatures) && input.signatures.length >= 3 && input.signatures.length <= 5, 'INV-400-SCHEMA', 'Promotion needs a bounded customer quorum');
+      const signers = new Set(), domains = new Set(), approvals = [];
+      for (const envelope of input.signatures) {
+        const approval = verifySigned(envelope, this.f.identities(p.tenant_id), 'policy-promotion'), identity = this.f.identities(p.tenant_id)[envelope.protected.key_id];
+        requireThat(digest(approval) === digest(x) && approval.tenant_id === p.tenant_id && identity.roles.includes('custodian'), 'INV-403-SCOPE', 'Promotion approval must be an exact customer custodian signature', 403);
+        signers.add(envelope.protected.key_id); domains.add(identity.failure_domain); approvals.push(digest(envelope));
+      }
+      requireThat(signers.size >= 3 && domains.size >= 3, 'INV-403-QUORUM', 'Promotion needs three independent customer custodians', 403);
+      const payload = { ...clone(x), signer_set: [...signers].sort(), approval_digests: approvals.sort(), promoted_at: now };
+      const envelope = signed(payload, this.f.keys(p.tenant_id).execution, 'policy-promotion-record');
+      this.f.store.insert(p.tenant_id, 'policy-promotion', this.id(x.policy_digest, x.stage), { envelope, signatures: clone(input.signatures) }, now);
+      this.f.store.audit(p.tenant_id, 'POLICY_PROMOTED', p.subject_id, x.policy_id, { policy_digest: x.policy_digest, reviewed_commit: x.reviewed_commit, stage: x.stage, simulation_digest: x.simulation_digest, signer_count: signers.size }, now);
+      return envelope;
+    });
+  }
+  current(tenant, policyDigest, stage, now = this.f.clock()) {
+    const record = this.f.store.must(tenant, 'policy-promotion', this.id(policyDigest, stage));
+    fields(record, ['envelope', 'signatures']);
+    const payload = verifySigned(record.envelope, this.f.executionPublic(tenant), 'policy-promotion-record');
+    fields(payload, ['format', 'tenant_id', 'policy_id', 'policy_version', 'policy_digest', 'baseline_digest', 'reviewed_commit', 'stage', 'environment', 'release_evidence_digest', 'simulation_id', 'simulation_digest', 'issued_at', 'expires_at', 'signer_set', 'approval_digests', 'promoted_at']);
+    const simulation = this.f.store.must(tenant, 'simulation', payload.simulation_id), { signer_set, approval_digests, promoted_at, ...challenge } = payload;
+    const releaseEvidence = this.f.store.get(tenant, 'release-evidence', payload.release_evidence_digest);
+    requireThat(payload.format === 'IF-POLICY-PROMOTION-1' && payload.tenant_id === tenant && payload.policy_digest === policyDigest && payload.stage === stage && payload.expires_at > now && payload.promoted_at <= now && payload.simulation_digest === digest(simulation) && simulation.candidate_digest === policyDigest && simulation.baseline_digest === payload.baseline_digest && simulation.time_basis >= now - 86400000 && releaseEvidence && digest(releaseEvidence.binding) === digest({ release_id: payload.policy_digest, source_commit: payload.reviewed_commit, artifact_digest: payload.policy_digest, policy_digest: payload.policy_digest, execution_key_id: this.f.keys(tenant).execution.key_id, stage: payload.stage, environment: payload.environment }) && !this.f.revoked(tenant, 'artifact', payload.policy_digest) && Array.isArray(record.signatures) && signer_set.length >= 3 && approval_digests.length >= 3, 'INV-409-STATE', 'Policy promotion is unavailable or expired', 409);
+    verifyReleaseEvidence(this.f, tenant, releaseEvidence.evidence, releaseEvidence.binding, now);
+    const signers = new Set(), domains = new Set(), approvalDigests = [];
+    for (const envelope of record.signatures) {
+      const approval = verifySigned(envelope, this.f.identities(tenant), 'policy-promotion'), identity = this.f.identities(tenant)[envelope.protected.key_id];
+      requireThat(digest(approval) === digest(challenge) && identity.roles.includes('custodian'), 'INV-403-SCOPE', 'Policy promotion approval is invalid', 403);
+      signers.add(envelope.protected.key_id); domains.add(identity.failure_domain); approvalDigests.push(digest(envelope));
+    }
+    requireThat(signers.size >= 3 && domains.size >= 3 && digest([...signers].sort()) === digest(signer_set) && digest(approvalDigests.sort()) === digest(approval_digests), 'INV-403-QUORUM', 'Policy promotion quorum is no longer valid', 403);
+    return payload;
+  }
 }

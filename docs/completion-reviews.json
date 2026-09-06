@@ -1,0 +1,62 @@
+{
+  "ACT-002": {
+    "tests": [
+      "ACT-002: every action schema rejects all missing capsule, actor, action, state and requested fields",
+      "ACT-002 ACT-011: the gate supplies tenant and collision-resistant capsule identity, never caller overrides"
+    ],
+    "rationale": "Reviewed validateProposal and all thirteen action schemas, including actor, action, current state, quantities, destination, evidence references, policy, nonce, times and rollback metadata. Exhaustive deletion tests cover every mandatory field at each level. Fabric adds authenticated tenant/capsule identity and rejects caller overrides.",
+    "requirement_digest": "bac6a2ee6fb9cfe4aea98c9a4b9d3ef3312b5abcd79db52ad8ec8963c37591d5",
+    "source_fingerprint": "a428136fe383a9d7f3f24eabfdfaba2eea7f14a7baef1c9e3de147e6409136c9",
+    "status": "VERIFIED",
+    "software_complete": true,
+    "acceptance_complete": true,
+    "implementation": [
+      "src/schema.mjs",
+      "src/fabric.mjs",
+      "src/canonical.mjs",
+      "src/store.mjs"
+    ],
+    "owner": "Principal engineering acceptance review",
+    "release_baseline": "Full SRS: intrinsic capsule/schema contract"
+  },
+  "ACT-008": {
+    "tests": [
+      "ACT-008: all schemas reject missing, unknown or substituted identifiers and digests",
+      "ACT-008: tampered schema digest rejected"
+    ],
+    "rationale": "Every registered schema has a versioned identifier and digest. validateProposal requires exact equality to both; exhaustive schema-substitution tests and the Fabric tampering test reject unsupported versions and altered digests before storage or policy evaluation.",
+    "requirement_digest": "7373c4234613217868a939aacba4e81e25dc13a652c288eaa7c7376843411538",
+    "source_fingerprint": "a428136fe383a9d7f3f24eabfdfaba2eea7f14a7baef1c9e3de147e6409136c9",
+    "status": "VERIFIED",
+    "software_complete": true,
+    "acceptance_complete": true,
+    "implementation": [
+      "src/schema.mjs",
+      "src/fabric.mjs",
+      "src/canonical.mjs",
+      "src/store.mjs"
+    ],
+    "owner": "Principal engineering acceptance review",
+    "release_baseline": "Full SRS: intrinsic capsule/schema contract"
+  },
+  "ACT-011": {
+    "tests": [
+      "ACT-002 ACT-011: the gate supplies tenant and collision-resistant capsule identity, never caller overrides",
+      "ACT-011 COM-006: proposal idempotency returns exact first result; changed request rejected"
+    ],
+    "rationale": "Fabric generates capsule IDs using the cryptographic randomUUID implementation, indexes capsule records by tenant and ID, and inserts nonces uniquely per tenant. Caller-specified IDs are schema-rejected; duplicate nonce submission is rejected, while explicit same-key idempotent retransmission returns the original immutable result and detects changed requests.",
+    "requirement_digest": "037669e20a940da4a38a9bab8b8ef8931352f1ae0d6757314420cfd5190197f1",
+    "source_fingerprint": "a428136fe383a9d7f3f24eabfdfaba2eea7f14a7baef1c9e3de147e6409136c9",
+    "status": "VERIFIED",
+    "software_complete": true,
+    "acceptance_complete": true,
+    "implementation": [
+      "src/schema.mjs",
+      "src/fabric.mjs",
+      "src/canonical.mjs",
+      "src/store.mjs"
+    ],
+    "owner": "Principal engineering acceptance review",
+    "release_baseline": "Full SRS: intrinsic capsule/schema contract"
+  }
+}

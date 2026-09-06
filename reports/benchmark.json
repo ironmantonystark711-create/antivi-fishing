@@ -1,41 +1,66 @@
 {
   "reference_environment": {
-    "node": "v24.16.0",
+    "node": "v24.19.0",
     "os": "linux",
     "architecture": "x64",
-    "cpu": "Intel(R) Xeon(R) Processor @ 2.60GHz",
+    "cpu": "unknown",
     "logical_cpus": 2,
-    "memory_bytes": 2088390656,
+    "memory_bytes": 17179869184,
     "isolated_environment": true
   },
+  "benchmark_command": "node scripts/benchmark.mjs",
   "core_deterministic_evaluation": {
     "samples": 2000,
-    "p50_ms": 0.12403799999998455,
-    "p95_ms": 0.2221479999999758,
-    "p99_ms": 0.30945599999995466,
-    "operations_per_second": 7035.96678570561
+    "errors": 0,
+    "p50_ms": 0.07755900000000793,
+    "p95_ms": 0.14309000000000083,
+    "p99_ms": 0.309568999999982,
+    "operations_per_second": 11112.366993787526
   },
-  "integrated_evaluation_with_sqlite_audit": {
+  "protected_action_evaluation_with_sqlite_audit": {
     "samples": 500,
-    "p50_ms": 1.9291230000000041,
-    "p95_ms": 2.4237400000000093,
-    "p99_ms": 3.243109999999888,
-    "operations_per_second": 520.7845846413072
+    "errors": 0,
+    "p50_ms": 1.7022670000000062,
+    "p95_ms": 2.8127139999999144,
+    "p99_ms": 6.644655000000057,
+    "operations_per_second": 495.86909752422275
   },
-  "local_software_runtime_with_signed_audit": {
+  "runtime_authorization_with_signed_audit": {
     "samples": 500,
-    "p50_ms": 0.7430240000001049,
-    "p95_ms": 1.2211429999999837,
-    "p99_ms": 1.833798999999999,
-    "operations_per_second": 1174.1286656734308
+    "errors": 0,
+    "p50_ms": 0.9865979999999581,
+    "p95_ms": 1.5313269999999193,
+    "p99_ms": 2.6757350000000315,
+    "operations_per_second": 908.6312952967805
   },
-  "target_network_latency": "not measured: no external target connector",
+  "cached_local_runtime_dataplane": {
+    "samples": 5000,
+    "errors": 0,
+    "p50_ms": 0.0025599999999030842,
+    "p95_ms": 0.0040300000000570435,
+    "p99_ms": 0.009399999999914144,
+    "operations_per_second": 282410.5343196021
+  },
+  "loopback_http_proxy_under_concurrent_load": {
+    "samples": 1000,
+    "errors": 0,
+    "p50_ms": 9.369919999999638,
+    "p95_ms": 19.424777999999606,
+    "p99_ms": 43.640018000000055,
+    "operations_per_second": 1357.9120114840246
+  },
+  "external_connector_latency": {
+    "status": "NOT_CONFIGURED",
+    "samples": 0,
+    "reason": "No external connector is configured; core and local-runtime latency are reported separately."
+  },
   "targets": {
     "core_p95_at_most_250_ms": true,
     "core_p99_at_most_750_ms": true,
-    "integrated_100_evaluations_per_second": true,
-    "runtime_p99_at_most_1_ms": false
+    "protected_action_100_evaluations_per_second": true,
+    "cached_runtime_p99_at_most_1_ms": true,
+    "loopback_proxy_p99_at_most_250_ms": true
   },
   "production_capacity_claim": false,
-  "caveat": "Single-node microbenchmark, warm process, synthetic data and virtual policy clock advanced to respect budget/rate limits; not a production load, soak, packet or multi-zone benchmark."
+  "caveat": "Single-node warm-process benchmark using synthetic data and a virtual policy clock. The proxy result uses 20 concurrent keep-alive requests against an actual loopback HTTP listener. NFR-PERF-002 applies its 1 ms target to cached local gate decisions; the 250 ms proxy transport target is implementation-specific. This is not production load, soak, kernel packet enforcement, multi-zone, or external connector evidence."
 }

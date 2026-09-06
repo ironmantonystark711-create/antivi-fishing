@@ -8,7 +8,8 @@ import { signed } from '../src/crypto.mjs';
 import { canonical } from '../src/canonical.mjs';
 function network(h) {
  const cap = h.f.runtime.issue(h.p(), runtimeInput({ action: 'service.connect', resource: 'erp-service', destination: 'erp-service', columns: [], row_ids: [] }));
- const gate = new LocalNetworkGate({ tenant: 'acme', gate: h.f.config.gate_id, publicKeys: h.f.executionPublic('acme'), clock: h.now, maxEntries: 2, policyDigest: cap.payload.policy_digest, snapshot: h.setup.config.tenants.acme.runtime_snapshot.config });
+ const gate = new LocalNetworkGate({ tenant: 'acme', gate: h.f.config.gate_id, publicKeys: h.f.executionPublic('acme'), configurationKeys: h.f.identities('acme'), revocationKeys: { [h.f.keys('acme').audit.key_id]: { public_key: h.f.keys('acme').audit.public_key } }, clock: h.now, maxEntries: 2, policyDigest: cap.payload.policy_digest, snapshot: h.setup.config.tenants.acme.runtime_snapshot });
+ gate.reportEndpointHealth(signed({ tenant_id: 'acme', gate_id: h.f.config.gate_id, device_id: 'operator-device', reported_at: h.now(), expires_at: h.now() + 5000, status: 'HEALTHY', nonce: 'network-health-1' }, h.setup.deviceKeys.acme, 'endpoint-health'));
  let delivered = 0; gate.register('erp-service', p => { delivered++; return { received: p }; }); gate.importCapability(cap);
  const request = { capability_id: cap.payload.capability_id, tenant_id: 'acme', subject_id: 'operator', device_id: 'operator-device', destination: 'erp-service', protocol: 'https', port: 443, request_id: 'request-1' };
  return { gate, cap, request, delivered: () => delivered };
@@ -27,7 +28,7 @@ test('NET-004 NET-005 NET-006 NET-010 RUN-004 RUN-008 RUN-009: rate, quarantine,
  assert.equal(n.gate.send({ ...n.request, request_id: 'rate-excess' }, {}).code, 'INV-429-RATE'); n.gate.quarantine('operator-device');
  assert.equal(n.gate.send({ ...n.request, request_id: 'quarantine' }, {}).code, 'INV-403-QUARANTINE'); assert.equal(n.gate.send({ ...n.request, destination: 'peer-workstation', request_id: 'peer' }, {}).decision, 'DENY');
  assert.equal(n.gate.report().events.at(-1).reason, 'HEALTH_LOST'); assert.equal(n.delivered(), 20);
- const x = network(h); x.gate.revoke(x.cap.payload.capability_id); assert.equal(x.gate.send(x.request, {}).code, 'INV-401-CAPABILITY'); x.gate.withdraw(); assert.equal(x.gate.send(x.request, {}).code, 'INV-503-CONFIG');
+ const x = network(h); x.gate.revoke(h.f.revoke(h.p('security'), { kind: 'capability', id: x.cap.payload.capability_id, reason: 'Synthetic local revocation' })); assert.equal(x.gate.send(x.request, {}).code, 'INV-401-CAPABILITY'); x.gate.withdraw(); assert.equal(x.gate.send(x.request, {}).code, 'INV-503-CONFIG');
 });
 test('PER-001 PER-003 PER-006 PER-007 PER-009 PER-010: software transport contract encrypts only allowed fields and never claims hardware assurance', t => {
  const h = fixture(t), key = h.setup.issuerKeys.acme.governance, broker = new PerceptionBroker({ attestationKeys: h.f.tenant('acme').issuers, auditKey: h.f.keys('acme').audit, clock: h.now, measurements: ['display-sim:1'] });

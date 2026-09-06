@@ -9,8 +9,8 @@ export class Store {
   constructor(path, tenantKeys, auditKeys) {
     mkdirSync(dirname(path), { recursive: true, mode: 0o700 });
     this.db = new DatabaseSync(path); chmodSync(path, 0o600);
-    this.tenantKeys = tenantKeys; this.auditKeys = auditKeys; this.recordCache = new Map(); this.statementCache = new Map();
-    this.db.exec('PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL; PRAGMA foreign_keys=ON; PRAGMA busy_timeout=5000;');
+    this.tenantKeys = tenantKeys; this.auditKeys = auditKeys; this.recordCache = new Map(); this.statementCache = new Map(); this.pendingSecureErase = false; this.lastSecureErase = null;
+    this.db.exec('PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL; PRAGMA secure_delete=ON; PRAGMA foreign_keys=ON; PRAGMA busy_timeout=5000;');
     const version = this.statement('PRAGMA user_version').get().user_version;
     requireThat(version <= 1, 'INV-503-STORAGE', 'Database schema is newer than this application', 503);
     this.db.exec(`
@@ -34,12 +34,20 @@ export class Store {
   statement(sql) { if (!this.statementCache.has(sql)) { if (this.statementCache.size >= 128) this.statementCache.delete(this.statementCache.keys().next().value); this.statementCache.set(sql, this.db.prepare(sql)); } return this.statementCache.get(sql); }
   close() { this.recordCache.clear(); this.statementCache.clear(); this.db.close(); }
   tx(fn) {
+    let committed = false;
     this.db.exec('BEGIN IMMEDIATE');
     try {
       const result = fn();
       if (result && typeof result.then === 'function') throw new Error('Transactions must be synchronous');
-      this.db.exec('COMMIT'); return result;
-    } catch (e) { this.db.exec('ROLLBACK'); throw e; }
+      this.db.exec('COMMIT'); committed = true;
+      if (this.pendingSecureErase) {
+        this.pendingSecureErase = false;
+        // SQLite's secure-delete overwrites freed cells; compaction drops prior WAL frames.
+        this.db.exec('PRAGMA wal_checkpoint(TRUNCATE); VACUUM; PRAGMA wal_checkpoint(TRUNCATE);');
+        this.lastSecureErase = { completed: true, method: 'SQLITE_SECURE_DELETE_WAL_CHECKPOINT_VACUUM' };
+      }
+      return result;
+    } catch (e) { this.pendingSecureErase = false; if (!committed) this.db.exec('ROLLBACK'); throw e; }
   }
   key(tenant) {
     requireThat(this.tenantKeys[tenant], 'INV-404-NOT-FOUND', 'Resource not found', 404);
@@ -66,7 +74,10 @@ export class Store {
   list(tenant, kind, limit = 500, offset = 0) {
     return this.statement('SELECT id,value FROM records WHERE tenant=? AND kind=? ORDER BY created DESC,id LIMIT ? OFFSET ?').all(tenant, kind, limit, offset).map(row => decrypt(row.value, this.key(tenant), `${tenant}/${kind}/${row.id}`));
   }
-  remove(tenant, kind, id) { this.statement('DELETE FROM records WHERE tenant=? AND kind=? AND id=?').run(tenant, kind, id); }
+  remove(tenant, kind, id) {
+    this.statement('DELETE FROM records WHERE tenant=? AND kind=? AND id=?').run(tenant, kind, id);
+    this.recordCache.delete(`${tenant}/${kind}/${id}`); this.pendingSecureErase = true;
+  }
   clock(now) {
     requireThat(Number.isSafeInteger(now) && now > 0, 'INV-503-TIME', 'Clock unavailable', 503);
     const row = this.statement('SELECT last FROM clock WHERE id=1').get();
@@ -80,10 +91,10 @@ export class Store {
     this.statement('INSERT INTO audit VALUES(?,?,?,?,?)').run(tenant, entry.sequence, entry.previous, hash, canonical(envelope));
     return { hash, envelope };
   }
-  auditExport(tenant) {
+  auditExport(tenant, now) {
     const rows = this.statement('SELECT hash,envelope FROM audit WHERE tenant=? ORDER BY seq').all(tenant).map(r => ({ hash: r.hash, envelope: JSON.parse(r.envelope) }));
     const key = this.auditKeys[tenant], public_keys = { [key.key_id]: { public_key: key.public_key } };
-    const checkpoint = signed({ tenant_id: tenant, size: rows.length, head: rows.at(-1)?.hash ?? '0'.repeat(64) }, key, 'checkpoint');
+    const checkpoint = signed({ tenant_id: tenant, size: rows.length, head: rows.at(-1)?.hash ?? '0'.repeat(64), issued_at: now }, key, 'checkpoint');
     return { format: 'IF-AUDIT-1', public_keys, checkpoint, entries: rows };
   }
   idempotent(tenant, scope, key, requestHash, fn) {
@@ -99,15 +110,18 @@ export class Store {
   }
 }
 export function verifyAudit(bundle, pinnedKeys, priorCheckpoint = null) {
-  requireThat(bundle.format === 'IF-AUDIT-1' && Array.isArray(bundle.entries), 'INV-400-AUDIT', 'Unsupported audit format');
+  requireThat(bundle && Object.keys(bundle).sort().join() === 'checkpoint,entries,format,public_keys' && bundle.format === 'IF-AUDIT-1' && Array.isArray(bundle.entries) && bundle.entries.length <= 100000, 'INV-400-AUDIT', 'Unsupported audit format');
+  requireThat(pinnedKeys && typeof pinnedKeys === 'object' && !Array.isArray(pinnedKeys), 'INV-401-SIGNATURE', 'Pinned audit trust is required', 401);
   const checkpoint = verifySigned(bundle.checkpoint, pinnedKeys, 'checkpoint');
+  requireThat(Object.keys(checkpoint).sort().join() === 'head,issued_at,size,tenant_id' && /^[a-f0-9]{64}$/.test(checkpoint.head) && Number.isSafeInteger(checkpoint.issued_at) && checkpoint.issued_at > 0 && Number.isSafeInteger(checkpoint.size) && checkpoint.size >= 0, 'INV-400-AUDIT', 'Invalid checkpoint');
   let previous = '0'.repeat(64), sequence = 0, time = 0;
   for (const item of bundle.entries) {
+    requireThat(item && Object.keys(item).sort().join() === 'envelope,hash' && typeof item.hash === 'string' && /^[a-f0-9]{64}$/.test(item.hash), 'INV-400-AUDIT', 'Invalid audit entry');
     const entry = verifySigned(item.envelope, pinnedKeys, 'audit');
     requireThat(entry.tenant_id === checkpoint.tenant_id && entry.sequence === ++sequence && entry.previous === previous && entry.time >= time && digest(entry) === item.hash, 'INV-409-AUDIT', 'Audit continuity failure', 409);
     previous = item.hash; time = entry.time;
     if (priorCheckpoint && sequence === priorCheckpoint.size) requireThat(previous === priorCheckpoint.head, 'INV-409-FORK', 'Witness checkpoint disagrees', 409);
   }
-  requireThat(checkpoint.size === sequence && checkpoint.head === previous && (!priorCheckpoint || (checkpoint.tenant_id === priorCheckpoint.tenant_id && sequence >= priorCheckpoint.size)), 'INV-409-AUDIT', 'Missing or inconsistent checkpoint', 409);
+  requireThat(checkpoint.size === sequence && checkpoint.head === previous && (!priorCheckpoint || (checkpoint.tenant_id === priorCheckpoint.tenant_id && sequence >= priorCheckpoint.size && checkpoint.issued_at >= priorCheckpoint.issued_at)), 'INV-409-AUDIT', 'Missing or inconsistent checkpoint', 409);
   return { valid: true, entries: sequence, head: previous, tenant_id: checkpoint.tenant_id };
 }

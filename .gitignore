@@ -7,3 +7,7 @@ var/
 .env
 *.log
 coverage/
+.hoplite/attachments/
+.hoplite/local/
+reports/browser/*.png
+reports/browser/*.webm

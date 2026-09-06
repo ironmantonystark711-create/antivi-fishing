@@ -76,7 +76,12 @@ test('ACT-010: material change or graph change invalidates exact approval', t =>
 test('COM-014 POL-009: 3-of-5 customer software quorum protects exact policy activation', t => {
   const h = fixture(t), next = clone(h.f.policy('acme')); next.version = 2; next.rules['finance.payment.first'].max_quantity = 500000;
   const r = h.proposed('policy.change', { policy: next }, { action: { type: 'policy.change', target_resource: 'policy-root', purpose: 'Tighten payment ceiling' } });
-  h.f.simulate(h.p('policy-admin'), next); h.advance(120001); h.evidence(r, { kind: 'governance_review' }); h.evidence(r, { issuer: 'registry', kind: 'governance_review' }); h.approve(r, 2);
+  const simulation = h.f.simulate(h.p('policy-admin'), next);
+  for (const stage of ['staging', 'canary', 'production']) {
+    const environment = `acme-${stage}`, policyDigest = digest(next), challenge = h.f.policyPromotionChallenge(h.p('policy-admin'), { candidate: next, reviewed_commit: 'a'.repeat(40), stage, environment, simulation_id: simulation.simulation_id, expires_at: h.now() + 300000, release_evidence: h.releaseEvidence({ releaseId: policyDigest, artifactDigest: policyDigest, policyDigest, stage, environment }) });
+    h.f.promotePolicy(h.p('policy-admin'), { challenge, signatures: Object.values(h.setup.custodianKeys.acme).slice(0, 3).map(key => signed(challenge, key, 'policy-promotion')) });
+  }
+  h.advance(120001); h.evidence(r, { kind: 'governance_review' }); h.evidence(r, { issuer: 'registry', kind: 'governance_review' }); h.approve(r, 2);
   assert.throws(() => h.f.certificate(h.p(), r.capsule.capsule_id), hasCode('INV-412-EVIDENCE'));
   const p = h.p('custodian-3'); h.f.approve(p, signed(h.f.approvalChallenge(p, r.capsule.capsule_id), h.setup.custodianKeys.acme['custodian-3'], 'action-approval'));
   const cert = h.f.certificate(h.p(), r.capsule.capsule_id); assert.equal(h.f.execute(h.p(), cert).payload.status, 'VERIFIED'); assert.equal(h.f.policy('acme').version, 2);
