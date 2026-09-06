@@ -19,7 +19,7 @@ jobs:
           node-version: '24.16.0'
       - run: node scripts/check.mjs
       - run: node --test --test-concurrency=1 tests/*.test.mjs
-      - run: python scripts/canonical-vectors.py
+      - run: python3 scripts/canonical-vectors.py examples/canonical-vectors.json
   browser:
     runs-on: ubuntu-latest
     timeout-minutes: 15
