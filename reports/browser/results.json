@@ -1,0 +1,37 @@
+{
+  "status": "PASS",
+  "source_revision": "c754213f6d860f07299fb2db3e94aad3a05b9218",
+  "checks": [
+    "landing-no-horizontal-overflow-1440",
+    "landing-no-horizontal-overflow-900",
+    "landing-no-horizontal-overflow-390",
+    "landing-anchor-navigation",
+    "login-invalid-token-error",
+    "token-cleared-after-login",
+    "no-browser-persistent-credentials",
+    "non-allow-cannot-mint",
+    "exact-challenge-download-custodian-1",
+    "exact-challenge-download-custodian-2",
+    "dry-run-does-not-mutate",
+    "real-browser-exact-workflow",
+    "verified-cannot-execute-twice",
+    "detail-no-horizontal-overflow-1440",
+    "detail-no-horizontal-overflow-900",
+    "detail-no-horizontal-overflow-390",
+    "coverage-honest-empty-state",
+    "browser-scoped-data-flow",
+    "audit-projection-download",
+    "all-controls-have-labels",
+    "reduced-motion-honored",
+    "offline-error-visible",
+    "logout-clears-workspace",
+    "no-browser-javascript-errors",
+    "no-unexpected-network-failures"
+  ],
+  "javascript_errors": [],
+  "expected_offline_failures": [
+    "http://127.0.0.1:17788/v1/action-capsules?limit=25&offset=0"
+  ],
+  "visual_review": "Screenshots generated; human/model image inspection is separately required",
+  "production_ready": false
+}
